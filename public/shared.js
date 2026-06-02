@@ -18,10 +18,30 @@ function getState() {
 }
 
 function subscribe(onState) {
-  const events = new EventSource("/events");
-  events.onmessage = () => getState().then(onState);
-  getState().then(onState);
-  return events;
+  let stopped = false;
+  let lastUpdatedAt = null;
+
+  async function poll() {
+    if (stopped) return;
+    try {
+      const state = await getState();
+      if (state.updatedAt !== lastUpdatedAt) {
+        lastUpdatedAt = state.updatedAt;
+        onState(state);
+      }
+    } catch (error) {
+      console.warn("Could not refresh bingo state", error);
+    } finally {
+      if (!stopped) setTimeout(poll, 1000);
+    }
+  }
+
+  poll();
+  return {
+    close() {
+      stopped = true;
+    },
+  };
 }
 
 function formatClock(ms) {

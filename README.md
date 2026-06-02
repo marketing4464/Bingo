@@ -5,13 +5,37 @@ Digital bingo software for **That Was Iconic: Pop Culture Moments Bingo** at On 
 ## Run it
 
 ```bash
-node server.js
+npm install
+npm run dev
 ```
 
 Open the host console:
 
 ```text
-http://localhost:4173
+http://localhost:3000
+```
+
+For the original local Node server, run:
+
+```bash
+npm run local
+```
+
+That opens the host console at `http://localhost:4173`.
+
+## Deploy to Vercel
+
+This project is Next.js-compatible for Vercel:
+
+- Static app screens live in `public/`
+- Clean routes are configured in `next.config.mjs`
+- API routes are handled by `app/api/[...path]/route.js`
+- Browser clients poll `/api/state`, which avoids long-lived EventSource connections on Vercel
+
+After connecting the GitHub repo to Vercel, use the default Next.js build command:
+
+```bash
+npm run build
 ```
 
 Use the host console to open the big-screen display and show the QR code. Players scan the QR code, enter their name, and choose 1-3 bingo cards.

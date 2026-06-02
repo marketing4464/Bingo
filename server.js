@@ -154,6 +154,7 @@ function freshState() {
 }
 
 function publicState(req) {
+  advanceState();
   const round = rounds[state.roundIndex] || rounds[rounds.length - 1];
   const origin = getOrigin(req);
   const joinUrl = `${origin}/play`;
@@ -269,7 +270,7 @@ function startNextRound() {
   startCurrentRound();
 }
 
-setInterval(() => {
+function advanceState() {
   const now = Date.now();
   if (state.status === "countdown" && state.countdownEndsAt && now >= state.countdownEndsAt) {
     startCurrentRound({ resetClaims: true });
@@ -289,7 +290,13 @@ setInterval(() => {
   if (state.status === "playing" && state.nextPullAt && now >= state.nextPullAt && drawNextMoment()) {
     markUpdated();
   }
-}, 500);
+}
+
+function startStateTimer() {
+  return setInterval(() => {
+    advanceState();
+  }, 500);
+}
 
 function broadcast() {
   const data = `data: ${JSON.stringify({ type: "state", updatedAt: state.updatedAt })}\n\n`;
@@ -310,7 +317,8 @@ function getOrigin(req) {
   if (host.startsWith("localhost") || host.startsWith("127.0.0.1")) {
     return `http://${getLocalIp()}:${PORT}`;
   }
-  return `http://${host}`;
+  const proto = req.headers["x-forwarded-proto"] || "https";
+  return `${proto}://${host}`;
 }
 
 function sendJson(res, body, status = 200) {
@@ -446,6 +454,11 @@ async function findMomentImage(text, category) {
 
 function loadGoogleImageManifest() {
   try {
+    return require("./public/assets/google-image-manifest.json");
+  } catch {
+    // Fall through to filesystem loading for the standalone local server.
+  }
+  try {
     return JSON.parse(fs.readFileSync(GOOGLE_IMAGE_MANIFEST_PATH, "utf8"));
   } catch {
     return {};
@@ -542,6 +555,7 @@ function routeStatic(req, res, pathname) {
 }
 
 async function routeApi(req, res, pathname) {
+  advanceState();
   if (req.method === "GET" && pathname === "/api/state") {
     sendJson(res, publicState(req));
     return;
@@ -704,6 +718,173 @@ async function routeApi(req, res, pathname) {
   sendJson(res, { error: "Not found" }, 404);
 }
 
+function webJson(body, status = 200) {
+  return Response.json(body, {
+    status,
+    headers: {
+      "Cache-Control": "no-store",
+    },
+  });
+}
+
+function webOrigin(request) {
+  const url = new URL(request.url);
+  const host = request.headers.get("host") || url.host;
+  if (host.startsWith("localhost") || host.startsWith("127.0.0.1")) {
+    return `${url.protocol}//${host}`;
+  }
+  const proto = request.headers.get("x-forwarded-proto") || url.protocol.replace(":", "") || "https";
+  return `${proto}://${host}`;
+}
+
+function publicStateForOrigin(origin) {
+  advanceState();
+  const round = rounds[state.roundIndex] || rounds[rounds.length - 1];
+  return {
+    ...state,
+    round,
+    rounds,
+    moments,
+    joinUrl: `${origin}/play`,
+    qrUrl: `${origin}/play`,
+    autoPullEverySeconds: PULL_INTERVAL_MS / 1000,
+    pregameCountdownSeconds: PREGAME_COUNTDOWN_MS / 1000,
+    leaderboard: leaderboardFromClaims(),
+    latestClaim: state.claims[0] || null,
+    serverTime: Date.now(),
+  };
+}
+
+async function handleApiWebRequest(request, pathname) {
+  advanceState();
+  const method = request.method;
+  const origin = webOrigin(request);
+  const requestUrl = new URL(request.url);
+
+  if (method === "GET" && pathname === "/api/state") {
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (method === "GET" && pathname === "/api/moment-image") {
+    const text = String(requestUrl.searchParams.get("text") || "").slice(0, 80);
+    const category = String(requestUrl.searchParams.get("category") || "").slice(0, 40);
+    if (!text) return webJson({ ok: false, error: "Missing text" }, 400);
+    return webJson(await findMomentImage(text, category));
+  }
+
+  if (method !== "POST") {
+    return webJson({ error: "Not found" }, 404);
+  }
+
+  let body = {};
+  try {
+    body = await request.json();
+  } catch {
+    body = {};
+  }
+
+  if (pathname === "/api/start-round") {
+    startCurrentRound({ resetClaims: state.roundIndex === 0 && state.status !== "break" });
+    markUpdated();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/start-countdown") {
+    if (state.status === "playing" || state.status === "break") {
+      return webJson({ error: "Reset the event before starting a new countdown." }, 409);
+    }
+    startOpeningCountdown();
+    markUpdated();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/skip-countdown") {
+    if (state.status !== "countdown") {
+      return webJson({ error: "There is no opening countdown to skip." }, 409);
+    }
+    startCurrentRound({ resetClaims: true });
+    markUpdated();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/pull") {
+    if (state.status !== "playing") {
+      return webJson({ error: "Start the round before pulling words." }, 409);
+    }
+    if (!drawNextMoment({ resetTimer: true })) {
+      return webJson({ error: "No more words available." }, 409);
+    }
+    markUpdated();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/start-break") {
+    startBreakOrEndEvent();
+    markUpdated();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/next-round") {
+    startNextRound();
+    markUpdated();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/reset") {
+    state = freshState();
+    markUpdated();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/claim") {
+    if (state.status !== "playing") {
+      return webJson({ error: "BINGO claims are only accepted during a live round." }, 409);
+    }
+    const calledWords = new Set(state.called.map((word) => word.text));
+    const rawBingos = Array.isArray(body.bingos) && body.bingos.length ? body.bingos.slice(0, 12) : [];
+    const invalidWords = [];
+    const bingos = rawBingos.map((bingo) => {
+      const words = Array.isArray(bingo.words) ? bingo.words.map((word) => String(word || "").slice(0, 80)) : [];
+      for (const word of words) {
+        if (word !== "FREE" && !calledWords.has(word)) invalidWords.push(word);
+      }
+      const id = String(bingo.id || "bingo").slice(0, 80);
+      return {
+        id,
+        label: String(bingo.label || "BINGO").slice(0, 80),
+        words,
+        points: pointsForBingo({ id }, rounds[state.roundIndex].pattern),
+      };
+    });
+    if (!bingos.length) return webJson({ error: "No BINGO pattern was submitted." }, 400);
+    if (invalidWords.length) {
+      return webJson({
+        error: `False BINGO: these words have not been pulled yet: ${[...new Set(invalidWords)].join(", ")}`,
+        invalidWords: [...new Set(invalidWords)],
+      }, 409);
+    }
+    const bingoCount = bingos.length;
+    const points = bingos.reduce((sum, bingo) => sum + bingo.points, 0);
+    const claim = {
+      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      player: String(body.player || "Player").slice(0, 40),
+      card: Number(body.card || 1),
+      bingos,
+      bingoCount,
+      points,
+      pattern: rounds[state.roundIndex].pattern,
+      round: rounds[state.roundIndex].name,
+      createdAt: Date.now(),
+    };
+    state.claims.unshift(claim);
+    state.claims = state.claims.slice(0, 200);
+    markUpdated();
+    return webJson({ ok: true, claim });
+  }
+
+  return webJson({ error: "Not found" }, 404);
+}
+
 function handleRequest(req, res) {
   const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
   if (url.pathname === "/host") {
@@ -730,9 +911,11 @@ function handleRequest(req, res) {
 }
 
 module.exports = handleRequest;
+module.exports.handleApiWebRequest = handleApiWebRequest;
 
 if (require.main === module) {
   const server = http.createServer(handleRequest);
+  startStateTimer();
   server.listen(PORT, "0.0.0.0", () => {
     const local = `http://localhost:${PORT}`;
     const network = `http://${getLocalIp()}:${PORT}`;

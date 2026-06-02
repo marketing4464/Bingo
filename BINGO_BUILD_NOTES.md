@@ -107,9 +107,9 @@ Use this file as the starting brief for future themed bingo games at On Par Ente
 
 ## Server/App Behavior To Preserve
 
-- Server runs with: `node server.js`
-- App port: `4173`
-- No package dependencies are currently required.
+- Next/Vercel dev server runs with: `npm run dev`
+- Original local Node server still runs with: `npm run local`
+- Original local Node app port: `4173`
 - Core files:
   - `server.js`
   - `public/display.html`
@@ -119,6 +119,9 @@ Use this file as the starting brief for future themed bingo games at On Par Ente
   - `public/play.html`
   - `public/play.js`
   - `public/styles.css`
+  - `next.config.mjs`
+  - `app/api/[...path]/route.js`
+  - `package.json`
 - Important timing constant:
   - `PULL_INTERVAL_MS = 30 * 1000`
 - The player cards should not auto-mark squares.
