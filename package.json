@@ -1,0 +1,12 @@
+{
+  "name": "on-par-pop-culture-bingo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "On Par Pop Culture Bingo live event app",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

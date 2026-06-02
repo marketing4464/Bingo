@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>On Par Pop Culture Bingo Host</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand-lockup">
+          <img class="brand-logo" src="/assets/on-par-logo-white.png" alt="On Par Entertainment logo" />
+          <div>
+          <p class="brand-kicker">On Par Entertainment</p>
+          <h1>That Was Iconic</h1>
+          <p class="subtitle">Pop Culture Moments Bingo host console</p>
+          </div>
+        </div>
+        <nav class="nav-actions">
+          <a href="/display" target="_blank"><button class="secondary">Open Display</button></a>
+          <a href="/play" target="_blank"><button class="secondary">Open Player Page</button></a>
+        </nav>
+      </header>
+
+      <section class="layout">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 id="roundName">Round</h2>
+              <p class="subtitle" id="roundMeta">Pattern</p>
+            </div>
+            <span class="status-pill setup" id="statusPill">Ready</span>
+          </div>
+
+          <div class="draw-box moment-host-box">
+            <img class="moment-art host-art" id="hostMomentImage" alt="Current pop culture moment image" />
+            <div class="moment-copy">
+              <div class="draw-word" id="currentWord">Scan In</div>
+              <div class="draw-category" id="currentCategory">Start the round when players are ready</div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button id="startCountdown">Start 15-Min Countdown</button>
+            <button class="secondary" id="skipCountdown">Skip Countdown</button>
+            <button id="startRound">Start Round Now</button>
+            <button class="gold" id="pullWord">Pull Next Moment</button>
+            <button class="secondary" id="startBreak">Start 10-Min Break</button>
+            <button class="secondary" id="nextRound">Next Round</button>
+            <button class="warning" id="resetGame">Reset Event</button>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat"><b id="timer">00:00</b><span>Timer</span></div>
+            <div class="stat"><b id="calledCount">0</b><span>Moments Pulled</span></div>
+            <div class="stat"><b id="remainingCount">0</b><span>Remaining</span></div>
+            <div class="stat"><b id="claimCount">0</b><span>Bingo Claims</span></div>
+          </div>
+        </div>
+
+        <aside class="panel qr-card">
+          <h2>Player QR</h2>
+          <img id="qrCode" alt="QR code for player bingo cards" />
+          <p class="small">Players scan to enter, add their name, and choose how many cards they want.</p>
+          <a id="joinLink" href="/play" target="_blank">Open player link</a>
+        </aside>
+      </section>
+
+      <section class="layout" style="margin-top: 18px;">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Called Moments</h2>
+            <span class="small">Newest first</span>
+          </div>
+          <div class="word-list" id="calledWords"></div>
+        </div>
+
+        <aside class="panel">
+          <h2>Event Run of Show</h2>
+          <div class="schedule" id="schedule"></div>
+          <h3 style="margin-top: 18px;">Bingo Claims</h3>
+          <div class="claims" id="claims"></div>
+        </aside>
+      </section>
+    </main>
+    <script src="/qrcode-generator.js"></script>
+    <script src="/shared.js"></script>
+    <script src="/host.js"></script>
+  </body>
+</html>

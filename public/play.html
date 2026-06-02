@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>On Par Pop Culture Bingo Player</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="player-shell">
+      <section class="panel" id="joinPanel">
+        <div class="brand-lockup player-brand">
+          <img class="brand-logo" src="/assets/on-par-logo-white.png" alt="On Par Entertainment logo" />
+          <div>
+            <p class="brand-kicker">On Par Entertainment</p>
+            <h1>Pop Culture Bingo</h1>
+            <p class="subtitle">Enter your name, choose up to 3 cards, and play along as moments are called.</p>
+          </div>
+        </div>
+        <form class="join-form" id="joinForm">
+          <label>
+            Player name
+            <input id="playerName" autocomplete="name" maxlength="40" placeholder="Your name" required />
+          </label>
+          <label>
+            Number of cards
+            <select id="cardCount">
+              <option value="1">1 card</option>
+              <option value="2">2 cards</option>
+              <option value="3">3 cards</option>
+            </select>
+          </label>
+          <button type="submit">Enter Game</button>
+        </form>
+      </section>
+
+      <section id="gamePanel" class="hidden">
+        <div class="player-status">
+          <strong id="playerRound">Round</strong>
+          <div class="small" id="playerMeta"></div>
+        </div>
+        <div class="cards" id="cards"></div>
+        <section class="recent-pulls player-recent">
+          <strong>Recently Pulled</strong>
+          <div class="word-list" id="playerRecentWords"></div>
+        </section>
+      </section>
+    </main>
+    <div class="toast hidden" id="toast"></div>
+    <script src="/shared.js"></script>
+    <script src="/play.js"></script>
+  </body>
+</html>

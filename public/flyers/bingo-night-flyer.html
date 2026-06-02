@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>On Par Entertainment Bingo Night Flyer</title>
+  <style>
+    :root {
+      --ink: #19151f;
+      --cream: #fff8df;
+      --hot-pink: #f43798;
+      --sun: #ffd84d;
+      --aqua: #32e6e2;
+      --mint: #93ff6a;
+      --violet: #6e4dff;
+      --orange: #ff8a2a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #111;
+      font-family: "Arial Black", "Arial Narrow", Impact, system-ui, sans-serif;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+
+    .flyer {
+      position: relative;
+      width: 850px;
+      height: 1100px;
+      overflow: hidden;
+      color: var(--cream);
+      background:
+        radial-gradient(circle at 19% 15%, rgba(255, 216, 77, .32) 0 9%, transparent 10%),
+        radial-gradient(circle at 88% 22%, rgba(50, 230, 226, .28) 0 10%, transparent 11%),
+        radial-gradient(circle at 83% 80%, rgba(244, 55, 152, .26) 0 12%, transparent 13%),
+        linear-gradient(145deg, #201039 0%, #3a1261 28%, #171b48 54%, #0f413f 100%);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .45);
+      isolation: isolate;
+    }
+
+    .flyer::before {
+      content: "";
+      position: absolute;
+      inset: -2%;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, .08) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255, 255, 255, .08) 2px, transparent 2px);
+      background-size: 48px 48px;
+      transform: rotate(-4deg) scale(1.08);
+      opacity: .38;
+      mix-blend-mode: screen;
+    }
+
+    .flyer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .09), transparent 12% 88%, rgba(0, 0, 0, .24)),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, .055) 0 1px, transparent 1px 5px);
+      mix-blend-mode: soft-light;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      height: 100%;
+      padding: .48in .5in .44in;
+    }
+
+    .top-bar {
+      display: grid;
+      grid-template-columns: 2.55in 1fr;
+      gap: .22in;
+      align-items: center;
+      min-height: .95in;
+    }
+
+    .logo-wrap {
+      display: grid;
+      place-items: center;
+      min-height: .75in;
+      padding: .11in .16in;
+      border: 3px solid rgba(255, 255, 255, .72);
+      background: rgba(10, 9, 22, .46);
+      box-shadow: 7px 7px 0 var(--hot-pink);
+      transform: rotate(-1.5deg);
+    }
+
+    .logo {
+      display: block;
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .25));
+    }
+
+    .badge-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: .1in;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .date-chip,
+    .time-chip {
+      min-width: 1.18in;
+      padding: .12in .16in .1in;
+      border: 3px solid var(--cream);
+      color: var(--ink);
+      text-align: center;
+      line-height: .92;
+      text-transform: uppercase;
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, .35);
+    }
+
+    .date-chip {
+      background: var(--sun);
+      transform: rotate(2deg);
+    }
+
+    .time-chip {
+      background: var(--aqua);
+      transform: rotate(-2deg);
+    }
+
+    .chip-small {
+      display: block;
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      font-size: .18in;
+      letter-spacing: .03in;
+      line-height: 1;
+    }
+
+    .chip-big {
+      display: block;
+      font-size: .35in;
+      line-height: .95;
+    }
+
+    .hero {
+      display: grid;
+      place-items: center;
+      padding: .28in 0 .05in;
+      text-align: center;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: .12in;
+      margin-bottom: .1in;
+      color: var(--sun);
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      font-size: .2in;
+      font-weight: 900;
+      letter-spacing: .06in;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, .7);
+    }
+
+    .kicker::before,
+    .kicker::after {
+      content: "";
+      width: .34in;
+      height: .08in;
+      background: var(--mint);
+      box-shadow: .13in .11in 0 var(--hot-pink);
+      transform: skewX(-22deg);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 7.35in;
+      color: var(--cream);
+      font-size: 1.14in;
+      line-height: .82;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      text-shadow:
+        .055in .055in 0 var(--hot-pink),
+        .105in .105in 0 var(--aqua),
+        .14in .14in 0 rgba(0, 0, 0, .42);
+    }
+
+    .subtitle {
+      width: fit-content;
+      max-width: 7.1in;
+      margin: .17in auto 0;
+      padding: .08in .24in .1in;
+      color: var(--ink);
+      background: var(--mint);
+      border: 3px solid var(--cream);
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      font-size: .28in;
+      font-weight: 900;
+      line-height: 1;
+      text-transform: uppercase;
+      box-shadow: 7px 7px 0 rgba(0, 0, 0, .38);
+      transform: rotate(-1.2deg);
+    }
+
+    .middle {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr);
+      gap: .22in;
+      align-items: center;
+      padding: .12in 0 .18in;
+    }
+
+    .bingo-card {
+      position: relative;
+      min-width: 0;
+      padding: .18in;
+      border: 4px solid var(--cream);
+      background: rgba(255, 248, 223, .96);
+      box-shadow: 12px 12px 0 rgba(0, 0, 0, .36);
+      color: var(--ink);
+      transform: rotate(-2deg);
+    }
+
+    .bingo-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: .06in;
+    }
+
+    .cell {
+      display: grid;
+      place-items: center;
+      min-height: .56in;
+      padding: .03in;
+      border: 3px solid var(--ink);
+      background: #fff;
+      color: var(--ink);
+      font-size: .16in;
+      line-height: 1.02;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .head {
+      min-height: .45in;
+      color: #fff;
+      background: var(--ink);
+      font-size: .31in;
+    }
+
+    .free {
+      color: var(--cream);
+      background: var(--hot-pink);
+      font-size: .2in;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, .35);
+    }
+
+    .starburst {
+      position: absolute;
+      right: -.18in;
+      bottom: -.2in;
+      display: grid;
+      place-items: center;
+      width: 1.42in;
+      aspect-ratio: 1;
+      color: var(--ink);
+      background: var(--sun);
+      clip-path: polygon(50% 0%, 60% 26%, 88% 12%, 74% 40%, 100% 50%, 74% 60%, 88% 88%, 60% 74%, 50% 100%, 40% 74%, 12% 88%, 26% 60%, 0% 50%, 26% 40%, 12% 12%, 40% 26%);
+      font-size: .24in;
+      line-height: .9;
+      text-align: center;
+      text-transform: uppercase;
+      transform: rotate(12deg);
+      filter: drop-shadow(7px 7px 0 rgba(0, 0, 0, .34));
+    }
+
+    .info-stack {
+      display: grid;
+      gap: .16in;
+    }
+
+    .theme-panel,
+    .prize-panel {
+      padding: .22in;
+      border: 4px solid var(--cream);
+      background: rgba(13, 13, 28, .72);
+      box-shadow: 10px 10px 0 rgba(0, 0, 0, .32);
+    }
+
+    .theme-panel {
+      transform: rotate(1.5deg);
+    }
+
+    .prize-panel {
+      background: rgba(244, 55, 152, .9);
+      transform: rotate(-1deg);
+    }
+
+    .panel-label {
+      margin: 0 0 .08in;
+      color: var(--sun);
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      font-size: .2in;
+      font-weight: 900;
+      letter-spacing: .045in;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .theme-title,
+    .prize-title {
+      margin: 0;
+      font-size: .37in;
+      line-height: .88;
+      text-transform: uppercase;
+      text-shadow: 4px 4px 0 rgba(0, 0, 0, .4);
+    }
+
+    .nostalgia {
+      margin: .12in 0 0;
+      color: var(--cream);
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      font-size: .16in;
+      font-weight: 800;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    .prizes {
+      display: grid;
+      gap: .1in;
+      margin-top: .14in;
+    }
+
+    .prize {
+      display: grid;
+      grid-template-columns: .42in 1fr;
+      gap: .1in;
+      align-items: center;
+      padding: .1in;
+      border: 3px solid var(--cream);
+      color: var(--ink);
+      background: var(--cream);
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .place {
+      display: grid;
+      place-items: center;
+      width: .42in;
+      aspect-ratio: 1;
+      border-radius: 999px;
+      color: var(--cream);
+      background: var(--ink);
+      font-size: .2in;
+      line-height: 1;
+    }
+
+    .prize-name {
+      font-size: .22in;
+      line-height: 1;
+    }
+
+    .footer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: .24in;
+      align-items: end;
+      min-height: .7in;
+      padding-top: .08in;
+    }
+
+    .footer-line {
+      margin: 0;
+      color: var(--cream);
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      font-size: .2in;
+      font-weight: 900;
+      line-height: 1.2;
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0 rgba(0, 0, 0, .55);
+    }
+
+    .retro-stamps {
+      display: flex;
+      gap: .1in;
+      align-items: center;
+    }
+
+    .stamp {
+      display: grid;
+      place-items: center;
+      width: .62in;
+      aspect-ratio: 1;
+      border: 3px solid var(--cream);
+      color: var(--ink);
+      background: var(--aqua);
+      font-size: .28in;
+      line-height: 1;
+      box-shadow: 5px 5px 0 rgba(0, 0, 0, .35);
+      transform: rotate(6deg);
+    }
+
+    .stamp:nth-child(2) {
+      background: var(--sun);
+      transform: rotate(-5deg);
+    }
+
+    .stamp:nth-child(3) {
+      background: var(--mint);
+      transform: rotate(3deg);
+    }
+
+    .decor {
+      position: absolute;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .cassette {
+      right: .24in;
+      top: 1.55in;
+      width: 1.2in;
+      height: .72in;
+      border: 4px solid var(--cream);
+      border-radius: .05in;
+      background: var(--orange);
+      box-shadow: 7px 7px 0 rgba(0, 0, 0, .32);
+      transform: rotate(10deg);
+    }
+
+    .cassette::before,
+    .cassette::after {
+      content: "";
+      position: absolute;
+      top: .21in;
+      width: .24in;
+      aspect-ratio: 1;
+      border: 4px solid var(--ink);
+      border-radius: 50%;
+      background: var(--cream);
+    }
+
+    .cassette::before {
+      left: .22in;
+    }
+
+    .cassette::after {
+      right: .22in;
+    }
+
+    .vhs {
+      left: .22in;
+      bottom: 1.05in;
+      width: 1.46in;
+      height: .84in;
+      border: 4px solid var(--cream);
+      background: #111;
+      box-shadow: 7px 7px 0 rgba(0, 0, 0, .32);
+      transform: rotate(-8deg);
+    }
+
+    .vhs::before {
+      content: "VHS";
+      position: absolute;
+      left: .13in;
+      top: .12in;
+      color: var(--cream);
+      font-size: .28in;
+      line-height: 1;
+    }
+
+    .vhs::after {
+      content: "";
+      position: absolute;
+      left: .16in;
+      right: .16in;
+      bottom: .15in;
+      height: .18in;
+      background: repeating-linear-gradient(90deg, var(--hot-pink) 0 .16in, var(--aqua) .16in .32in, var(--sun) .32in .48in);
+    }
+
+    .squiggle {
+      width: 1.05in;
+      height: .32in;
+      border-top: .08in solid var(--mint);
+      border-radius: 50%;
+      transform: rotate(-25deg);
+      opacity: .95;
+    }
+
+    .squiggle.one {
+      left: .35in;
+      top: 2.1in;
+    }
+
+    .squiggle.two {
+      right: .56in;
+      bottom: 2.08in;
+      border-color: var(--sun);
+      transform: rotate(20deg);
+    }
+
+    @page {
+      size: Letter;
+      margin: 0;
+    }
+
+    @media print {
+      html,
+      body {
+        width: 8.5in;
+        height: 11in;
+        padding: 0;
+        background: transparent;
+      }
+
+      .flyer {
+        width: 8.5in;
+        height: 11in;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="flyer" aria-label="On Par Entertainment first ever bingo night flyer">
+    <div class="decor cassette" aria-hidden="true"></div>
+    <div class="decor vhs" aria-hidden="true"></div>
+    <div class="decor squiggle one" aria-hidden="true"></div>
+    <div class="decor squiggle two" aria-hidden="true"></div>
+
+    <section class="content">
+      <header class="top-bar">
+        <div class="logo-wrap">
+          <img class="logo" src="../assets/on-par-logo-white.png" alt="On Par Entertainment" />
+        </div>
+
+        <div class="badge-row" aria-label="Event date and time">
+          <div class="date-chip">
+            <span class="chip-small">July</span>
+            <span class="chip-big">9th</span>
+          </div>
+          <div class="time-chip">
+            <span class="chip-small">Starts</span>
+            <span class="chip-big">7 PM</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div>
+          <p class="kicker">First Ever</p>
+          <h1>Bingo Night</h1>
+          <p class="subtitle">Pop Culture Moments Edition</p>
+        </div>
+      </section>
+
+      <section class="middle">
+        <div class="bingo-card" aria-label="Decorative pop culture bingo card">
+          <div class="bingo-grid">
+            <div class="cell head">B</div>
+            <div class="cell head">I</div>
+            <div class="cell head">N</div>
+            <div class="cell head">G</div>
+            <div class="cell head">O</div>
+            <div class="cell">Iconic TV</div>
+            <div class="cell">Y2K Fits</div>
+            <div class="cell">Award Show</div>
+            <div class="cell">Viral Quote</div>
+            <div class="cell">Throwback Jam</div>
+            <div class="cell">Red Carpet</div>
+            <div class="cell">Reality TV</div>
+            <div class="cell free">Free Space</div>
+            <div class="cell">Movie Twist</div>
+            <div class="cell">Music Video</div>
+            <div class="cell">Tabloid Era</div>
+            <div class="cell">Internet Meme</div>
+            <div class="cell">Sitcom Line</div>
+            <div class="cell">Dance Craze</div>
+            <div class="cell">Celebrity Feud</div>
+          </div>
+          <div class="starburst">Bring your pop culture brain</div>
+        </div>
+
+        <div class="info-stack">
+          <article class="theme-panel">
+            <p class="panel-label">Theme</p>
+            <h2 class="theme-title">Pop Culture Moments</h2>
+            <p class="nostalgia">From channel-surfing classics to internet-breaking memories.</p>
+          </article>
+
+          <article class="prize-panel">
+            <p class="panel-label">Winners</p>
+            <h2 class="prize-title">Prizes</h2>
+            <div class="prizes">
+              <div class="prize">
+                <span class="place">1st</span>
+                <span class="prize-name">Gas Card</span>
+              </div>
+              <div class="prize">
+                <span class="place">2nd</span>
+                <span class="prize-name">Kroger Gift Card</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p class="footer-line">Come ready for laughs, flashbacks, and bingo glory.</p>
+        <div class="retro-stamps" aria-hidden="true">
+          <span class="stamp">★</span>
+          <span class="stamp">▶</span>
+          <span class="stamp">#</span>
+        </div>
+      </footer>
+    </section>
+  </main>
+</body>
+</html>

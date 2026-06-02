@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>On Par Pop Culture Bingo Display</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="display-body">
+    <main class="display-shell">
+      <header class="display-header">
+        <div class="brand-lockup display-brand">
+          <img class="brand-logo display-logo" src="/assets/on-par-logo-white.png" alt="On Par Entertainment logo" />
+          <div>
+          <p class="brand-kicker">On Par Entertainment</p>
+          <h1 id="displayTitle">That Was Iconic</h1>
+          <p class="subtitle" id="displayRound">Round</p>
+          </div>
+        </div>
+        <div class="timer" id="displayTimer">00:00</div>
+      </header>
+
+      <section class="display-word">
+        <div class="draw-box display-moment-box" id="momentPanel">
+          <img class="moment-art display-art" id="displayMomentImage" alt="Current pop culture moment image" />
+          <div class="moment-copy">
+            <div class="draw-word" id="displayWord">Scan In</div>
+            <div class="draw-category" id="displayCategory">Pop Culture Moments Bingo</div>
+          </div>
+        </div>
+        <div class="leaderboard-panel hidden" id="leaderboardPanel"></div>
+      </section>
+      <div class="bingo-alert hidden" id="bingoAlert"></div>
+
+      <footer class="display-footer">
+        <div class="display-recent-pulls">
+          <strong>Recently Pulled</strong>
+          <div class="word-list" id="recentWords"></div>
+        </div>
+        <div class="join-strip">
+          <div>
+            <strong>Join the game</strong>
+            <div class="small" id="joinText"></div>
+          </div>
+          <img id="displayQr" alt="QR code for player bingo cards" />
+        </div>
+      </footer>
+    </main>
+    <script src="/qrcode-generator.js"></script>
+    <script src="/shared.js"></script>
+    <script src="/display.js"></script>
+  </body>
+</html>
