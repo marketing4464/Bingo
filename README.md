@@ -1,6 +1,6 @@
 # On Par Pop Culture Bingo
 
-Digital bingo software for **That Was Iconic: Pop Culture Moments Bingo** at On Par Entertainment.
+Digital bingo software for **Pop Culture Moments Bingo** at On Par Entertainment.
 
 ## Run it
 
@@ -68,4 +68,14 @@ Each regular BINGO is worth 100 points. Four corners, X bingo, and coverup add a
 
 Pulled-word images use the saved Google Images manifest at `public/assets/google-image-manifest.json`. It contains one Google Images thumbnail for every bingo phrase. If a new phrase is added later and is not in the manifest, the app can still try Google Custom Search with `GOOGLE_API_KEY` and `GOOGLE_CX`, then fall back to local art if Google returns no usable image.
 
-Game state is stored in memory. Restarting the server resets the event.
+Without Blob configuration, game state is stored in memory and a server restart resets the event.
+
+## Vercel Blob Storage
+
+The server can persist the live game snapshot to Vercel Blob at `on-par-bingo/game-state/current.json` when `BLOB_READ_WRITE_TOKEN` is available. Create and connect a private Blob store to the Vercel project with:
+
+```bash
+vercel blob create-store bingo-game-state --access private --yes --scope tina-marketing4464 --project bingo
+```
+
+After Vercel injects the Blob environment variables, `/api/storage-status` will report storage as configured and available.

@@ -1,0 +1,362 @@
+[
+  {
+    "text": "Baby Yoda",
+    "category": "TV",
+    "query": "Google Images Baby Yoda Grogu iconic pop culture moment",
+    "alt": "Top 10 Baby Yoda Moments - YouTube",
+    "source": "Google Images thumbnail",
+    "fileName": "baby-yoda.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/baby-yoda.jpg",
+    "reused": true
+  },
+  {
+    "text": "Kardashians",
+    "category": "Celebrity",
+    "query": "Google Images Kardashians iconic pop culture moment",
+    "alt": "ICONIC Kardashians moments ...",
+    "source": "Google Images thumbnail",
+    "fileName": "kardashians.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/kardashians.jpg",
+    "reused": true
+  },
+  {
+    "text": "Taylor Swift",
+    "category": "Music",
+    "query": "Google Images Taylor Swift Eras Tour iconic pop culture moment",
+    "alt": "Taylor Swift",
+    "source": "Google Images source result: https://commons.wikimedia.org/wiki/Special:Redirect/file/The_Eras_Tour_The_Tortured_Poets_Department_Performance.png",
+    "fileName": "taylor-swift.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/taylor-swift.jpg",
+    "reused": false,
+    "candidates": [
+      {
+        "alt": "Taylor Swift",
+        "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/The_Eras_Tour_The_Tortured_Poets_Department_Performance.png"
+      }
+    ]
+  },
+  {
+    "text": "Eras Tour",
+    "category": "Music",
+    "query": "Google Images Taylor Swift Eras Tour stage iconic pop culture moment",
+    "alt": "Eras Tour",
+    "source": "Google Images source result: https://commons.wikimedia.org/wiki/Special:Redirect/file/Taylor_Swift%27s_The_Eras_Tour_stage_%28Tampa%2C_FL_-_Raymond_Jaymes_Stadium_-_April_14%2C_2023%29.jpg",
+    "fileName": "eras-tour.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/eras-tour.jpg",
+    "reused": false,
+    "candidates": [
+      {
+        "alt": "Eras Tour",
+        "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Taylor_Swift%27s_The_Eras_Tour_stage_%28Tampa%2C_FL_-_Raymond_Jaymes_Stadium_-_April_14%2C_2023%29.jpg"
+      }
+    ]
+  },
+  {
+    "text": "Beyonce",
+    "category": "Music",
+    "query": "Google Images Beyonce Renaissance Cowboy Carter iconic pop culture moment",
+    "alt": "Beyonce",
+    "source": "Google Images source result: https://mma.prnewswire.com/media/2375099/Parkwood_Entertainment_Beyonce_Cowboy_Carter.jpg",
+    "fileName": "beyonce.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/beyonce.jpg",
+    "reused": false,
+    "candidates": [
+      {
+        "alt": "Beyonce",
+        "url": "https://mma.prnewswire.com/media/2375099/Parkwood_Entertainment_Beyonce_Cowboy_Carter.jpg"
+      }
+    ]
+  },
+  {
+    "text": "Lady Gaga",
+    "category": "Celebrity",
+    "query": "Google Images Lady Gaga meat dress iconic pop culture moment",
+    "alt": "THE STORY OF: Lady Gaga's Meat Dress ...",
+    "source": "Google Images thumbnail",
+    "fileName": "lady-gaga.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/lady-gaga.jpg",
+    "reused": true
+  },
+  {
+    "text": "Rihanna",
+    "category": "Music",
+    "query": "Google Images Rihanna Super Bowl halftime show iconic pop culture moment",
+    "alt": "Super Bowl halftime show: How Rihanna ...",
+    "source": "Google Images thumbnail",
+    "fileName": "rihanna.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/rihanna.jpg",
+    "reused": true
+  },
+  {
+    "text": "Usher",
+    "category": "Music",
+    "query": "Google Images Usher Super Bowl halftime show iconic pop culture moment",
+    "alt": "Usher Super Bowl Halftime Show Review",
+    "source": "Google Images thumbnail",
+    "fileName": "usher.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/usher.jpg",
+    "reused": true
+  },
+  {
+    "text": "Billie Eilish",
+    "category": "Music",
+    "query": "Google Images Billie Eilish bad guy music video iconic",
+    "alt": "Billie Eilish's Legendary Music Video ...",
+    "source": "Google Images thumbnail",
+    "fileName": "billie-eilish.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/billie-eilish.jpg",
+    "reused": true
+  },
+  {
+    "text": "Harry Potter",
+    "category": "Movies",
+    "query": "Harry Potter cast Hogwarts Great Hall iconic",
+    "alt": "Harry Potter Hogwarts Great Hall 2011",
+    "source": "Google Images thumbnail",
+    "fileName": "harry-potter.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/harry-potter.jpg",
+    "reused": true
+  },
+  {
+    "text": "Lord of the Rings",
+    "category": "Movies",
+    "query": "Google Images Lord of the Rings fellowship iconic scene pop culture moment",
+    "alt": "The Lord of the Rings Fellowship's Most ...",
+    "source": "Google Images thumbnail",
+    "fileName": "lord-of-the-rings.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/lord-of-the-rings.jpg",
+    "reused": true
+  },
+  {
+    "text": "The Matrix",
+    "category": "Movies",
+    "query": "Google Images The Matrix bullet time iconic scene pop culture moment",
+    "alt": "Matrix (1999) Bullet Time Revolution ...",
+    "source": "Google Images thumbnail",
+    "fileName": "the-matrix.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/the-matrix.jpg",
+    "reused": true
+  },
+  {
+    "text": "Breaking Bad",
+    "category": "TV",
+    "query": "Google Images Breaking Bad Walter White iconic scene pop culture moment",
+    "alt": "The Breaking Bad episode with a perfect ...",
+    "source": "Google Images thumbnail",
+    "fileName": "breaking-bad.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/breaking-bad.jpg",
+    "reused": true
+  },
+  {
+    "text": "Grey's Anatomy",
+    "category": "TV",
+    "query": "Google Images Greys Anatomy Meredith Grey iconic TV show",
+    "alt": "Grey's Anatomy: Meredith's Best Episodes",
+    "source": "Google Images thumbnail",
+    "fileName": "grey-s-anatomy.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/grey-s-anatomy.jpg",
+    "reused": true
+  },
+  {
+    "text": "Bridgerton",
+    "category": "TV",
+    "query": "Google Images Bridgerton Queen Charlotte Penelope iconic TV show",
+    "alt": "Queen Charlotte in Bridgerton ...",
+    "source": "Google Images thumbnail",
+    "fileName": "bridgerton.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/bridgerton.jpg",
+    "reused": true
+  },
+  {
+    "text": "Ted Lasso",
+    "category": "TV",
+    "query": "Google Images Ted Lasso believe sign iconic TV show",
+    "alt": "Ted Lasso Believe Sign \u2013 3D Printed ...",
+    "source": "Google Images thumbnail",
+    "fileName": "ted-lasso.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/ted-lasso.jpg",
+    "reused": true
+  },
+  {
+    "text": "Schitt's Creek",
+    "category": "TV",
+    "query": "Google Images Schitts Creek Moira David Rose iconic TV moment",
+    "alt": "16 iconic Schitt's Creek moments worth ...",
+    "source": "Google Images thumbnail",
+    "fileName": "schitt-s-creek.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/schitt-s-creek.jpg",
+    "reused": true
+  },
+  {
+    "text": "Euphoria",
+    "category": "TV",
+    "query": "Euphoria Rue Jules iconic scene HBO",
+    "alt": "Euphoria: Rue & Jules' Relationship Is ...",
+    "source": "Google Images thumbnail",
+    "fileName": "euphoria.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/euphoria.jpg",
+    "reused": true
+  },
+  {
+    "text": "Ghostbusters",
+    "category": "Movies",
+    "query": "Google Images Ghostbusters movie iconic scene pop culture moment",
+    "alt": "Ghostbusters | Classic Film Review ...",
+    "source": "Google Images thumbnail",
+    "fileName": "ghostbusters.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/ghostbusters.jpg",
+    "reused": true
+  },
+  {
+    "text": "Grease",
+    "category": "Movies",
+    "query": "Google Images Grease movie John Travolta Olivia Newton John iconic",
+    "alt": "Olivia Newton-John's Iconic Grease ...",
+    "source": "Google Images thumbnail",
+    "fileName": "grease.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/grease.jpg",
+    "reused": true
+  },
+  {
+    "text": "Rocky",
+    "category": "Movies",
+    "query": "Google Images Rocky steps iconic movie moment",
+    "alt": "Discovering the Rocky Steps: A ...",
+    "source": "Google Images thumbnail",
+    "fileName": "rocky.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/rocky.jpg",
+    "reused": true
+  },
+  {
+    "text": "The Dress",
+    "category": "Internet",
+    "query": "Google Images The Dress blue black white gold meme",
+    "alt": "Gold or Black and Blue Dress Meme ...",
+    "source": "Google Images thumbnail",
+    "fileName": "the-dress.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/the-dress.jpg",
+    "reused": true
+  },
+  {
+    "text": "Salt Bae",
+    "category": "Internet",
+    "query": "Google Images Salt Bae meme iconic pop culture moment",
+    "alt": "walking meme that is Salt Bae ...",
+    "source": "Google Images thumbnail",
+    "fileName": "salt-bae.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/salt-bae.jpg",
+    "reused": true
+  },
+  {
+    "text": "Oscars Slap",
+    "category": "Celebrity",
+    "query": "Google Images Oscars slap Will Smith Chris Rock iconic pop culture moment",
+    "alt": "Oscars Slap",
+    "source": "Google Images source result: https://i.kym-cdn.com/photos/images/original/002/340/368/88a.jpg",
+    "fileName": "oscars-slap.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/oscars-slap.jpg",
+    "reused": false,
+    "candidates": [
+      {
+        "alt": "Oscars Slap",
+        "url": "https://i.kym-cdn.com/photos/images/original/002/340/368/88a.jpg"
+      }
+    ]
+  },
+  {
+    "text": "Wordle",
+    "category": "Internet",
+    "query": "Google Images Wordle game viral pop culture moment",
+    "alt": "Wordle",
+    "source": "Google Images source result: https://wordle-nyt.org/upload/imgs/wordle-game.png",
+    "fileName": "wordle.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/wordle.jpg",
+    "reused": false,
+    "candidates": [
+      {
+        "alt": "Wordle",
+        "url": "https://wordle-nyt.org/upload/imgs/wordle-game.png"
+      }
+    ]
+  },
+  {
+    "text": "Netflix and Chill",
+    "category": "Internet",
+    "query": "Google Images Netflix and chill meme pop culture moment",
+    "alt": "Netflix and Chill",
+    "source": "Google Images source result: https://i.kym-cdn.com/photos/images/newsfeed/002/004/620/11d.png",
+    "fileName": "netflix-and-chill.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/netflix-and-chill.jpg",
+    "reused": false,
+    "candidates": [
+      {
+        "alt": "Netflix and Chill",
+        "url": "https://i.kym-cdn.com/photos/images/newsfeed/002/004/620/11d.png"
+      }
+    ]
+  },
+  {
+    "text": "Stanley Cup",
+    "category": "Internet",
+    "query": "Google Images Stanley cup tumbler viral pop culture moment",
+    "alt": "Stanley Cup",
+    "source": "Google Images source result: https://gcp-na-images.contentstack.com/v3/assets/bltea6093859af6183b/bltb87116a98be93fbd/698a439c86f68e0ede6f31b0/stanley-cups-valentines-day.jpg?branch=production&width=3840&quality=75&auto=webp&crop=16:9",
+    "fileName": "stanley-cup.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/stanley-cup.jpg",
+    "reused": false,
+    "candidates": [
+      {
+        "alt": "Stanley Cup",
+        "url": "https://gcp-na-images.contentstack.com/v3/assets/bltea6093859af6183b/bltb87116a98be93fbd/698a439c86f68e0ede6f31b0/stanley-cups-valentines-day.jpg?branch=production&width=3840&quality=75&auto=webp&crop=16:9"
+      }
+    ]
+  },
+  {
+    "text": "Coachella",
+    "category": "Music",
+    "query": "Google Images Coachella festival iconic pop culture moment",
+    "alt": "Coachella",
+    "source": "Google Images source result: https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Coachella18W1-18_%2842058161311%29.jpg/1280px-Coachella18W1-18_%2842058161311%29.jpg",
+    "fileName": "coachella.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/coachella.jpg",
+    "reused": false,
+    "candidates": [
+      {
+        "alt": "Coachella",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Coachella18W1-18_%2842058161311%29.jpg/1280px-Coachella18W1-18_%2842058161311%29.jpg"
+      }
+    ]
+  },
+  {
+    "text": "Roman Empire",
+    "category": "Internet",
+    "query": "Google Images Roman Empire meme TikTok pop culture moment",
+    "alt": "Roman Empire",
+    "source": "Google Images source result: https://cdn-v2.meme.com/memes/my-roman-empire/my-roman-empire-classical-painting.webp",
+    "fileName": "roman-empire.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/roman-empire.jpg",
+    "reused": false,
+    "candidates": [
+      {
+        "alt": "Roman Empire",
+        "url": "https://cdn-v2.meme.com/memes/my-roman-empire/my-roman-empire-classical-painting.webp"
+      }
+    ]
+  },
+  {
+    "text": "Girl Math",
+    "category": "Internet",
+    "query": "Google Images Girl Math meme pop culture moment",
+    "alt": "Girl Math",
+    "source": "Google Images source result: https://www.indy100.com/media-library/girl-math-is-the-funniest-money-meme-of-2023.png?id=34862781&width=1200&height=600&coordinates=0%2C52%2C0%2C52",
+    "fileName": "girl-math.jpg",
+    "filePath": "/Users/christinamyers/Desktop/MARKETING/on-par-pop-culture-bingo/public/assets/approval-images/new-words-30/girl-math.jpg",
+    "reused": false,
+    "candidates": [
+      {
+        "alt": "Girl Math",
+        "url": "https://www.indy100.com/media-library/girl-math-is-the-funniest-money-meme-of-2023.png?id=34862781&width=1200&height=600&coordinates=0%2C52%2C0%2C52"
+      }
+    ]
+  }
+]

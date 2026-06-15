@@ -1,18 +1,19 @@
 :root {
-  --ink: #f7f7f7;
-  --muted: #c7c2b8;
-  --paper: #111111;
-  --cream: #181818;
-  --teal: #00a878;
-  --green: #00d084;
-  --coral: #ff6900;
-  --gold: #0b3d2e;
-  --forest: #0b3d2e;
-  --forest-bright: #1f6f52;
-  --blue: #0693e3;
+  --ink: #f8fff4;
+  --muted: #d4eac9;
+  --paper: #0f2411;
+  --cream: #143a18;
+  --teal: #9fd783;
+  --green: #baf4a1;
+  --coral: #fffbdf;
+  --gold: #dfffc5;
+  --forest: #185d24;
+  --forest-bright: #3d8d35;
+  --blue: #c9ffd9;
   --charcoal: #050505;
-  --steel: #2a2a2a;
-  --shadow: 0 22px 60px rgba(0, 0, 0, 0.46);
+  --steel: #214a25;
+  --neon-glow: 0 0 16px rgba(223, 255, 197, 0.9), 0 0 42px rgba(152, 221, 99, 0.48);
+  --shadow: 0 22px 60px rgba(0, 0, 0, 0.52);
   --radius: 8px;
 }
 
@@ -25,28 +26,27 @@ body {
   min-height: 100vh;
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background:
-    radial-gradient(circle at 18% 12%, rgba(11, 61, 46, 0.42), transparent 26%),
-    radial-gradient(circle at 88% 8%, rgba(31, 111, 82, 0.23), transparent 24%),
-    linear-gradient(90deg, rgba(31, 111, 82, 0.12) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255, 255, 255, 0.052) 1px, transparent 1px),
-    #050505;
-  background-size: auto, auto, 42px 42px, 42px 42px, auto;
+  background-color: #0b2f12;
+  background-image:
+    linear-gradient(180deg, rgba(6, 30, 8, 0.66), rgba(6, 30, 8, 0.76)),
+    url("/assets/event-art/bingo-countdown-screen.png");
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 body::before {
-  content: "102 TAPS  KARAOKE  DUCKPIN  MINI GOLF  DARTS  POOL  FOOSBALL";
+  content: none;
   position: fixed;
-  left: -2vw;
-  right: -2vw;
-  top: 50%;
+  inset: 0;
   z-index: -1;
-  transform: rotate(-8deg);
-  color: rgba(31, 111, 82, 0.14);
-  font-size: clamp(42px, 8vw, 122px);
-  font-weight: 950;
-  white-space: nowrap;
-  letter-spacing: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(232, 255, 213, 0.28) 0 7px, transparent 8px),
+    linear-gradient(rgba(232, 255, 213, 0.2), rgba(232, 255, 213, 0.2));
+  background-size: 74px 34px, 74px 100%;
+  background-position: 14px 0, 51px 0;
+  opacity: 0.44;
 }
 
 button,
@@ -58,13 +58,13 @@ select {
 button {
   border: 0;
   border-radius: var(--radius);
-  color: #ffffff;
+  color: #102612;
   background: var(--gold);
   padding: 12px 16px;
   font-weight: 900;
   cursor: pointer;
   min-height: 44px;
-  box-shadow: 0 10px 24px rgba(11, 61, 46, 0.36);
+  box-shadow: var(--neon-glow);
 }
 
 button:hover {
@@ -78,8 +78,8 @@ button:disabled {
 
 button.secondary {
   color: var(--ink);
-  background: #171717;
-  border: 1px solid rgba(31, 111, 82, 0.45);
+  background: rgba(10, 42, 14, 0.82);
+  border: 1px solid rgba(223, 255, 197, 0.45);
   box-shadow: none;
 }
 
@@ -126,9 +126,9 @@ a {
   height: auto;
   flex: 0 0 auto;
   border-radius: 6px;
-  background: #020202;
+  background: rgba(6, 31, 10, 0.9);
   padding: 7px;
-  border: 1px solid rgba(31, 111, 82, 0.55);
+  border: 1px solid rgba(223, 255, 197, 0.55);
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38);
 }
 
@@ -178,11 +178,11 @@ h1 {
 
 .panel,
 .card {
-  border: 1px solid rgba(31, 111, 82, 0.38);
+  border: 1px solid rgba(223, 255, 197, 0.36);
   border-radius: var(--radius);
   background:
-    linear-gradient(180deg, rgba(31, 31, 31, 0.96), rgba(8, 8, 8, 0.96)),
-    #111111;
+    linear-gradient(180deg, rgba(27, 82, 28, 0.92), rgba(6, 29, 10, 0.96)),
+    #102b12;
   box-shadow: var(--shadow);
 }
 
@@ -238,11 +238,11 @@ h1 {
   border: 6px solid var(--gold);
   border-radius: var(--radius);
   background:
-    linear-gradient(135deg, rgba(11, 61, 46, 0.3), transparent 35%),
-    radial-gradient(circle at 85% 24%, rgba(31, 111, 82, 0.18), transparent 30%),
-    linear-gradient(135deg, #171717 0%, #090909 100%);
+    radial-gradient(circle at 50% 50%, rgba(162, 221, 98, 0.28), transparent 38%),
+    linear-gradient(135deg, rgba(35, 103, 37, 0.9), rgba(8, 40, 12, 0.96));
   text-align: center;
   overflow: hidden;
+  box-shadow: inset 0 0 48px rgba(223, 255, 197, 0.12), var(--neon-glow);
 }
 
 .moment-host-box,
@@ -252,9 +252,21 @@ h1 {
   padding: 18px;
 }
 
+.display-moment-box {
+  grid-template-columns: minmax(260px, 46%) minmax(0, 1fr);
+  align-items: center;
+  justify-items: stretch;
+}
+
 .moment-copy {
   min-width: 0;
   width: 100%;
+}
+
+.display-moment-box .moment-copy {
+  display: grid;
+  justify-items: center;
+  overflow: hidden;
 }
 
 .moment-art {
@@ -263,8 +275,8 @@ h1 {
   aspect-ratio: 16 / 10;
   object-fit: contain;
   border-radius: var(--radius);
-  border: 4px solid #ffffff;
-  background: #050505;
+  border: 4px solid var(--gold);
+  background: #0b2f12;
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.42);
 }
 
@@ -280,7 +292,11 @@ h1 {
   line-height: 0.92;
   font-weight: 950;
   letter-spacing: 0;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: ellipsis;
+  word-break: normal;
+  text-shadow: var(--neon-glow);
 }
 
 .draw-category {
@@ -338,6 +354,10 @@ h1 {
   border: 1px solid rgba(255, 255, 255, 0.18);
   padding: 8px 10px;
   font-weight: 900;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .word-chip.current-pull {
@@ -418,19 +438,92 @@ h1 {
   overflow: hidden;
 }
 
+.display-body::before {
+  content: "";
+  opacity: 1;
+  background: transparent;
+}
+
 .display-shell {
+  height: 100vh;
   min-height: 100vh;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  padding: 28px;
+  grid-template-rows: clamp(76px, 15vh, 116px) minmax(0, 1fr) clamp(68px, 13vh, 108px);
+  gap: clamp(8px, 1.2vh, 14px);
+  padding: clamp(12px, 1.6vw, 22px);
+  position: relative;
+  overflow: hidden;
+  background-color: #0b2f12;
+  background-image:
+    linear-gradient(180deg, rgba(6, 30, 8, 0.34), rgba(6, 30, 8, 0.58)),
+    url("/assets/event-art/bingo-countdown-screen.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.display-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.16)),
+    radial-gradient(circle, rgba(230, 255, 215, 0.22) 0 8px, transparent 9px);
+  background-size: 82px 100%, 82px 40px;
+  background-position: 41px 0, 0 0;
+  opacity: 0.36;
+}
+
+.display-body[data-display-status="countdown"] .display-shell,
+.display-body[data-display-status="break"] .display-shell,
+.display-body[data-display-status="ended"] .display-shell {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.display-body[data-display-status="countdown"] .display-shell {
+  background-image: url("/assets/event-art/bingo-countdown-screen.png");
+}
+
+.display-body[data-display-status="break"] .display-shell,
+.display-body[data-display-status="ended"] .display-shell {
+  background-image: url("/assets/event-art/bingo-leaderboard-screen.png");
+}
+
+.display-body[data-display-status="countdown"] .display-shell::before,
+.display-body[data-display-status="break"] .display-shell::before,
+.display-body[data-display-status="ended"] .display-shell::before {
+  content: none;
+}
+
+.display-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+.display-body[data-display-status="countdown"] .display-header,
+.display-body[data-display-status="countdown"] .display-recent-pulls,
+.display-body[data-display-status="countdown"] .join-strip,
+.display-body[data-display-status="break"] .display-header,
+.display-body[data-display-status="break"] .display-recent-pulls,
+.display-body[data-display-status="break"] .join-strip,
+.display-body[data-display-status="ended"] .display-header,
+.display-body[data-display-status="ended"] .display-recent-pulls,
+.display-body[data-display-status="ended"] .join-strip {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .display-header,
 .display-footer {
   display: flex;
   justify-content: space-between;
-  gap: 18px;
+  gap: clamp(10px, 1.4vw, 18px);
   align-items: center;
+  min-height: 0;
 }
 
 .display-recent-pulls {
@@ -440,50 +533,107 @@ h1 {
 
 .display-recent-pulls > strong {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: #ffffff;
-  font-size: clamp(18px, 1.8vw, 30px);
+  font-size: clamp(16px, 1.55vw, 24px);
   font-weight: 950;
 }
 
 .display-recent-pulls .word-list {
   gap: 10px;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .display-recent-pulls .word-chip {
-  padding: 12px 16px;
-  font-size: clamp(18px, 2vw, 34px);
+  min-width: 0;
+  color: #ffffff;
+  background: #050505;
+  border-color: rgba(255, 255, 255, 0.72);
+  padding: 8px 12px;
+  font-size: clamp(13px, 1.15vw, 18px);
   line-height: 1;
 }
 
+.display-recent-pulls .word-chip.current-pull {
+  color: #ffffff;
+  background: #050505;
+  border-color: #ffffff;
+}
+
 .display-logo {
-  width: clamp(130px, 14vw, 260px);
+  width: clamp(92px, 10.5vw, 170px);
+}
+
+.display-brand {
+  gap: clamp(10px, 1.3vw, 16px);
+  min-width: 0;
+}
+
+.display-brand > div {
+  min-width: 0;
+}
+
+.display-brand .brand-kicker {
+  margin-bottom: 4px;
+  font-size: clamp(10px, 1vw, 13px);
+}
+
+.display-brand h1 {
+  margin-bottom: 4px;
+  font-size: clamp(26px, 3.3vw, 44px);
+  line-height: 0.9;
+  max-width: min(58vw, 720px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.display-brand .subtitle {
+  max-width: min(58vw, 760px);
+  color: #f2ffe9;
+  font-size: clamp(13px, 1.45vw, 19px);
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .display-word {
   display: grid;
   place-items: center;
   text-align: center;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .display-word .draw-box {
   width: 100%;
-  min-height: min(58vh, 620px);
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
 }
 
 .display-word .draw-word {
-  font-size: clamp(34px, 6.2vw, 88px);
-  line-height: 0.95;
+  display: block;
+  font-size: clamp(30px, 5.3vw, 76px);
+  line-height: 1;
+  max-width: 100%;
+  min-width: 0;
   white-space: nowrap;
+  text-overflow: clip;
 }
 
 .display-art {
-  height: min(46vh, 520px);
+  width: 100%;
+  max-width: 100%;
+  height: min(36vh, 360px);
+  max-height: 100%;
 }
 
 .timer {
   color: #ffffff;
-  font-size: clamp(38px, 8vw, 110px);
+  font-size: clamp(36px, 6.8vw, 86px);
   font-weight: 950;
   line-height: 1;
   text-shadow: 0 0 30px rgba(31, 111, 82, 0.34);
@@ -491,16 +641,16 @@ h1 {
 
 .join-strip {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   align-items: center;
 }
 
 .join-strip img {
-  width: 116px;
-  height: 116px;
+  width: clamp(76px, 8vw, 96px);
+  height: clamp(76px, 8vw, 96px);
   background: white;
   border-radius: var(--radius);
-  padding: 8px;
+  padding: 6px;
 }
 
 .player-shell {
@@ -628,18 +778,18 @@ select {
 .leaderboard-panel {
   width: min(1180px, 94vw);
   padding: 34px;
-  border: 6px solid var(--gold);
+  border: 0;
   border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(22, 22, 22, 0.98), rgba(5, 5, 5, 0.98));
-  box-shadow: var(--shadow);
+  background: transparent;
+  box-shadow: none;
 }
 
 .break-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.45fr);
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(210px, 280px);
+  gap: clamp(12px, 1.6vw, 20px);
   align-items: end;
-  margin-bottom: 22px;
+  margin-bottom: clamp(12px, 1.8vh, 18px);
 }
 
 .break-header.final-header {
@@ -650,14 +800,14 @@ select {
 .leaderboard-panel h2 {
   margin-bottom: 8px;
   color: #ffffff;
-  font-size: clamp(42px, 7vw, 96px);
+  font-size: clamp(38px, 5.8vw, 74px);
   line-height: 0.95;
 }
 
 .break-next {
   margin: 0;
   color: var(--muted);
-  font-size: clamp(18px, 2vw, 28px);
+  font-size: clamp(16px, 1.7vw, 22px);
   font-weight: 850;
 }
 
@@ -665,24 +815,26 @@ select {
   display: grid;
   gap: 6px;
   justify-items: center;
-  padding: 18px;
+  min-width: 0;
+  padding: clamp(12px, 1.5vw, 16px);
   border-radius: var(--radius);
-  border: 1px solid rgba(31, 111, 82, 0.58);
+  border: 1px solid rgba(223, 255, 197, 0.58);
   background:
-    linear-gradient(135deg, rgba(11, 61, 46, 0.62), rgba(5, 5, 5, 0.95)),
-    #0b3d2e;
+    linear-gradient(135deg, rgba(29, 95, 30, 0.72), rgba(5, 26, 8, 0.95)),
+    #185d24;
 }
 
 .break-countdown span {
   color: var(--muted);
-  font-size: clamp(13px, 1.4vw, 18px);
+  font-size: clamp(11px, 1.1vw, 14px);
   font-weight: 950;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .break-countdown strong {
   color: #ffffff;
-  font-size: clamp(54px, 7vw, 108px);
+  font-size: clamp(42px, 5vw, 64px);
   line-height: 0.9;
   font-weight: 950;
   font-variant-numeric: tabular-nums;
@@ -755,12 +907,51 @@ select {
 .pregame-panel {
   width: min(1080px, 94vw);
   padding: 42px;
-  border: 6px solid var(--gold);
+  border: 1px solid rgba(223, 255, 197, 0.58);
   border-radius: var(--radius);
   background:
-    radial-gradient(circle at 20% 18%, rgba(31, 111, 82, 0.48), transparent 34%),
-    linear-gradient(180deg, rgba(22, 22, 22, 0.98), rgba(5, 5, 5, 0.98));
+    radial-gradient(circle at 20% 18%, rgba(211, 255, 186, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(20, 88, 25, 0.66), rgba(6, 35, 11, 0.72));
   box-shadow: var(--shadow);
+  backdrop-filter: blur(3px);
+}
+
+.event-art-panel {
+  color: #faffee;
+  text-shadow: 0 0 16px rgba(35, 75, 23, 0.7);
+}
+
+.display-body[data-display-status="countdown"] .leaderboard-panel {
+  align-self: end;
+  margin-bottom: min(3vh, 26px);
+}
+
+.display-body[data-display-status="countdown"] .pregame-panel {
+  width: min(720px, 72vw);
+  margin-inline: auto;
+  padding: clamp(18px, 2.2vw, 28px);
+}
+
+.display-body[data-display-status="countdown"] .pregame-panel h2 {
+  margin-bottom: 8px;
+  font-size: clamp(28px, 4.6vw, 64px);
+}
+
+.display-body[data-display-status="countdown"] .pregame-countdown {
+  margin: 0 0 8px;
+  font-size: clamp(58px, 10vw, 150px);
+}
+
+.display-body[data-display-status="countdown"] .pregame-copy {
+  font-size: clamp(15px, 1.6vw, 22px);
+}
+
+.display-body[data-display-status="break"] .leaderboard-panel,
+.display-body[data-display-status="ended"] .leaderboard-panel {
+  width: min(1040px, 84vw);
+  margin-top: clamp(160px, 28vh, 360px);
+  padding: clamp(12px, 1.6vw, 22px);
+  color: #12320f;
 }
 
 .pregame-panel h2 {
@@ -800,9 +991,10 @@ select {
   gap: 14px;
   align-items: center;
   padding: 14px 18px;
-  border: 1px solid rgba(31, 111, 82, 0.5);
+  border: 1px solid rgba(34, 83, 24, 0.3);
   border-radius: var(--radius);
-  background: #101010;
+  background: rgba(244, 255, 234, 0.54);
+  backdrop-filter: blur(2px);
 }
 
 .leaderboard-rank {
@@ -812,19 +1004,19 @@ select {
   height: 42px;
   border-radius: 999px;
   background: var(--gold);
-  color: #ffffff;
+  color: #173515;
   font-weight: 950;
 }
 
 .leaderboard-name,
 .leaderboard-score {
-  color: #ffffff;
+  color: #143311;
   font-size: clamp(22px, 3vw, 36px);
   font-weight: 950;
 }
 
 .leaderboard-score {
-  color: var(--green);
+  color: #25590f;
 }
 
 .leaderboard-empty {
@@ -952,8 +1144,8 @@ select {
   }
 
   .display-word .draw-word {
-    font-size: clamp(30px, 11vw, 64px);
-    white-space: normal;
+    font-size: clamp(24px, 8vw, 44px);
+    white-space: nowrap;
   }
 
   .brand-lockup,

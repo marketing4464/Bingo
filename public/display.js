@@ -16,6 +16,7 @@ const displayEls = {
 };
 let visibleClaimId = null;
 let claimAlertTimer = null;
+let displayWordFitFrame = null;
 
 subscribe((state) => {
   displayState = state;
@@ -26,6 +27,11 @@ setInterval(() => {
   if (!displayState) return;
   updateDisplayTimers(displayState);
 }, 500);
+
+window.addEventListener("resize", () => {
+  if (!displayState) return;
+  scheduleDisplayWordFit();
+});
 
 function updateDisplayTimers(state) {
   const target = state.status === "countdown" ? state.countdownEndsAt : state.status === "playing" ? state.playEndsAt : state.breakEndsAt;
@@ -38,7 +44,8 @@ function updateDisplayTimers(state) {
 }
 
 function renderDisplay(state) {
-  displayEls.title.textContent = state.title.replace("Pop Culture Bingo", "");
+  document.body.dataset.displayStatus = state.status;
+  displayEls.title.textContent = state.title;
   displayEls.round.textContent = `Round ${state.roundIndex + 1}: ${state.round.name} • ${state.round.pattern} • New word every ${state.autoPullEverySeconds}s`;
   renderQrImage(displayEls.qr, state.joinUrl);
   displayEls.join.textContent = state.joinUrl;
@@ -58,6 +65,7 @@ function renderDisplay(state) {
     displayEls.word.textContent = state.currentWord?.text || "Scan In";
     displayEls.category.textContent = state.currentWord?.category || "Pop Culture Moments Bingo";
     setMomentImage(displayEls.momentImage, state.currentWord);
+    scheduleDisplayWordFit();
   }
 
   renderClaimAlert(state);
@@ -67,14 +75,39 @@ function renderDisplay(state) {
     .join("");
 }
 
+function scheduleDisplayWordFit() {
+  if (displayWordFitFrame) cancelAnimationFrame(displayWordFitFrame);
+    displayWordFitFrame = requestAnimationFrame(() => {
+      displayWordFitFrame = null;
+    fitSingleLineText(displayEls.word, 12);
+  });
+}
+
+function fitSingleLineText(element, minSize) {
+  element.style.whiteSpace = "nowrap";
+  element.style.fontSize = "";
+  const computedSize = parseFloat(getComputedStyle(element).fontSize);
+  let size = Math.floor(computedSize);
+
+  while (size > minSize && element.scrollWidth > element.clientWidth) {
+    size -= 2;
+    element.style.fontSize = `${size}px`;
+  }
+
+  if (element.scrollWidth > element.clientWidth) {
+    element.style.fontSize = `${minSize}px`;
+  }
+}
+
 function renderPregameCountdown(state) {
-  displayEls.round.textContent = `Round 1 starts automatically when the countdown ends • New word every ${state.autoPullEverySeconds}s`;
+  displayEls.title.textContent = "Bingo Night";
+  displayEls.round.textContent = "Opening countdown";
   displayEls.leaderboardPanel.innerHTML = `
-    <div class="pregame-panel">
+    <div class="pregame-panel event-art-panel">
       <p class="brand-kicker">Scan In Now</p>
-      <h2>Bingo Starts In</h2>
+      <h2>Starts In</h2>
       <strong class="pregame-countdown" id="pregameCountdown">${formatClock(state.countdownEndsAt - Date.now())}</strong>
-      <p class="pregame-copy">Players can scan the QR code and enter their name before Round 1 begins.</p>
+      <p class="pregame-copy">Round 1 starts automatically when the countdown ends.</p>
     </div>
   `;
 }
@@ -90,7 +123,7 @@ function renderLeaderboard(state) {
     ? `Up next: Round ${state.roundIndex + 2} • ${nextRound.name}`
     : "Final leaderboard";
   displayEls.leaderboardPanel.innerHTML = `
-    <div class="break-header ${isEnded ? "final-header" : ""}">
+    <div class="break-header event-art-panel ${isEnded ? "final-header" : ""}">
       <div>
         <p class="brand-kicker">${isEnded ? "Final Scores" : "10-Minute Break"}</p>
         <h2>${isEnded ? "Final Leaderboard" : "Leaderboard"}</h2>

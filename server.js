@@ -10,8 +10,20 @@ const GOOGLE_IMAGE_MANIFEST_PATH = path.join(PUBLIC_DIR, "assets", "google-image
 const PULL_INTERVAL_MS = 30 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
 const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
+const GAME_STATE_BLOB_PATH = "on-par-bingo/game-state/current.json";
 const imageCache = new Map();
 let googleImageManifest = loadGoogleImageManifest();
+let blobSdkPromise = null;
+let blobHydrationPromise = null;
+let blobHydrated = false;
+let blobSaveTimer = null;
+let blobStatus = {
+  configured: isBlobConfigured(),
+  available: false,
+  lastLoadedAt: null,
+  lastSavedAt: null,
+  error: null,
+};
 
 const moments = [
   { text: "Barbie", category: "Movies" },
@@ -122,6 +134,36 @@ const moments = [
   { text: "TGIF", category: "Throwback" },
   { text: "VHS", category: "Throwback" },
   { text: "Fanny Pack", category: "Throwback" },
+  { text: "Baby Yoda", category: "TV" },
+  { text: "Kardashians", category: "Celebrity" },
+  { text: "Taylor Swift", category: "Music" },
+  { text: "Eras Tour", category: "Music" },
+  { text: "Beyonce", category: "Music" },
+  { text: "Lady Gaga", category: "Celebrity" },
+  { text: "Rihanna", category: "Music" },
+  { text: "Usher", category: "Music" },
+  { text: "Billie Eilish", category: "Music" },
+  { text: "Harry Potter", category: "Movies" },
+  { text: "Lord of the Rings", category: "Movies" },
+  { text: "The Matrix", category: "Movies" },
+  { text: "Breaking Bad", category: "TV" },
+  { text: "Grey's Anatomy", category: "TV" },
+  { text: "Bridgerton", category: "TV" },
+  { text: "Ted Lasso", category: "TV" },
+  { text: "Schitt's Creek", category: "TV" },
+  { text: "Euphoria", category: "TV" },
+  { text: "Ghostbusters", category: "Movies" },
+  { text: "Grease", category: "Movies" },
+  { text: "Rocky", category: "Movies" },
+  { text: "The Dress", category: "Internet" },
+  { text: "Salt Bae", category: "Internet" },
+  { text: "Oscars Slap", category: "Celebrity" },
+  { text: "Wordle", category: "Internet" },
+  { text: "Netflix and Chill", category: "Internet" },
+  { text: "Stanley Cup", category: "Internet" },
+  { text: "Coachella", category: "Music" },
+  { text: "Roman Empire", category: "Internet" },
+  { text: "Girl Math", category: "Internet" },
 ];
 
 const rounds = [
@@ -137,7 +179,7 @@ let state = freshState();
 
 function freshState() {
   return {
-    title: "That Was Iconic: Pop Culture Bingo",
+    title: "Pop Culture Moments Bingo",
     venue: "On Par Entertainment",
     roundIndex: 0,
     status: "setup",
@@ -169,6 +211,7 @@ function publicState(req) {
     pregameCountdownSeconds: PREGAME_COUNTDOWN_MS / 1000,
     leaderboard: leaderboardFromClaims(),
     latestClaim: state.claims[0] || null,
+    storage: publicBlobStatus(),
     serverTime: Date.now(),
   };
 }
@@ -185,6 +228,94 @@ function shuffle(items) {
 function markUpdated() {
   state.updatedAt = Date.now();
   broadcast();
+  scheduleBlobSave();
+}
+
+function isBlobConfigured() {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID));
+}
+
+function publicBlobStatus() {
+  return {
+    configured: blobStatus.configured,
+    available: blobStatus.available,
+    lastLoadedAt: blobStatus.lastLoadedAt,
+    lastSavedAt: blobStatus.lastSavedAt,
+    error: blobStatus.error ? "Blob storage unavailable" : null,
+  };
+}
+
+async function getBlobSdk() {
+  if (!isBlobConfigured()) return null;
+  if (!blobSdkPromise) blobSdkPromise = import("@vercel/blob");
+  return blobSdkPromise;
+}
+
+async function hydrateStateFromBlob() {
+  if (blobHydrated) return;
+  if (blobHydrationPromise) return blobHydrationPromise;
+  blobHydrationPromise = (async () => {
+    blobStatus.configured = isBlobConfigured();
+    const sdk = await getBlobSdk();
+    if (!sdk) {
+      blobHydrated = true;
+      return;
+    }
+    try {
+      const result = await sdk.get(GAME_STATE_BLOB_PATH, { access: "private" });
+      if (result?.stream) {
+        const snapshot = await new Response(result.stream).json();
+        if (isValidStateSnapshot(snapshot)) {
+          state = {
+            ...freshState(),
+            ...snapshot,
+            updatedAt: Number(snapshot.updatedAt) || Date.now(),
+          };
+          blobStatus.lastLoadedAt = Date.now();
+        }
+      }
+      blobStatus.available = true;
+      blobStatus.error = null;
+    } catch (error) {
+      blobStatus.available = false;
+      blobStatus.error = error.message || "Could not load Blob state";
+      console.warn("Vercel Blob state load skipped:", blobStatus.error);
+    } finally {
+      blobHydrated = true;
+    }
+  })();
+  return blobHydrationPromise;
+}
+
+function isValidStateSnapshot(snapshot) {
+  return Boolean(snapshot && typeof snapshot === "object" && typeof snapshot.status === "string" && Array.isArray(snapshot.deck));
+}
+
+function scheduleBlobSave() {
+  if (!isBlobConfigured()) return;
+  clearTimeout(blobSaveTimer);
+  blobSaveTimer = setTimeout(() => {
+    saveStateToBlob().catch((error) => {
+      blobStatus.available = false;
+      blobStatus.error = error.message || "Could not save Blob state";
+      console.warn("Vercel Blob state save skipped:", blobStatus.error);
+    });
+  }, 250);
+}
+
+async function saveStateToBlob() {
+  const sdk = await getBlobSdk();
+  if (!sdk) return;
+  await sdk.put(GAME_STATE_BLOB_PATH, JSON.stringify(state, null, 2), {
+    access: "private",
+    allowOverwrite: true,
+    contentType: "application/json",
+    cacheControlMaxAge: 0,
+  });
+  blobStatus.configured = true;
+  blobStatus.available = true;
+  blobStatus.lastSavedAt = Date.now();
+  blobStatus.error = null;
 }
 
 function leaderboardFromClaims() {
@@ -555,9 +686,15 @@ function routeStatic(req, res, pathname) {
 }
 
 async function routeApi(req, res, pathname) {
+  await hydrateStateFromBlob();
   advanceState();
   if (req.method === "GET" && pathname === "/api/state") {
     sendJson(res, publicState(req));
+    return;
+  }
+
+  if (req.method === "GET" && pathname === "/api/storage-status") {
+    sendJson(res, { ok: true, storage: publicBlobStatus() });
     return;
   }
 
@@ -751,11 +888,13 @@ function publicStateForOrigin(origin) {
     pregameCountdownSeconds: PREGAME_COUNTDOWN_MS / 1000,
     leaderboard: leaderboardFromClaims(),
     latestClaim: state.claims[0] || null,
+    storage: publicBlobStatus(),
     serverTime: Date.now(),
   };
 }
 
 async function handleApiWebRequest(request, pathname) {
+  await hydrateStateFromBlob();
   advanceState();
   const method = request.method;
   const origin = webOrigin(request);
@@ -770,6 +909,10 @@ async function handleApiWebRequest(request, pathname) {
     const category = String(requestUrl.searchParams.get("category") || "").slice(0, 40);
     if (!text) return webJson({ ok: false, error: "Missing text" }, 400);
     return webJson(await findMomentImage(text, category));
+  }
+
+  if (method === "GET" && pathname === "/api/storage-status") {
+    return webJson({ ok: true, storage: publicBlobStatus() });
   }
 
   if (method !== "POST") {

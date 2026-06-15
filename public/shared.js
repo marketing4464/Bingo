@@ -100,7 +100,7 @@ async function setMomentImage(image, moment) {
 }
 
 function momentImageUrl(moment) {
-  const fallback = { text: "That Was Iconic", category: "Bingo" };
+  const fallback = { text: "Pop Culture Moments Bingo", category: "Bingo" };
   const item = moment || fallback;
   const palettes = [
     ["#050505", "#0b3d2e", "#151515"],
