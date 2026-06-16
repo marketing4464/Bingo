@@ -448,6 +448,7 @@ h1 {
   height: 100vh;
   min-height: 100vh;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: clamp(76px, 15vh, 116px) minmax(0, 1fr) clamp(68px, 13vh, 108px);
   gap: clamp(8px, 1.2vh, 14px);
   padding: clamp(12px, 1.6vw, 22px);
@@ -523,12 +524,15 @@ h1 {
   justify-content: space-between;
   gap: clamp(10px, 1.4vw, 18px);
   align-items: center;
+  width: 100%;
+  min-width: 0;
   min-height: 0;
 }
 
 .display-recent-pulls {
   flex: 1 1 auto;
   min-width: 0;
+  overflow: hidden;
 }
 
 .display-recent-pulls > strong {
@@ -601,6 +605,8 @@ h1 {
 
 .display-word {
   display: grid;
+  width: 100%;
+  min-width: 0;
   place-items: center;
   text-align: center;
   min-height: 0;
@@ -609,6 +615,7 @@ h1 {
 
 .display-word .draw-box {
   width: 100%;
+  min-width: 0;
   height: 100%;
   min-height: 0;
   max-height: 100%;
@@ -641,6 +648,7 @@ h1 {
 
 .join-strip {
   display: flex;
+  flex: 0 0 auto;
   gap: 12px;
   align-items: center;
 }
