@@ -13,6 +13,7 @@ const displayEls = {
   momentPanel: $("#momentPanel"),
   leaderboardPanel: $("#leaderboardPanel"),
   bingoAlert: $("#bingoAlert"),
+  finalVideo: $("#finalLeaderboardVideo"),
 };
 let visibleClaimId = null;
 let claimAlertTimer = null;
@@ -86,6 +87,7 @@ function renderDisplay(state) {
   const joinTitle = document.querySelector(".join-strip strong");
   if (joinTitle) joinTitle.textContent = state.status === "countdown" ? "Scan to play!" : "Join the game";
   updateDisplayTimers(state);
+  updateFinalVideo(state.status === "ended");
 
   if (state.status === "countdown") {
     lastDisplayedMoment = null;
@@ -183,6 +185,7 @@ function renderLeaderboard(state) {
     ? `Up next: Round ${state.roundIndex + 2} • ${nextRound.name}`
     : "Final leaderboard";
   displayEls.leaderboardPanel.innerHTML = `
+    ${isEnded ? renderFinalWinners(rows) : ""}
     <div class="break-header event-art-panel ${isEnded ? "final-header" : ""}">
       <div>
         <p class="brand-kicker">${isEnded ? "Final Scores" : "10-Minute Break"}</p>
@@ -212,6 +215,51 @@ function renderLeaderboard(state) {
       `).join("") : `<div class="leaderboard-empty">No BINGO claims yet.</div>`}
     </div>
   `;
+  scheduleFinalWinnerFit();
+}
+
+function updateFinalVideo(shouldShow) {
+  if (!displayEls.finalVideo) return;
+  displayEls.finalVideo.classList.toggle("hidden", !shouldShow);
+  if (shouldShow) {
+    displayEls.finalVideo.play().catch(() => {});
+  } else {
+    displayEls.finalVideo.pause();
+  }
+}
+
+function renderFinalWinners(rows) {
+  const winners = rows.slice(0, 3);
+  return `
+    <section class="final-winners-overlay" aria-label="Final winners">
+      <p class="brand-kicker">Tonight's Winners</p>
+      ${winners.length ? `
+        <div class="final-winner-podium">
+          ${winners.map((winner, index) => `
+            <div class="final-winner-card rank-${index + 1}">
+              <span>${index + 1}${ordinalSuffix(index + 1)} Place</span>
+              <strong>${escapeHtml(winner.player)}</strong>
+              <em>${winner.points} pts</em>
+            </div>
+          `).join("")}
+        </div>
+      ` : `
+        <div class="final-winner-card no-winners">
+          <span>Final Scores</span>
+          <strong>No claims yet</strong>
+          <em>Thanks for playing</em>
+        </div>
+      `}
+    </section>
+  `;
+}
+
+function scheduleFinalWinnerFit() {
+  requestAnimationFrame(() => {
+    $$(".final-winner-card strong", displayEls.leaderboardPanel).forEach((element) => {
+      fitSingleLineText(element, 18);
+    });
+  });
 }
 
 function renderPrizeClaim(rows) {
@@ -224,6 +272,13 @@ function renderPrizeClaim(rows) {
       <p>Please claim your prize at the front desk.</p>
     </div>
   `;
+}
+
+function ordinalSuffix(number) {
+  if (number === 1) return "st";
+  if (number === 2) return "nd";
+  if (number === 3) return "rd";
+  return "th";
 }
 
 function renderClaimAlert(state) {
