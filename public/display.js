@@ -17,10 +17,11 @@ const displayEls = {
 let visibleClaimId = null;
 let claimAlertTimer = null;
 let displayWordFitFrame = null;
+let heldCountdownState = null;
 
 subscribe((state) => {
-  displayState = state;
-  renderDisplay(state);
+  displayState = stableDisplayState(state);
+  renderDisplay(displayState);
 });
 
 setInterval(() => {
@@ -32,6 +33,30 @@ window.addEventListener("resize", () => {
   if (!displayState) return;
   scheduleDisplayWordFit();
 });
+
+function stableDisplayState(state) {
+  if (state.status === "countdown" && state.countdownEndsAt) {
+    heldCountdownState = state;
+    return state;
+  }
+
+  if (state.status === "playing") {
+    heldCountdownState = null;
+    return state;
+  }
+
+  if (heldCountdownState && heldCountdownState.countdownEndsAt && Date.now() < heldCountdownState.countdownEndsAt) {
+    return {
+      ...heldCountdownState,
+      joinUrl: state.joinUrl || heldCountdownState.joinUrl,
+      qrUrl: state.qrUrl || heldCountdownState.qrUrl,
+      serverTime: state.serverTime || heldCountdownState.serverTime,
+    };
+  }
+
+  heldCountdownState = null;
+  return state;
+}
 
 function updateDisplayTimers(state) {
   const target = state.status === "countdown" ? state.countdownEndsAt : state.status === "playing" ? state.playEndsAt : state.breakEndsAt;
