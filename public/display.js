@@ -105,13 +105,21 @@ function renderPregameCountdown(state) {
   displayEls.title.textContent = "Bingo Night";
   displayEls.round.textContent = "Opening countdown";
   displayEls.leaderboardPanel.innerHTML = `
-    <div class="pregame-panel event-art-panel">
-      <p class="brand-kicker">Scan In Now</p>
-      <h2>Starts In</h2>
-      <strong class="pregame-countdown" id="pregameCountdown">${formatClock(state.countdownEndsAt - Date.now())}</strong>
-      <p class="pregame-copy">Round 1 starts automatically when the countdown ends.</p>
+    <div class="pregame-layout">
+      <div class="pregame-panel event-art-panel">
+        <p class="brand-kicker">Scan In Now</p>
+        <h2>Starts In</h2>
+        <strong class="pregame-countdown" id="pregameCountdown">${formatClock(state.countdownEndsAt - Date.now())}</strong>
+        <p class="pregame-copy">Round 1 starts automatically when the countdown ends.</p>
+      </div>
+      <div class="pregame-qr-card">
+        <strong>Scan to play!</strong>
+        <span>${escapeHtml(state.joinUrl)}</span>
+        <img id="pregameQr" alt="QR code to join Pop Culture Moments Bingo" />
+      </div>
     </div>
   `;
+  renderQrImage($("#pregameQr"), state.joinUrl);
 }
 
 function renderLeaderboard(state) {

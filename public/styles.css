@@ -507,6 +507,7 @@ h1 {
 
 .display-body[data-display-status="countdown"] .display-header,
 .display-body[data-display-status="countdown"] .display-recent-pulls,
+.display-body[data-display-status="countdown"] .join-strip,
 .display-body[data-display-status="break"] .display-header,
 .display-body[data-display-status="break"] .display-recent-pulls,
 .display-body[data-display-status="break"] .join-strip,
@@ -653,11 +654,6 @@ h1 {
 }
 
 .display-body[data-display-status="countdown"] .display-footer {
-  position: absolute;
-  right: clamp(18px, 2.4vw, 34px);
-  top: 50%;
-  width: auto;
-  transform: translateY(-50%);
   justify-content: flex-end;
 }
 
@@ -973,13 +969,61 @@ select {
 }
 
 .display-body[data-display-status="countdown"] .leaderboard-panel {
-  align-self: end;
-  margin-bottom: min(3vh, 26px);
-  transform: translateX(clamp(-160px, -12vw, -92px));
+  width: min(1120px, 94vw);
+  align-self: center;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.pregame-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(190px, 20vw, 250px);
+  gap: clamp(18px, 3vw, 42px);
+  align-items: center;
+  width: 100%;
+}
+
+.pregame-qr-card {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  min-width: 0;
+  padding: clamp(12px, 1.6vw, 18px);
+  border: 1px solid rgba(223, 255, 197, 0.64);
+  border-radius: var(--radius);
+  background: rgba(5, 26, 8, 0.82);
+  box-shadow: 0 0 22px rgba(223, 255, 197, 0.24);
+  backdrop-filter: blur(3px);
+  text-align: center;
+}
+
+.pregame-qr-card strong {
+  display: block;
+  color: #ffffff;
+  font-size: clamp(25px, 2.9vw, 38px);
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-shadow: var(--neon-glow);
+}
+
+.pregame-qr-card span {
+  max-width: 100%;
+  color: #f7ffe9;
+  font-size: clamp(11px, 1vw, 13px);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.pregame-qr-card img {
+  width: clamp(136px, 13vw, 178px);
+  height: clamp(136px, 13vw, 178px);
+  border-radius: var(--radius);
+  background: #ffffff;
+  padding: 8px;
 }
 
 .display-body[data-display-status="countdown"] .pregame-panel {
-  width: min(720px, 72vw);
+  width: 100%;
   margin-inline: auto;
   padding: clamp(18px, 2.2vw, 28px);
 }
@@ -1217,6 +1261,16 @@ select {
 
   .break-header {
     grid-template-columns: 1fr;
+  }
+
+  .pregame-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .pregame-qr-card {
+    justify-self: center;
+    width: min(100%, 280px);
   }
 
   .leaderboard-score {
