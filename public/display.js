@@ -42,6 +42,14 @@ function stableDisplayState(state) {
   }
 
   if (state.status === "playing") {
+    if (!state.currentWord && !state.called?.[0] && heldCountdownState) {
+      return {
+        ...heldCountdownState,
+        joinUrl: state.joinUrl || heldCountdownState.joinUrl,
+        qrUrl: state.qrUrl || heldCountdownState.qrUrl,
+        serverTime: state.serverTime || heldCountdownState.serverTime,
+      };
+    }
     heldCountdownState = null;
     return state;
   }
@@ -91,11 +99,23 @@ function renderDisplay(state) {
     renderLeaderboard(state);
   } else {
     const activeMoment = state.currentWord || state.called?.[0] || lastDisplayedMoment;
+    if (!activeMoment) {
+      lastDisplayedMoment = null;
+      document.body.dataset.displayStatus = "countdown";
+      displayEls.momentPanel.classList.add("hidden");
+      displayEls.leaderboardPanel.classList.remove("hidden");
+      renderPregameCountdown({
+        ...state,
+        countdownEndsAt: Date.now(),
+        countdownCopy: `Round ${state.roundIndex + 1} is starting now.`,
+      });
+      return;
+    }
     if (activeMoment) lastDisplayedMoment = activeMoment;
     displayEls.momentPanel.classList.remove("hidden");
     displayEls.leaderboardPanel.classList.add("hidden");
-    displayEls.word.textContent = activeMoment?.text || "Get Ready";
-    displayEls.category.textContent = activeMoment?.category || "Moment coming up";
+    displayEls.word.textContent = activeMoment.text;
+    displayEls.category.textContent = activeMoment.category;
     setMomentImage(displayEls.momentImage, activeMoment);
     scheduleDisplayWordFit();
   }
@@ -140,7 +160,7 @@ function renderPregameCountdown(state) {
         <p class="brand-kicker">Players Join Now</p>
         <h2>Starts In</h2>
         <strong class="pregame-countdown" id="pregameCountdown">${formatClock(state.countdownEndsAt - Date.now())}</strong>
-        <p class="pregame-copy">Round 1 starts automatically when the countdown ends.</p>
+        <p class="pregame-copy">${escapeHtml(state.countdownCopy || "Round 1 starts automatically when the countdown ends.")}</p>
       </div>
       <div class="pregame-qr-card">
         <strong>Scan to play!</strong>
