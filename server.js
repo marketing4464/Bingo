@@ -690,6 +690,7 @@ function routeStatic(req, res, pathname) {
       ".png": "image/png",
       ".jpg": "image/jpeg",
       ".jpeg": "image/jpeg",
+      ".mp4": "video/mp4",
     };
     res.writeHead(200, {
       "Content-Type": types[ext] || "application/octet-stream",

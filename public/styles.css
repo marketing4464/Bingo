@@ -527,8 +527,6 @@ h1 {
 }
 
 .display-body[data-display-status="countdown"] .display-header,
-.display-body[data-display-status="countdown"] .display-recent-pulls,
-.display-body[data-display-status="countdown"] .join-strip,
 .display-body[data-display-status="break"] .display-header,
 .display-body[data-display-status="break"] .display-recent-pulls,
 .display-body[data-display-status="break"] .join-strip,
@@ -537,6 +535,16 @@ h1 {
 .display-body[data-display-status="ended"] .join-strip {
   opacity: 0;
   pointer-events: none;
+}
+
+.display-body[data-display-status="countdown"] .display-header {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.display-body[data-display-status="countdown"] .display-recent-pulls,
+.display-body[data-display-status="countdown"] .join-strip {
+  display: none;
 }
 
 .display-header,
@@ -675,7 +683,48 @@ h1 {
 }
 
 .display-body[data-display-status="countdown"] .display-footer {
-  justify-content: flex-end;
+  justify-content: center;
+}
+
+.countdown-instructions {
+  display: none;
+}
+
+.display-body[data-display-status="countdown"] .countdown-instructions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(8px, 1vw, 14px);
+  width: min(1280px, 100%);
+  min-width: 0;
+  padding: clamp(8px, 1.1vw, 14px);
+  border: 1px solid rgba(223, 255, 197, 0.64);
+  border-radius: var(--radius);
+  background: rgba(4, 25, 7, 0.84);
+  box-shadow: 0 0 24px rgba(223, 255, 197, 0.22);
+  backdrop-filter: blur(4px);
+}
+
+.countdown-instructions div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  text-align: center;
+}
+
+.countdown-instructions strong {
+  color: #ffffff;
+  font-size: clamp(12px, 1.15vw, 18px);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow: var(--neon-glow);
+}
+
+.countdown-instructions span {
+  color: #f2ffe9;
+  font-size: clamp(10px, 0.9vw, 14px);
+  font-weight: 850;
+  line-height: 1.15;
 }
 
 .display-body[data-display-status="countdown"] .join-strip {
@@ -1403,6 +1452,10 @@ select {
   .pregame-qr-card {
     justify-self: center;
     width: min(100%, 280px);
+  }
+
+  .display-body[data-display-status="countdown"] .countdown-instructions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .leaderboard-score {
