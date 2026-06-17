@@ -197,7 +197,6 @@ function freshState() {
 }
 
 function publicState(req) {
-  advanceState();
   const round = rounds[state.roundIndex] || rounds[rounds.length - 1];
   const origin = getOrigin(req);
   const joinUrl = joinUrlForOrigin(origin);
@@ -232,6 +231,11 @@ function markUpdated() {
   scheduleBlobSave();
 }
 
+async function commitState() {
+  markUpdated();
+  await flushStateToBlob();
+}
+
 function isBlobConfigured() {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN || (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID));
 }
@@ -252,9 +256,13 @@ async function getBlobSdk() {
   return blobSdkPromise;
 }
 
-async function hydrateStateFromBlob() {
-  if (blobHydrated) return;
-  if (blobHydrationPromise) return blobHydrationPromise;
+async function hydrateStateFromBlob({ force = false } = {}) {
+  if (!force && blobHydrated) return;
+  if (!force && blobHydrationPromise) return blobHydrationPromise;
+  if (force) {
+    blobHydrationPromise = null;
+    blobHydrated = false;
+  }
   blobHydrationPromise = (async () => {
     blobStatus.configured = isBlobConfigured();
     const sdk = await getBlobSdk();
@@ -283,6 +291,7 @@ async function hydrateStateFromBlob() {
       console.warn("Vercel Blob state load skipped:", blobStatus.error);
     } finally {
       blobHydrated = true;
+      blobHydrationPromise = null;
     }
   })();
   return blobHydrationPromise;
@@ -302,6 +311,19 @@ function scheduleBlobSave() {
       console.warn("Vercel Blob state save skipped:", blobStatus.error);
     });
   }, 250);
+}
+
+async function flushStateToBlob() {
+  if (!isBlobConfigured()) return;
+  clearTimeout(blobSaveTimer);
+  blobSaveTimer = null;
+  try {
+    await saveStateToBlob();
+  } catch (error) {
+    blobStatus.available = false;
+    blobStatus.error = error.message || "Could not save Blob state";
+    console.warn("Vercel Blob state save skipped:", blobStatus.error);
+  }
 }
 
 async function saveStateToBlob() {
@@ -407,21 +429,23 @@ function advanceState() {
   if (state.status === "countdown" && state.countdownEndsAt && now >= state.countdownEndsAt) {
     startCurrentRound({ resetClaims: true });
     markUpdated();
-    return;
+    return true;
   }
   if (state.status === "playing" && state.playEndsAt && now >= state.playEndsAt) {
     startBreakOrEndEvent();
     markUpdated();
-    return;
+    return true;
   }
   if (state.status === "break" && state.breakEndsAt && now >= state.breakEndsAt) {
     startNextRound();
     markUpdated();
-    return;
+    return true;
   }
   if (state.status === "playing" && state.nextPullAt && now >= state.nextPullAt && drawNextMoment()) {
     markUpdated();
+    return true;
   }
+  return false;
 }
 
 function startStateTimer() {
@@ -701,8 +725,8 @@ function routeStatic(req, res, pathname) {
 }
 
 async function routeApi(req, res, pathname) {
-  await hydrateStateFromBlob();
-  advanceState();
+  await hydrateStateFromBlob({ force: true });
+  if (advanceState()) await flushStateToBlob();
   if (req.method === "GET" && pathname === "/api/state") {
     sendJson(res, publicState(req));
     return;
@@ -753,7 +777,7 @@ async function routeApi(req, res, pathname) {
 
   if (pathname === "/api/start-round") {
     startCurrentRound({ resetClaims: state.roundIndex === 0 && state.status !== "break" });
-    markUpdated();
+    await commitState();
     sendJson(res, publicState(req));
     return;
   }
@@ -764,7 +788,7 @@ async function routeApi(req, res, pathname) {
       return;
     }
     startOpeningCountdown();
-    markUpdated();
+    await commitState();
     sendJson(res, publicState(req));
     return;
   }
@@ -775,7 +799,7 @@ async function routeApi(req, res, pathname) {
       return;
     }
     startCurrentRound({ resetClaims: true });
-    markUpdated();
+    await commitState();
     sendJson(res, publicState(req));
     return;
   }
@@ -789,28 +813,28 @@ async function routeApi(req, res, pathname) {
       sendJson(res, { error: "No more words available." }, 409);
       return;
     }
-    markUpdated();
+    await commitState();
     sendJson(res, publicState(req));
     return;
   }
 
   if (pathname === "/api/start-break") {
     startBreakOrEndEvent();
-    markUpdated();
+    await commitState();
     sendJson(res, publicState(req));
     return;
   }
 
   if (pathname === "/api/next-round") {
     startNextRound();
-    markUpdated();
+    await commitState();
     sendJson(res, publicState(req));
     return;
   }
 
   if (pathname === "/api/reset") {
     state = freshState();
-    markUpdated();
+    await commitState();
     sendJson(res, publicState(req));
     return;
   }
@@ -862,7 +886,7 @@ async function routeApi(req, res, pathname) {
     };
     state.claims.unshift(claim);
     state.claims = state.claims.slice(0, 200);
-    markUpdated();
+    await commitState();
     sendJson(res, { ok: true, claim });
     return;
   }
@@ -890,7 +914,6 @@ function webOrigin(request) {
 }
 
 function publicStateForOrigin(origin) {
-  advanceState();
   const round = rounds[state.roundIndex] || rounds[rounds.length - 1];
   return {
     ...state,
@@ -909,8 +932,8 @@ function publicStateForOrigin(origin) {
 }
 
 async function handleApiWebRequest(request, pathname) {
-  await hydrateStateFromBlob();
-  advanceState();
+  await hydrateStateFromBlob({ force: true });
+  if (advanceState()) await flushStateToBlob();
   const method = request.method;
   const origin = webOrigin(request);
   const requestUrl = new URL(request.url);
@@ -943,7 +966,7 @@ async function handleApiWebRequest(request, pathname) {
 
   if (pathname === "/api/start-round") {
     startCurrentRound({ resetClaims: state.roundIndex === 0 && state.status !== "break" });
-    markUpdated();
+    await commitState();
     return webJson(publicStateForOrigin(origin));
   }
 
@@ -952,7 +975,7 @@ async function handleApiWebRequest(request, pathname) {
       return webJson({ error: "Reset the event before starting a new countdown." }, 409);
     }
     startOpeningCountdown();
-    markUpdated();
+    await commitState();
     return webJson(publicStateForOrigin(origin));
   }
 
@@ -961,7 +984,7 @@ async function handleApiWebRequest(request, pathname) {
       return webJson({ error: "There is no opening countdown to skip." }, 409);
     }
     startCurrentRound({ resetClaims: true });
-    markUpdated();
+    await commitState();
     return webJson(publicStateForOrigin(origin));
   }
 
@@ -972,25 +995,25 @@ async function handleApiWebRequest(request, pathname) {
     if (!drawNextMoment({ resetTimer: true })) {
       return webJson({ error: "No more words available." }, 409);
     }
-    markUpdated();
+    await commitState();
     return webJson(publicStateForOrigin(origin));
   }
 
   if (pathname === "/api/start-break") {
     startBreakOrEndEvent();
-    markUpdated();
+    await commitState();
     return webJson(publicStateForOrigin(origin));
   }
 
   if (pathname === "/api/next-round") {
     startNextRound();
-    markUpdated();
+    await commitState();
     return webJson(publicStateForOrigin(origin));
   }
 
   if (pathname === "/api/reset") {
     state = freshState();
-    markUpdated();
+    await commitState();
     return webJson(publicStateForOrigin(origin));
   }
 
@@ -1036,7 +1059,7 @@ async function handleApiWebRequest(request, pathname) {
     };
     state.claims.unshift(claim);
     state.claims = state.claims.slice(0, 200);
-    markUpdated();
+    await commitState();
     return webJson({ ok: true, claim });
   }
 

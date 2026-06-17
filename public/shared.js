@@ -1,5 +1,6 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const momentImageCache = new Map();
 
 function api(path, body = {}) {
   return fetch(path, {
@@ -20,14 +21,17 @@ function getState() {
 function subscribe(onState) {
   let stopped = false;
   let lastUpdatedAt = null;
+  let lastStableState = null;
 
   async function poll() {
     if (stopped) return;
     try {
       const state = await getState();
-      if (state.updatedAt !== lastUpdatedAt) {
-        lastUpdatedAt = state.updatedAt;
-        onState(state);
+      const stableState = stabilizeLiveState(state, lastStableState);
+      if (stableState && stableState.updatedAt !== lastUpdatedAt) {
+        lastUpdatedAt = stableState.updatedAt;
+        lastStableState = stableState;
+        onState(stableState);
       }
     } catch (error) {
       console.warn("Could not refresh bingo state", error);
@@ -42,6 +46,22 @@ function subscribe(onState) {
       stopped = true;
     },
   };
+}
+
+function stabilizeLiveState(state, previous) {
+  if (!previous) return state;
+  const incomingUpdatedAt = Number(state.updatedAt) || 0;
+  const previousUpdatedAt = Number(previous.updatedAt) || 0;
+  if (incomingUpdatedAt < previousUpdatedAt) return null;
+
+  const sameLiveRound = state.status === "playing"
+    && previous.status === "playing"
+    && state.roundIndex === previous.roundIndex;
+  if (sameLiveRound && !(state.called || []).length && (previous.called || []).length) {
+    return null;
+  }
+
+  return state;
 }
 
 function formatClock(ms) {
@@ -74,29 +94,59 @@ function renderQrImage(image, value) {
 
 async function setMomentImage(image, moment) {
   if (!image) return;
+  const key = moment ? `${moment.text}|${moment.category || ""}` : "fallback";
+  if (image.dataset.momentKey === key) return;
+  image.dataset.pendingMomentKey = key;
+
   if (!moment) {
-    image.src = momentImageUrl(null);
-    image.removeAttribute("data-source");
+    await applyMomentImage(image, key, momentImageUrl(null), "fallback", "Pop Culture Moments Bingo image");
     return;
   }
 
-  image.src = momentImageUrl(moment);
-  image.dataset.source = "fallback";
+  if (!image.getAttribute("src")) image.src = momentImageUrl(moment);
+
+  let nextImage = momentImageCache.get(key);
   try {
-    const params = new URLSearchParams({
-      text: moment.text,
-      category: moment.category || "",
-    });
-    const response = await fetch(`/api/moment-image?${params}`, { cache: "force-cache" });
-    const data = await response.json();
-    if (data.ok && data.url) {
-      image.src = data.url;
-      image.dataset.source = data.source || "internet";
-      image.alt = `${moment.text} image from ${image.dataset.source}`;
+    if (!nextImage) {
+      const params = new URLSearchParams({
+        text: moment.text,
+        category: moment.category || "",
+      });
+      const response = await fetch(`/api/moment-image?${params}`, { cache: "force-cache" });
+      const data = await response.json();
+      nextImage = data.ok && data.url
+        ? { url: data.url, source: data.source || "internet" }
+        : { url: momentImageUrl(moment), source: "fallback" };
+      momentImageCache.set(key, nextImage);
     }
   } catch (error) {
-    image.dataset.source = "fallback";
+    nextImage = { url: momentImageUrl(moment), source: "fallback" };
+    momentImageCache.set(key, nextImage);
   }
+
+  await applyMomentImage(image, key, nextImage.url, nextImage.source, `${moment.text} image`);
+}
+
+function applyMomentImage(image, key, url, source, alt) {
+  return preloadImage(url)
+    .catch(() => source === "fallback" ? null : preloadImage(momentImageUrl(null)))
+    .then((fallbackUrl) => {
+      if (image.dataset.pendingMomentKey !== key) return;
+      image.src = fallbackUrl || url;
+      image.dataset.momentKey = key;
+      image.dataset.source = fallbackUrl ? "fallback" : source;
+      image.alt = alt;
+      image.removeAttribute("data-pending-moment-key");
+    });
+}
+
+function preloadImage(url) {
+  return new Promise((resolve, reject) => {
+    const preview = new Image();
+    preview.onload = () => resolve(url);
+    preview.onerror = reject;
+    preview.src = url;
+  });
 }
 
 function momentImageUrl(moment) {
