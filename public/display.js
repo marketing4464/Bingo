@@ -49,6 +49,8 @@ function renderDisplay(state) {
   displayEls.round.textContent = `Round ${state.roundIndex + 1}: ${state.round.name} • ${state.round.pattern} • New word every ${state.autoPullEverySeconds}s`;
   renderQrImage(displayEls.qr, state.joinUrl);
   displayEls.join.textContent = state.joinUrl;
+  const joinTitle = document.querySelector(".join-strip strong");
+  if (joinTitle) joinTitle.textContent = state.status === "countdown" ? "Scan to play!" : "Join the game";
   updateDisplayTimers(state);
 
   if (state.status === "countdown") {

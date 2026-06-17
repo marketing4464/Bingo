@@ -653,16 +653,47 @@ h1 {
 }
 
 .display-body[data-display-status="countdown"] .display-footer {
+  position: absolute;
+  right: clamp(18px, 2.4vw, 34px);
+  top: 50%;
+  width: auto;
+  transform: translateY(-50%);
   justify-content: flex-end;
 }
 
 .display-body[data-display-status="countdown"] .join-strip {
-  padding: 10px 12px;
+  flex-direction: column;
+  gap: 10px;
+  width: clamp(190px, 19vw, 250px);
+  padding: clamp(12px, 1.6vw, 18px);
   border: 1px solid rgba(223, 255, 197, 0.64);
   border-radius: var(--radius);
   background: rgba(5, 26, 8, 0.78);
   box-shadow: 0 0 22px rgba(223, 255, 197, 0.24);
   backdrop-filter: blur(3px);
+  text-align: center;
+}
+
+.display-body[data-display-status="countdown"] .join-strip strong {
+  display: block;
+  color: #ffffff;
+  font-size: clamp(24px, 2.8vw, 38px);
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-shadow: var(--neon-glow);
+}
+
+.display-body[data-display-status="countdown"] .join-strip .small {
+  color: #f7ffe9;
+  font-size: clamp(11px, 1vw, 13px);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.display-body[data-display-status="countdown"] .join-strip img {
+  width: clamp(132px, 13vw, 178px);
+  height: clamp(132px, 13vw, 178px);
+  padding: 8px;
 }
 
 .join-strip img {
@@ -944,6 +975,7 @@ select {
 .display-body[data-display-status="countdown"] .leaderboard-panel {
   align-self: end;
   margin-bottom: min(3vh, 26px);
+  transform: translateX(clamp(-160px, -12vw, -92px));
 }
 
 .display-body[data-display-status="countdown"] .pregame-panel {
