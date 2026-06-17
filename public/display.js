@@ -18,6 +18,7 @@ let visibleClaimId = null;
 let claimAlertTimer = null;
 let displayWordFitFrame = null;
 let heldCountdownState = null;
+let lastDisplayedMoment = null;
 
 subscribe((state) => {
   displayState = stableDisplayState(state);
@@ -79,19 +80,23 @@ function renderDisplay(state) {
   updateDisplayTimers(state);
 
   if (state.status === "countdown") {
+    lastDisplayedMoment = null;
     displayEls.momentPanel.classList.add("hidden");
     displayEls.leaderboardPanel.classList.remove("hidden");
     renderPregameCountdown(state);
   } else if (state.status === "break" || state.status === "ended") {
+    lastDisplayedMoment = null;
     displayEls.momentPanel.classList.add("hidden");
     displayEls.leaderboardPanel.classList.remove("hidden");
     renderLeaderboard(state);
   } else {
+    const activeMoment = state.currentWord || state.called?.[0] || lastDisplayedMoment;
+    if (activeMoment) lastDisplayedMoment = activeMoment;
     displayEls.momentPanel.classList.remove("hidden");
     displayEls.leaderboardPanel.classList.add("hidden");
-    displayEls.word.textContent = state.currentWord?.text || "Scan In";
-    displayEls.category.textContent = state.currentWord?.category || "Pop Culture Moments Bingo";
-    setMomentImage(displayEls.momentImage, state.currentWord);
+    displayEls.word.textContent = activeMoment?.text || "Get Ready";
+    displayEls.category.textContent = activeMoment?.category || "Moment coming up";
+    setMomentImage(displayEls.momentImage, activeMoment);
     scheduleDisplayWordFit();
   }
 
@@ -132,7 +137,7 @@ function renderPregameCountdown(state) {
   displayEls.leaderboardPanel.innerHTML = `
     <div class="pregame-layout">
       <div class="pregame-panel event-art-panel">
-        <p class="brand-kicker">Scan In Now</p>
+        <p class="brand-kicker">Players Join Now</p>
         <h2>Starts In</h2>
         <strong class="pregame-countdown" id="pregameCountdown">${formatClock(state.countdownEndsAt - Date.now())}</strong>
         <p class="pregame-copy">Round 1 starts automatically when the countdown ends.</p>

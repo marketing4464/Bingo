@@ -112,7 +112,6 @@ function renderCard(card, pattern) {
       <div class="bingo-grid">${heads}${cells}</div>
       <div class="card-actions">
         <button class="claimButton ${hasWin ? "gold" : "secondary"}" data-card="${card.number}" ${hasWin ? "" : "disabled"}>${hasWin ? `Claim +${totalPoints}` : "No New Bingo"}</button>
-        <button class="secondary" type="button" onclick="window.print()">Print</button>
       </div>
     </article>
   `;
