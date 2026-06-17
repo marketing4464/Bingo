@@ -507,7 +507,6 @@ h1 {
 
 .display-body[data-display-status="countdown"] .display-header,
 .display-body[data-display-status="countdown"] .display-recent-pulls,
-.display-body[data-display-status="countdown"] .join-strip,
 .display-body[data-display-status="break"] .display-header,
 .display-body[data-display-status="break"] .display-recent-pulls,
 .display-body[data-display-status="break"] .join-strip,
@@ -651,6 +650,19 @@ h1 {
   flex: 0 0 auto;
   gap: 12px;
   align-items: center;
+}
+
+.display-body[data-display-status="countdown"] .display-footer {
+  justify-content: flex-end;
+}
+
+.display-body[data-display-status="countdown"] .join-strip {
+  padding: 10px 12px;
+  border: 1px solid rgba(223, 255, 197, 0.64);
+  border-radius: var(--radius);
+  background: rgba(5, 26, 8, 0.78);
+  box-shadow: 0 0 22px rgba(223, 255, 197, 0.24);
+  backdrop-filter: blur(3px);
 }
 
 .join-strip img {

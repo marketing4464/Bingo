@@ -40,6 +40,8 @@ npm run build
 
 Use the host console to open the big-screen display and show the QR code. Players scan the QR code, enter their name, and choose 1-3 bingo cards.
 
+If players see a Vercel login after scanning the QR code, the display is likely running on a protected preview deployment. Open the production deployment for the event, or set `PUBLIC_JOIN_URL` / `NEXT_PUBLIC_JOIN_URL` to the public player URL, for example `https://your-public-domain.com/play`.
+
 ## Event Format
 
 - Round 1: Red Carpet Warm-Up, 15 minutes, Any Line

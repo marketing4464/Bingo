@@ -11,6 +11,7 @@ const PULL_INTERVAL_MS = 30 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
 const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
 const GAME_STATE_BLOB_PATH = "on-par-bingo/game-state/current.json";
+const PUBLIC_JOIN_URL = publicJoinUrlFromEnv();
 const imageCache = new Map();
 let googleImageManifest = loadGoogleImageManifest();
 let blobSdkPromise = null;
@@ -199,7 +200,7 @@ function publicState(req) {
   advanceState();
   const round = rounds[state.roundIndex] || rounds[rounds.length - 1];
   const origin = getOrigin(req);
-  const joinUrl = `${origin}/play`;
+  const joinUrl = joinUrlForOrigin(origin);
   return {
     ...state,
     round,
@@ -450,6 +451,19 @@ function getOrigin(req) {
   }
   const proto = req.headers["x-forwarded-proto"] || "https";
   return `${proto}://${host}`;
+}
+
+function publicJoinUrlFromEnv() {
+  const explicitUrl = process.env.PUBLIC_JOIN_URL || process.env.NEXT_PUBLIC_JOIN_URL;
+  if (explicitUrl) return explicitUrl.replace(/\/$/, "");
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.replace(/\/$/, "")}/play`;
+  }
+  return "";
+}
+
+function joinUrlForOrigin(origin) {
+  return PUBLIC_JOIN_URL || `${origin}/play`;
 }
 
 function sendJson(res, body, status = 200) {
@@ -882,8 +896,8 @@ function publicStateForOrigin(origin) {
     round,
     rounds,
     moments,
-    joinUrl: `${origin}/play`,
-    qrUrl: `${origin}/play`,
+    joinUrl: joinUrlForOrigin(origin),
+    qrUrl: joinUrlForOrigin(origin),
     autoPullEverySeconds: PULL_INTERVAL_MS / 1000,
     pregameCountdownSeconds: PREGAME_COUNTDOWN_MS / 1000,
     leaderboard: leaderboardFromClaims(),
