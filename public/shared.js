@@ -1,6 +1,7 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const momentImageCache = new Map();
+let heartbeatId = localStorage.getItem("bingoHeartbeatId") || "";
 
 function api(path, body = {}) {
   return fetch(path, {
@@ -46,6 +47,29 @@ function subscribe(onState) {
       stopped = true;
     },
   };
+}
+
+function startHeartbeat(role, detailProvider = () => ({})) {
+  async function sendHeartbeat() {
+    try {
+      const detail = detailProvider() || {};
+      const response = await api("/api/heartbeat", {
+        role,
+        id: heartbeatId,
+        path: window.location.pathname,
+        ...detail,
+      });
+      if (response.id && response.id !== heartbeatId) {
+        heartbeatId = response.id;
+        localStorage.setItem("bingoHeartbeatId", heartbeatId);
+      }
+    } catch (error) {
+      console.warn("Could not send bingo heartbeat", error);
+    }
+  }
+
+  sendHeartbeat();
+  return setInterval(sendHeartbeat, 10000);
 }
 
 function stabilizeLiveState(state, previous) {
@@ -95,8 +119,16 @@ function renderQrImage(image, value) {
 async function setMomentImage(image, moment) {
   if (!image) return;
   const key = moment ? `${moment.text}|${moment.category || ""}` : "fallback";
-  if (image.dataset.momentKey === key) return;
+  if (image.dataset.momentKey === key || image.dataset.pendingMomentKey === key) return;
   image.dataset.pendingMomentKey = key;
+  image.decoding = "async";
+  image.onerror = () => {
+    const fallbackUrl = momentImageUrl(null);
+    if (image.src !== fallbackUrl) {
+      image.src = fallbackUrl;
+      image.dataset.source = "fallback";
+    }
+  };
 
   if (!moment) {
     await applyMomentImage(image, key, momentImageUrl(null), "fallback", "Pop Culture Moments Bingo image");
@@ -132,7 +164,8 @@ function applyMomentImage(image, key, url, source, alt) {
     .catch(() => source === "fallback" ? null : preloadImage(momentImageUrl(null)))
     .then((fallbackUrl) => {
       if (image.dataset.pendingMomentKey !== key) return;
-      image.src = fallbackUrl || url;
+      const nextUrl = fallbackUrl || url;
+      if (image.src !== nextUrl) image.src = nextUrl;
       image.dataset.momentKey = key;
       image.dataset.source = fallbackUrl ? "fallback" : source;
       image.alt = alt;

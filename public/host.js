@@ -23,7 +23,10 @@ const els = {
   schedule: $("#schedule"),
   claims: $("#claims"),
   hostMomentImage: $("#hostMomentImage"),
+  commandCenter: $("#hostCommandCenter"),
 };
+
+startHeartbeat("host");
 
 subscribe((state) => {
   latestState = state;
@@ -35,18 +38,24 @@ setInterval(() => {
   renderTimer(latestState);
 }, 500);
 
-els.startCountdown.addEventListener("click", () => api("/api/start-countdown").catch(alertError));
-els.skipCountdown.addEventListener("click", () => api("/api/skip-countdown").catch(alertError));
-els.startRound.addEventListener("click", () => api("/api/start-round").catch(alertError));
-els.pullWord.addEventListener("click", () => api("/api/pull").catch(alertError));
-els.startBreak.addEventListener("click", () => api("/api/start-break").catch(alertError));
-els.nextRound.addEventListener("click", () => api("/api/next-round").catch(alertError));
+els.startCountdown.addEventListener("click", () => runHostAction("startCountdown"));
+els.skipCountdown.addEventListener("click", () => runHostAction("skipCountdown"));
+els.startRound.addEventListener("click", () => runHostAction("startRound"));
+els.pullWord.addEventListener("click", () => runHostAction("pullWord"));
+els.startBreak.addEventListener("click", () => runHostAction("startBreak"));
+els.nextRound.addEventListener("click", () => runHostAction("nextRound"));
 els.resetGame.addEventListener("click", () => {
-  if (confirm("Reset the full bingo event back to Round 1?")) api("/api/reset").catch(alertError);
+  runHostAction("resetGame");
+});
+els.commandCenter.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-host-action]");
+  if (!button || button.disabled) return;
+  runHostAction(button.dataset.hostAction);
 });
 
 function render(state) {
   const roundNumber = state.roundIndex + 1;
+  HostRunbook.render(els.commandCenter, state);
   els.roundName.textContent = `Round ${roundNumber}: ${state.round.name}`;
   els.roundMeta.textContent = `${state.round.pattern} • ${state.round.playMinutes} minutes of play • words rotate every ${state.autoPullEverySeconds} seconds`;
   els.statusPill.textContent = statusLabel(state.status);
@@ -101,6 +110,56 @@ function render(state) {
     : `<p class="small">Claims will appear here when players tap BINGO.</p>`;
 
   renderTimer(state);
+}
+
+async function runHostAction(action) {
+  try {
+    if (action === "none") return;
+    if (action === "openDisplay") {
+      window.open("/display", "_blank", "noopener");
+      return;
+    }
+    if (action === "openPlayer") {
+      window.open("/play", "_blank", "noopener");
+      return;
+    }
+    if (action === "startCountdown") {
+      if (!confirm("Start the 15-minute countdown on the display screen?")) return;
+      await api("/api/start-countdown");
+      return;
+    }
+    if (action === "skipCountdown") {
+      if (!confirm("Skip the countdown and start Round 1 right now?")) return;
+      await api("/api/skip-countdown");
+      return;
+    }
+    if (action === "startRound") {
+      if (!confirm("Start the current round immediately? This clears called moments for this round.")) return;
+      await api("/api/start-round");
+      return;
+    }
+    if (action === "pullWord") {
+      await api("/api/pull");
+      return;
+    }
+    if (action === "startBreak") {
+      if (!confirm("Start the leaderboard break now? The current round will stop.")) return;
+      await api("/api/start-break");
+      return;
+    }
+    if (action === "nextRound") {
+      if (!confirm("Start the next round now?")) return;
+      await api("/api/next-round");
+      return;
+    }
+    if (action === "resetGame") {
+      const typed = prompt("This clears the event back to setup. Type RESET to confirm.");
+      if (typed !== "RESET") return;
+      await api("/api/reset", { confirm: "RESET" });
+    }
+  } catch (error) {
+    alertError(error);
+  }
 }
 
 function renderTimer(state) {

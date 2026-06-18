@@ -2,6 +2,7 @@ let player = "";
 let cards = [];
 let currentState = null;
 let currentCardRoundIndex = null;
+let playerHeartbeatTimer = null;
 
 const joinPanel = $("#joinPanel");
 const gamePanel = $("#gamePanel");
@@ -19,6 +20,7 @@ joinForm.addEventListener("submit", async (event) => {
   const count = Math.max(1, Math.min(3, Number($("#cardCount").value || 1)));
   cards = Array.from({ length: count }, (_, index) => createCard(state.moments, index + 1));
   currentCardRoundIndex = state.roundIndex;
+  startPlayerHeartbeat();
   joinPanel.classList.add("hidden");
   gamePanel.classList.remove("hidden");
   renderPlayer(state);
@@ -71,6 +73,14 @@ function renderPlayer(state) {
   $$(".claimButton").forEach((button) => {
     button.addEventListener("click", () => claimBingo(Number(button.dataset.card)));
   });
+}
+
+function startPlayerHeartbeat() {
+  if (playerHeartbeatTimer) clearInterval(playerHeartbeatTimer);
+  playerHeartbeatTimer = startHeartbeat("player", () => ({
+    player,
+    cards: cards.length,
+  }));
 }
 
 cardsEl.addEventListener("click", (event) => {

@@ -21,6 +21,8 @@ let displayWordFitFrame = null;
 let heldCountdownState = null;
 let lastDisplayedMoment = null;
 
+startHeartbeat("display");
+
 subscribe((state) => {
   displayState = stableDisplayState(state);
   renderDisplay(displayState);

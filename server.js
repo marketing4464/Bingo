@@ -28,6 +28,11 @@ let storageStatus = {
   lastSavedAt: null,
   error: null,
 };
+const presence = {
+  host: new Map(),
+  display: new Map(),
+  player: new Map(),
+};
 
 const moments = [
   { text: "Barbie", category: "Movies" },
@@ -203,6 +208,7 @@ function publicState(req) {
   const round = rounds[state.roundIndex] || rounds[rounds.length - 1];
   const origin = getOrigin(req);
   const joinUrl = joinUrlForOrigin(origin);
+  const health = eventHealth(joinUrl);
   return {
     ...state,
     round,
@@ -215,6 +221,7 @@ function publicState(req) {
     leaderboard: leaderboardFromClaims(),
     latestClaim: state.claims[0] || null,
     storage: publicStorageStatus(),
+    health,
     serverTime: Date.now(),
   };
 }
@@ -285,12 +292,8 @@ async function hydrateStateFromStorage({ force = false } = {}) {
         `${SUPABASE_STATE_TABLE}?id=eq.${encodeURIComponent(GAME_STATE_ROW_ID)}&select=state`,
       );
       const snapshot = Array.isArray(rows) ? rows[0]?.state : null;
-      if (isValidStateSnapshot(snapshot)) {
-        state = {
-          ...freshState(),
-          ...snapshot,
-          updatedAt: Number(snapshot.updatedAt) || Date.now(),
-        };
+      if (isValidStateSnapshot(snapshot) && shouldUseStorageSnapshot(snapshot)) {
+        state = normalizeStateSnapshot(snapshot);
         storageStatus.lastLoadedAt = Date.now();
       }
       storageStatus.available = true;
@@ -309,6 +312,23 @@ async function hydrateStateFromStorage({ force = false } = {}) {
 
 function isValidStateSnapshot(snapshot) {
   return Boolean(snapshot && typeof snapshot === "object" && typeof snapshot.status === "string" && Array.isArray(snapshot.deck));
+}
+
+function shouldUseStorageSnapshot(snapshot) {
+  const snapshotUpdatedAt = Number(snapshot.updatedAt) || 0;
+  const localUpdatedAt = Number(state.updatedAt) || 0;
+  return snapshotUpdatedAt >= localUpdatedAt;
+}
+
+function normalizeStateSnapshot(snapshot) {
+  return {
+    ...freshState(),
+    ...snapshot,
+    called: Array.isArray(snapshot.called) ? snapshot.called : [],
+    deck: Array.isArray(snapshot.deck) ? snapshot.deck : shuffle(moments),
+    claims: Array.isArray(snapshot.claims) ? snapshot.claims : [],
+    updatedAt: Number(snapshot.updatedAt) || Date.now(),
+  };
 }
 
 function scheduleStorageSave() {
@@ -396,6 +416,7 @@ function drawNextMoment({ resetTimer = true } = {}) {
   if (state.status !== "playing") return false;
   if (!state.deck.length) {
     state.deck = shuffle(moments.filter((moment) => !state.called.some((word) => word.text === moment.text)));
+    if (!state.deck.length) state.deck = shuffle(moments);
   }
   const next = state.deck.shift();
   if (!next) {
@@ -406,6 +427,12 @@ function drawNextMoment({ resetTimer = true } = {}) {
   state.called.unshift(next);
   state.nextPullAt = resetTimer ? Date.now() + PULL_INTERVAL_MS : state.nextPullAt;
   return true;
+}
+
+function ensureLiveRoundHasMoment() {
+  if (state.status !== "playing") return false;
+  if (state.currentWord || state.called.length) return false;
+  return drawNextMoment({ resetTimer: true });
 }
 
 function startCurrentRound({ resetClaims = false } = {}) {
@@ -479,7 +506,56 @@ function advanceState() {
     markUpdated();
     return true;
   }
+  if (ensureLiveRoundHasMoment()) {
+    markUpdated();
+    return true;
+  }
   return false;
+}
+
+function prunePresence() {
+  const cutoff = Date.now() - 45 * 1000;
+  for (const roleMap of Object.values(presence)) {
+    for (const [id, entry] of roleMap.entries()) {
+      if (!entry.lastSeenAt || entry.lastSeenAt < cutoff) roleMap.delete(id);
+    }
+  }
+}
+
+function updatePresence(role, id, detail = {}) {
+  const safeRole = ["host", "display", "player"].includes(role) ? role : "player";
+  const safeId = String(id || `${safeRole}-${Math.random().toString(16).slice(2)}`).slice(0, 80);
+  presence[safeRole].set(safeId, {
+    ...presence[safeRole].get(safeId),
+    ...detail,
+    id: safeId,
+    role: safeRole,
+    lastSeenAt: Date.now(),
+  });
+  prunePresence();
+  return safeId;
+}
+
+function eventHealth(joinUrl) {
+  prunePresence();
+  const hasCurrentMoment = state.status !== "playing" || Boolean(state.currentWord || state.called.length);
+  const storageHealthy = !storageStatus.configured || storageStatus.available;
+  return {
+    ok: Boolean(joinUrl && storageHealthy && state.deck.length >= 0 && hasCurrentMoment),
+    joinReady: Boolean(joinUrl),
+    deckReady: state.status === "playing" ? Boolean(state.deck.length || state.currentWord) : moments.length >= 24,
+    currentMomentReady: hasCurrentMoment,
+    storageHealthy,
+    displayConnected: presence.display.size > 0,
+    hostConnected: presence.host.size > 0,
+    activePlayers: presence.player.size,
+    lastDisplaySeenAt: latestPresenceTime("display"),
+    lastPlayerSeenAt: latestPresenceTime("player"),
+  };
+}
+
+function latestPresenceTime(role) {
+  return Math.max(0, ...[...presence[role].values()].map((entry) => entry.lastSeenAt || 0)) || null;
 }
 
 function startStateTimer() {
@@ -816,6 +892,20 @@ async function routeApi(req, res, pathname) {
     return;
   }
 
+  if (pathname === "/api/heartbeat") {
+    const id = updatePresence(
+      String(body.role || "player"),
+      body.id,
+      {
+        player: String(body.player || "").slice(0, 40),
+        cards: Number(body.cards || 0),
+        path: String(body.path || "").slice(0, 80),
+      },
+    );
+    sendJson(res, { ok: true, id, health: eventHealth(joinUrlForOrigin(getOrigin(req))) });
+    return;
+  }
+
   if (pathname === "/api/start-countdown") {
     if (state.status === "playing" || state.status === "break") {
       sendJson(res, { error: "Reset the event before starting a new countdown." }, 409);
@@ -867,6 +957,10 @@ async function routeApi(req, res, pathname) {
   }
 
   if (pathname === "/api/reset") {
+    if (String(body.confirm || "") !== "RESET") {
+      sendJson(res, { error: "Type RESET to confirm a full event reset." }, 409);
+      return;
+    }
     state = freshState();
     await commitState();
     sendJson(res, publicState(req));
@@ -949,18 +1043,21 @@ function webOrigin(request) {
 
 function publicStateForOrigin(origin) {
   const round = rounds[state.roundIndex] || rounds[rounds.length - 1];
+  const joinUrl = joinUrlForOrigin(origin);
+  const health = eventHealth(joinUrl);
   return {
     ...state,
     round,
     rounds,
     moments,
-    joinUrl: joinUrlForOrigin(origin),
-    qrUrl: joinUrlForOrigin(origin),
+    joinUrl,
+    qrUrl: joinUrl,
     autoPullEverySeconds: PULL_INTERVAL_MS / 1000,
     pregameCountdownSeconds: PREGAME_COUNTDOWN_MS / 1000,
     leaderboard: leaderboardFromClaims(),
     latestClaim: state.claims[0] || null,
     storage: publicStorageStatus(),
+    health,
     serverTime: Date.now(),
   };
 }
@@ -1002,6 +1099,19 @@ async function handleApiWebRequest(request, pathname) {
     startCurrentRound({ resetClaims: state.roundIndex === 0 && state.status !== "break" });
     await commitState();
     return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/heartbeat") {
+    const id = updatePresence(
+      String(body.role || "player"),
+      body.id,
+      {
+        player: String(body.player || "").slice(0, 40),
+        cards: Number(body.cards || 0),
+        path: String(body.path || "").slice(0, 80),
+      },
+    );
+    return webJson({ ok: true, id, health: eventHealth(joinUrlForOrigin(origin)) });
   }
 
   if (pathname === "/api/start-countdown") {
@@ -1046,6 +1156,9 @@ async function handleApiWebRequest(request, pathname) {
   }
 
   if (pathname === "/api/reset") {
+    if (String(body.confirm || "") !== "RESET") {
+      return webJson({ error: "Type RESET to confirm a full event reset." }, 409);
+    }
     state = freshState();
     await commitState();
     return webJson(publicStateForOrigin(origin));
