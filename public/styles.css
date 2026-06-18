@@ -854,24 +854,26 @@ select {
 }
 
 .bingo-head {
-  color: #ffffff;
-  background: var(--gold);
+  color: #050505;
+  background: #ffffff;
   font-weight: 950;
   font-size: 18px;
+  box-shadow: 0 0 14px rgba(223, 255, 197, 0.58);
 }
 
 .bingo-cell {
   aspect-ratio: 1;
-  padding: 5px;
-  color: var(--ink);
-  background: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 12px;
-  font-weight: 850;
-  line-height: 1.05;
+  padding: 6px;
+  color: #071407;
+  background: #f7ffe9;
+  border: 2px solid rgba(223, 255, 197, 0.84);
+  font-size: clamp(12px, 1.15vw, 14px);
+  font-weight: 950;
+  line-height: 1.08;
   cursor: pointer;
   user-select: none;
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  box-shadow: inset 0 0 0 1px rgba(12, 72, 20, 0.12);
 }
 
 .bingo-cell:hover {
@@ -882,14 +884,16 @@ select {
 .bingo-cell.selected,
 .bingo-cell.free {
   color: #ffffff;
-  background: var(--gold);
-  border-color: var(--gold);
+  background: #0b3b14;
+  border-color: #ffffff;
+  box-shadow: var(--neon-glow);
 }
 
 .bingo-cell.win {
   color: #050505;
   background: #ffffff;
   border-color: #ffffff;
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.78);
 }
 
 .leaderboard-panel {
@@ -1586,9 +1590,9 @@ select {
   }
 
   .bingo-cell {
-    padding: 3px;
-    font-size: clamp(9px, 2.55vw, 12px);
-    line-height: 1;
+    padding: 4px;
+    font-size: clamp(10px, 2.9vw, 13px);
+    line-height: 1.04;
   }
 
   .card-actions {
