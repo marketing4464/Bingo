@@ -10,16 +10,19 @@ const GOOGLE_IMAGE_MANIFEST_PATH = path.join(PUBLIC_DIR, "assets", "google-image
 const PULL_INTERVAL_MS = 30 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
 const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
-const GAME_STATE_BLOB_PATH = "on-par-bingo/game-state/current.json";
+const GAME_STATE_ROW_ID = "current";
+const SUPABASE_STATE_TABLE = "on_par_bingo_state";
+const DEFAULT_SUPABASE_URL = "https://tmnstuthbllnoqgepotn.supabase.co";
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_G74TdOYv0R0AML1WZTfxJQ_YZqJa7jE";
 const PUBLIC_JOIN_URL = publicJoinUrlFromEnv();
 const imageCache = new Map();
 let googleImageManifest = loadGoogleImageManifest();
-let blobSdkPromise = null;
-let blobHydrationPromise = null;
-let blobHydrated = false;
-let blobSaveTimer = null;
-let blobStatus = {
-  configured: isBlobConfigured(),
+let storageHydrationPromise = null;
+let storageHydrated = false;
+let storageSaveTimer = null;
+let storageStatus = {
+  provider: "supabase",
+  configured: isSupabaseConfigured(),
   available: false,
   lastLoadedAt: null,
   lastSavedAt: null,
@@ -211,7 +214,7 @@ function publicState(req) {
     pregameCountdownSeconds: PREGAME_COUNTDOWN_MS / 1000,
     leaderboard: leaderboardFromClaims(),
     latestClaim: state.claims[0] || null,
-    storage: publicBlobStatus(),
+    storage: publicStorageStatus(),
     serverTime: Date.now(),
   };
 }
@@ -228,117 +231,148 @@ function shuffle(items) {
 function markUpdated() {
   state.updatedAt = Date.now();
   broadcast();
-  scheduleBlobSave();
+  scheduleStorageSave();
 }
 
 async function commitState() {
   markUpdated();
-  await flushStateToBlob();
+  await flushStateToStorage();
 }
 
-function isBlobConfigured() {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID));
-}
-
-function publicBlobStatus() {
+function supabaseConfig() {
   return {
-    configured: blobStatus.configured,
-    available: blobStatus.available,
-    lastLoadedAt: blobStatus.lastLoadedAt,
-    lastSavedAt: blobStatus.lastSavedAt,
-    error: blobStatus.error ? "Blob storage unavailable" : null,
+    url: (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || DEFAULT_SUPABASE_URL).replace(/\/$/, ""),
+    key: process.env.SUPABASE_SERVICE_ROLE_KEY
+      || process.env.SUPABASE_SECRET_KEY
+      || process.env.SUPABASE_SERVICE_KEY
+      || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      || process.env.SUPABASE_ANON_KEY
+      || DEFAULT_SUPABASE_PUBLISHABLE_KEY,
   };
 }
 
-async function getBlobSdk() {
-  if (!isBlobConfigured()) return null;
-  if (!blobSdkPromise) blobSdkPromise = import("@vercel/blob");
-  return blobSdkPromise;
+function isSupabaseConfigured() {
+  const config = supabaseConfig();
+  return Boolean(config.url && config.key);
 }
 
-async function hydrateStateFromBlob({ force = false } = {}) {
-  if (!force && blobHydrated) return;
-  if (!force && blobHydrationPromise) return blobHydrationPromise;
+function publicStorageStatus() {
+  return {
+    provider: storageStatus.provider,
+    configured: storageStatus.configured,
+    available: storageStatus.available,
+    lastLoadedAt: storageStatus.lastLoadedAt,
+    lastSavedAt: storageStatus.lastSavedAt,
+    error: storageStatus.error ? "Supabase storage unavailable" : null,
+  };
+}
+
+async function hydrateStateFromStorage({ force = false } = {}) {
+  if (!force && storageHydrated) return;
+  if (!force && storageHydrationPromise) return storageHydrationPromise;
   if (force) {
-    blobHydrationPromise = null;
-    blobHydrated = false;
+    storageHydrationPromise = null;
+    storageHydrated = false;
   }
-  blobHydrationPromise = (async () => {
-    blobStatus.configured = isBlobConfigured();
-    const sdk = await getBlobSdk();
-    if (!sdk) {
-      blobHydrated = true;
+  storageHydrationPromise = (async () => {
+    storageStatus.configured = isSupabaseConfigured();
+    if (!storageStatus.configured) {
+      storageHydrated = true;
       return;
     }
     try {
-      const result = await sdk.get(GAME_STATE_BLOB_PATH, { access: "private" });
-      if (result?.stream) {
-        const snapshot = await new Response(result.stream).json();
-        if (isValidStateSnapshot(snapshot)) {
-          state = {
-            ...freshState(),
-            ...snapshot,
-            updatedAt: Number(snapshot.updatedAt) || Date.now(),
-          };
-          blobStatus.lastLoadedAt = Date.now();
-        }
+      const rows = await supabaseRequest(
+        `${SUPABASE_STATE_TABLE}?id=eq.${encodeURIComponent(GAME_STATE_ROW_ID)}&select=state`,
+      );
+      const snapshot = Array.isArray(rows) ? rows[0]?.state : null;
+      if (isValidStateSnapshot(snapshot)) {
+        state = {
+          ...freshState(),
+          ...snapshot,
+          updatedAt: Number(snapshot.updatedAt) || Date.now(),
+        };
+        storageStatus.lastLoadedAt = Date.now();
       }
-      blobStatus.available = true;
-      blobStatus.error = null;
+      storageStatus.available = true;
+      storageStatus.error = null;
     } catch (error) {
-      blobStatus.available = false;
-      blobStatus.error = error.message || "Could not load Blob state";
-      console.warn("Vercel Blob state load skipped:", blobStatus.error);
+      storageStatus.available = false;
+      storageStatus.error = error.message || "Could not load Supabase state";
+      console.warn("Supabase state load skipped:", storageStatus.error);
     } finally {
-      blobHydrated = true;
-      blobHydrationPromise = null;
+      storageHydrated = true;
+      storageHydrationPromise = null;
     }
   })();
-  return blobHydrationPromise;
+  return storageHydrationPromise;
 }
 
 function isValidStateSnapshot(snapshot) {
   return Boolean(snapshot && typeof snapshot === "object" && typeof snapshot.status === "string" && Array.isArray(snapshot.deck));
 }
 
-function scheduleBlobSave() {
-  if (!isBlobConfigured()) return;
-  clearTimeout(blobSaveTimer);
-  blobSaveTimer = setTimeout(() => {
-    saveStateToBlob().catch((error) => {
-      blobStatus.available = false;
-      blobStatus.error = error.message || "Could not save Blob state";
-      console.warn("Vercel Blob state save skipped:", blobStatus.error);
+function scheduleStorageSave() {
+  if (!isSupabaseConfigured()) return;
+  clearTimeout(storageSaveTimer);
+  storageSaveTimer = setTimeout(() => {
+    saveStateToStorage().catch((error) => {
+      storageStatus.available = false;
+      storageStatus.error = error.message || "Could not save Supabase state";
+      console.warn("Supabase state save skipped:", storageStatus.error);
     });
   }, 250);
 }
 
-async function flushStateToBlob() {
-  if (!isBlobConfigured()) return;
-  clearTimeout(blobSaveTimer);
-  blobSaveTimer = null;
+async function flushStateToStorage() {
+  if (!isSupabaseConfigured()) return;
+  clearTimeout(storageSaveTimer);
+  storageSaveTimer = null;
   try {
-    await saveStateToBlob();
+    await saveStateToStorage();
   } catch (error) {
-    blobStatus.available = false;
-    blobStatus.error = error.message || "Could not save Blob state";
-    console.warn("Vercel Blob state save skipped:", blobStatus.error);
+    storageStatus.available = false;
+    storageStatus.error = error.message || "Could not save Supabase state";
+    console.warn("Supabase state save skipped:", storageStatus.error);
   }
 }
 
-async function saveStateToBlob() {
-  const sdk = await getBlobSdk();
-  if (!sdk) return;
-  await sdk.put(GAME_STATE_BLOB_PATH, JSON.stringify(state, null, 2), {
-    access: "private",
-    allowOverwrite: true,
-    contentType: "application/json",
-    cacheControlMaxAge: 0,
+async function saveStateToStorage() {
+  await supabaseRequest(`${SUPABASE_STATE_TABLE}?on_conflict=id`, {
+    method: "POST",
+    headers: {
+      Prefer: "resolution=merge-duplicates",
+    },
+    body: JSON.stringify({
+      id: GAME_STATE_ROW_ID,
+      state,
+      updated_at: new Date().toISOString(),
+    }),
   });
-  blobStatus.configured = true;
-  blobStatus.available = true;
-  blobStatus.lastSavedAt = Date.now();
-  blobStatus.error = null;
+  storageStatus.configured = true;
+  storageStatus.available = true;
+  storageStatus.lastSavedAt = Date.now();
+  storageStatus.error = null;
+}
+
+async function supabaseRequest(pathname, options = {}) {
+  const config = supabaseConfig();
+  if (!config.url || !config.key) throw new Error("Supabase is not configured");
+  const response = await fetch(`${config.url}/rest/v1/${pathname}`, {
+    ...options,
+    headers: {
+      apikey: config.key,
+      Authorization: `Bearer ${config.key}`,
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(`Supabase request failed (${response.status}): ${detail || response.statusText}`);
+  }
+  if (response.status === 204) return null;
+  const text = await response.text();
+  return text ? JSON.parse(text) : null;
 }
 
 function leaderboardFromClaims() {
@@ -725,15 +759,15 @@ function routeStatic(req, res, pathname) {
 }
 
 async function routeApi(req, res, pathname) {
-  await hydrateStateFromBlob({ force: true });
-  if (advanceState()) await flushStateToBlob();
+  await hydrateStateFromStorage({ force: true });
+  if (advanceState()) await flushStateToStorage();
   if (req.method === "GET" && pathname === "/api/state") {
     sendJson(res, publicState(req));
     return;
   }
 
   if (req.method === "GET" && pathname === "/api/storage-status") {
-    sendJson(res, { ok: true, storage: publicBlobStatus() });
+    sendJson(res, { ok: true, storage: publicStorageStatus() });
     return;
   }
 
@@ -926,14 +960,14 @@ function publicStateForOrigin(origin) {
     pregameCountdownSeconds: PREGAME_COUNTDOWN_MS / 1000,
     leaderboard: leaderboardFromClaims(),
     latestClaim: state.claims[0] || null,
-    storage: publicBlobStatus(),
+    storage: publicStorageStatus(),
     serverTime: Date.now(),
   };
 }
 
 async function handleApiWebRequest(request, pathname) {
-  await hydrateStateFromBlob({ force: true });
-  if (advanceState()) await flushStateToBlob();
+  await hydrateStateFromStorage({ force: true });
+  if (advanceState()) await flushStateToStorage();
   const method = request.method;
   const origin = webOrigin(request);
   const requestUrl = new URL(request.url);
@@ -950,7 +984,7 @@ async function handleApiWebRequest(request, pathname) {
   }
 
   if (method === "GET" && pathname === "/api/storage-status") {
-    return webJson({ ok: true, storage: publicBlobStatus() });
+    return webJson({ ok: true, storage: publicStorageStatus() });
   }
 
   if (method !== "POST") {

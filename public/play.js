@@ -196,8 +196,13 @@ async function claimBingo(cardNumber) {
 function renderRecentPulls(state) {
   if (!playerRecentWords) return;
   playerRecentWords.innerHTML = state.called.length
-    ? state.called.slice(0, 12).map((word, index) => `<span class="word-chip ${index === 0 ? "current-pull" : ""}">${escapeHtml(word.text)}</span>`).join("")
-    : `<span class="small">No moments pulled yet.</span>`;
+    ? state.called.slice(0, 12).map((word, index) => `
+      <span class="word-chip player-word-chip ${index === 0 ? "current-pull" : ""}">
+        <span>${index === 0 ? "Now" : `#${index + 1}`}</span>
+        <strong>${escapeHtml(word.text)}</strong>
+      </span>
+    `).join("")
+    : `<span class="empty-recent">No moments pulled yet.</span>`;
 }
 
 function showToast(message) {

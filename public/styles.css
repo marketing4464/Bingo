@@ -1363,20 +1363,89 @@ select {
   bottom: 0;
   z-index: 2;
   margin-inline: -12px;
+  padding: 14px 12px 12px;
   border-bottom: 0;
-  background: rgba(5, 5, 5, 0.94);
+  border-color: rgba(223, 255, 197, 0.5);
+  background: rgba(5, 5, 5, 0.96);
   backdrop-filter: blur(8px);
+  box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.32);
+}
+
+.player-recent > strong {
+  margin-bottom: 8px;
+  font-size: clamp(16px, 2.2vw, 21px);
+  line-height: 1;
 }
 
 .player-recent .word-list {
   flex-wrap: nowrap;
   overflow-x: auto;
-  padding-bottom: 4px;
+  gap: 10px;
+  padding: 2px 2px 8px;
   scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
 }
 
 .player-recent .word-chip {
   flex: 0 0 auto;
+}
+
+.player-word-chip {
+  display: grid;
+  align-content: center;
+  min-width: clamp(124px, 16vw, 178px);
+  max-width: min(72vw, 220px);
+  min-height: 56px;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  background: #050505;
+  border-color: rgba(223, 255, 197, 0.58);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.player-word-chip span {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 950;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.player-word-chip strong {
+  display: block;
+  min-width: 0;
+  margin-top: 3px;
+  color: #ffffff;
+  font-size: clamp(17px, 2vw, 23px);
+  line-height: 1.02;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-word-chip.current-pull {
+  background: #ffffff;
+  border-color: #ffffff;
+  box-shadow: var(--neon-glow);
+}
+
+.player-word-chip.current-pull span {
+  color: #185d24;
+}
+
+.player-word-chip.current-pull strong {
+  color: #050505;
+}
+
+.empty-recent {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius);
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 15px;
+  font-weight: 850;
 }
 
 .toast {
@@ -1532,11 +1601,16 @@ select {
 
   .player-recent {
     margin-inline: -7px;
-    padding: 10px 8px;
+    padding: 10px 8px 9px;
   }
 
   .player-recent .word-chip {
+    min-width: 132px;
+    min-height: 52px;
     padding: 8px 10px;
-    font-size: 13px;
+  }
+
+  .player-word-chip strong {
+    font-size: clamp(16px, 4.8vw, 20px);
   }
 }
