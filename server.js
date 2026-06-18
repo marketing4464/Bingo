@@ -407,9 +407,15 @@ function leaderboardFromClaims() {
 }
 
 function pointsForBingo(bingo, pattern) {
-  if (bingo.id === "coverup" || bingo.id === "blackout") return pattern === "Blackout" ? 150 : 50;
-  if (bingo.id === "four-corners" || bingo.id === "x-pattern") return 50;
-  return 100;
+  if (isRegularLineBingo(bingo.id)) return 100;
+  if (bingo.id === "four-corners") return pattern === "Four Corners" ? 50 : 0;
+  if (bingo.id === "x-pattern") return pattern === "X Pattern" ? 50 : 0;
+  if (bingo.id === "coverup" || bingo.id === "blackout") return pattern === "Blackout" ? 150 : 0;
+  return 0;
+}
+
+function isRegularLineBingo(id) {
+  return /^row-[1-5]$/.test(id) || /^col-[1-5]$/.test(id) || id === "diag-1" || id === "diag-2";
 }
 
 function drawNextMoment({ resetTimer = true } = {}) {
@@ -988,7 +994,8 @@ async function routeApi(req, res, pathname) {
         points: pointsForBingo({ id }, rounds[state.roundIndex].pattern),
       };
     });
-    if (!bingos.length) {
+    const validBingos = bingos.filter((bingo) => bingo.points > 0);
+    if (!validBingos.length) {
       sendJson(res, { error: "No BINGO pattern was submitted." }, 400);
       return;
     }
@@ -999,13 +1006,13 @@ async function routeApi(req, res, pathname) {
       }, 409);
       return;
     }
-    const bingoCount = bingos.length;
-    const points = bingos.reduce((sum, bingo) => sum + bingo.points, 0);
+    const bingoCount = validBingos.length;
+    const points = validBingos.reduce((sum, bingo) => sum + bingo.points, 0);
     const claim = {
       id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
       player: String(body.player || "Player").slice(0, 40),
       card: Number(body.card || 1),
-      bingos,
+      bingos: validBingos,
       bingoCount,
       points,
       pattern: rounds[state.roundIndex].pattern,
@@ -1184,20 +1191,21 @@ async function handleApiWebRequest(request, pathname) {
         points: pointsForBingo({ id }, rounds[state.roundIndex].pattern),
       };
     });
-    if (!bingos.length) return webJson({ error: "No BINGO pattern was submitted." }, 400);
+    const validBingos = bingos.filter((bingo) => bingo.points > 0);
+    if (!validBingos.length) return webJson({ error: "No BINGO pattern was submitted." }, 400);
     if (invalidWords.length) {
       return webJson({
         error: `False BINGO: these words have not been pulled yet: ${[...new Set(invalidWords)].join(", ")}`,
         invalidWords: [...new Set(invalidWords)],
       }, 409);
     }
-    const bingoCount = bingos.length;
-    const points = bingos.reduce((sum, bingo) => sum + bingo.points, 0);
+    const bingoCount = validBingos.length;
+    const points = validBingos.reduce((sum, bingo) => sum + bingo.points, 0);
     const claim = {
       id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
       player: String(body.player || "Player").slice(0, 40),
       card: Number(body.card || 1),
-      bingos,
+      bingos: validBingos,
       bingoCount,
       points,
       pattern: rounds[state.roundIndex].pattern,

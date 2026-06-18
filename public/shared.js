@@ -104,6 +104,20 @@ function statusLabel(status) {
   return "Ready";
 }
 
+function roundRuleLabel(pattern) {
+  if (pattern === "Four Corners") return "Any line bingo + Four Corners bonus";
+  if (pattern === "X Pattern") return "Any line bingo + X bonus";
+  if (pattern === "Blackout") return "Any line bingo + Blackout bonus";
+  return "Any line bingo";
+}
+
+function bonusRuleLabel(pattern) {
+  if (pattern === "Four Corners") return "Four Corners bonus +50";
+  if (pattern === "X Pattern") return "X bonus +50";
+  if (pattern === "Blackout") return "Blackout bonus +150";
+  return "No bonus pattern";
+}
+
 function calledSet(state) {
   return new Set((state.called || []).map((word) => word.text));
 }

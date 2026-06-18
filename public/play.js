@@ -65,7 +65,7 @@ function shuffle(items) {
 
 function renderPlayer(state) {
   playerRound.textContent = `Round ${state.roundIndex + 1}: ${state.round.name}`;
-  playerMeta.textContent = `${statusLabel(state.status)} • ${state.round.pattern} • Current: ${state.currentWord?.text || "waiting"} • Tap your own squares`;
+  playerMeta.textContent = `${statusLabel(state.status)} • ${roundRuleLabel(state.round.pattern)} • Current: ${state.currentWord?.text || "waiting"} • Tap your own squares`;
 
   cardsEl.innerHTML = cards.map((card) => renderCard(card, state.round.pattern)).join("");
   renderRecentPulls(state);
@@ -148,18 +148,12 @@ function completedBingos(selected, pattern) {
     .filter((line) => line.cells.every((index) => marked[index]))
     .map((line) => ({ ...line, points: 100 }));
   const bonusBingos = [];
-  const addCoverup = () => {
-    if (marked.every(Boolean)) {
-      bonusBingos.push({ id: "coverup", label: "Coverup Bonus", cells: allCells, points: 50 });
-    }
-  };
 
   if (pattern === "Four Corners") {
     const corners = [0, 4, 20, 24];
     if (corners.every((index) => marked[index])) {
       bonusBingos.push({ id: "four-corners", label: "Four Corners Bonus", cells: corners, points: 50 });
     }
-    addCoverup();
     return [...regularBingos, ...bonusBingos];
   }
 
@@ -168,16 +162,17 @@ function completedBingos(selected, pattern) {
     if (x.every((index) => marked[index])) {
       bonusBingos.push({ id: "x-pattern", label: "X Bingo Bonus", cells: x, points: 50 });
     }
-    addCoverup();
     return [...regularBingos, ...bonusBingos];
   }
 
   if (pattern === "Blackout") {
-    return marked.every(Boolean) ? [{ id: "coverup", label: "Coverup", cells: allCells, points: 150 }] : [];
+    if (marked.every(Boolean)) {
+      bonusBingos.push({ id: "blackout", label: "Blackout Bonus", cells: allCells, points: 150 });
+    }
+    return [...regularBingos, ...bonusBingos];
   }
 
-  addCoverup();
-  return [...regularBingos, ...bonusBingos];
+  return regularBingos;
 }
 
 async function claimBingo(cardNumber) {

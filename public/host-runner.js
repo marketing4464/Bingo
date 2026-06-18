@@ -33,7 +33,7 @@ const HostRunbook = (() => {
         </div>
         <div class="host-notes">
           <strong>Player rules to announce</strong>
-          <p>Each player can choose 1-3 cards. Tap each moment when it is called. Line Bingo is 100 points, bonus patterns are 50 points, and blackout is 150 points. Players tap BINGO only when their current round pattern is complete.</p>
+          <p>Each player can choose 1-3 cards. Every round accepts regular bingo: any row, column, or diagonal is 100 points. Four Corners, X, and Blackout are bonus points only. Players tap BINGO when they complete a regular line or a bonus pattern.</p>
         </div>
       </div>
     `;
@@ -108,7 +108,7 @@ const HostRunbook = (() => {
     return [
       { number: "1", text: "Open the display screen and confirm the QR code says Scan to play.", state: status === "setup" ? "active" : "done" },
       { number: "2", text: "Start the 15-minute countdown and let players enter names and choose up to 3 cards.", state: status === "countdown" ? "active" : stepDone(status, ["playing", "break", "ended"]) },
-      { number: "3", text: "Round 1 starts automatically. Watch moments pull every 30 seconds or pull manually if needed.", state: status === "playing" ? "active" : stepDone(status, ["break", "ended"]) },
+      { number: "3", text: "Round 1 starts automatically. Regular bingo is valid every round; bonus patterns add extra points.", state: status === "playing" ? "active" : stepDone(status, ["break", "ended"]) },
       { number: "4", text: "During breaks, confirm leaderboard and claims before the next round starts.", state: status === "break" ? "active" : stepDone(status, ["ended"]) },
       { number: "5", text: "At the end, leave the final winner video running and announce prize pickup.", state: status === "ended" ? "active" : "waiting" },
     ];

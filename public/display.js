@@ -83,7 +83,7 @@ function updateDisplayTimers(state) {
 function renderDisplay(state) {
   document.body.dataset.displayStatus = state.status;
   displayEls.title.textContent = state.title;
-  displayEls.round.textContent = `Round ${state.roundIndex + 1}: ${state.round.name} • ${state.round.pattern} • New word every ${state.autoPullEverySeconds}s`;
+  displayEls.round.textContent = `Round ${state.roundIndex + 1}: ${state.round.name} • ${roundRuleLabel(state.round.pattern)} • New word every ${state.autoPullEverySeconds}s`;
   renderQrImage(displayEls.qr, state.joinUrl);
   displayEls.join.textContent = state.joinUrl;
   const joinTitle = document.querySelector(".join-strip strong");

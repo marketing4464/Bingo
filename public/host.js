@@ -57,7 +57,7 @@ function render(state) {
   const roundNumber = state.roundIndex + 1;
   HostRunbook.render(els.commandCenter, state);
   els.roundName.textContent = `Round ${roundNumber}: ${state.round.name}`;
-  els.roundMeta.textContent = `${state.round.pattern} • ${state.round.playMinutes} minutes of play • words rotate every ${state.autoPullEverySeconds} seconds`;
+  els.roundMeta.textContent = `${roundRuleLabel(state.round.pattern)} • ${state.round.playMinutes} minutes of play • words rotate every ${state.autoPullEverySeconds} seconds`;
   els.statusPill.textContent = statusLabel(state.status);
   els.statusPill.className = `status-pill ${state.status}`;
   els.currentWord.textContent = state.currentWord?.text || (state.status === "countdown" ? "Bingo Starts Soon" : state.status === "break" ? "Break Time" : state.status === "ended" ? "Event Complete" : "Ready?");
@@ -97,9 +97,9 @@ function render(state) {
           <span class="round-number">${index + 1}</span>
           <div>
             <strong>${escapeHtml(round.name)}</strong>
-            <div class="small">${escapeHtml(round.pattern)}</div>
+            <div class="small">${escapeHtml(roundRuleLabel(round.pattern))}</div>
           </div>
-          <span class="small">${round.playMinutes} min${breakText}</span>
+          <span class="small">${round.playMinutes} min${breakText}<br>${escapeHtml(bonusRuleLabel(round.pattern))}</span>
         </div>
       `;
     })
