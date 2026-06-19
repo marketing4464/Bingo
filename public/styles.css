@@ -35,6 +35,15 @@ body {
   background-attachment: fixed;
 }
 
+html.player-page,
+body.player-body {
+  overscroll-behavior-y: none;
+}
+
+body.player-body {
+  background-attachment: scroll;
+}
+
 body::before {
   content: none;
   position: fixed;

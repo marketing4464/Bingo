@@ -3,6 +3,9 @@ let cards = [];
 let currentState = null;
 let currentCardRoundIndex = null;
 let playerHeartbeatTimer = null;
+let attemptedSessionRestore = false;
+
+const PLAYER_STORAGE_KEY = "onParBingoPlayerSession";
 
 const joinPanel = $("#joinPanel");
 const gamePanel = $("#gamePanel");
@@ -12,6 +15,8 @@ const playerRound = $("#playerRound");
 const playerMeta = $("#playerMeta");
 const playerRecentWords = $("#playerRecentWords");
 const toast = $("#toast");
+
+installPullToRefreshGuard();
 
 joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -24,14 +29,20 @@ joinForm.addEventListener("submit", async (event) => {
   joinPanel.classList.add("hidden");
   gamePanel.classList.remove("hidden");
   renderPlayer(state);
+  savePlayerSession();
 });
 
 subscribe((state) => {
   currentState = state;
+  if (!attemptedSessionRestore && gamePanel.classList.contains("hidden")) {
+    attemptedSessionRestore = true;
+    restorePlayerSession(state);
+  }
   if (!gamePanel.classList.contains("hidden")) {
     if (currentCardRoundIndex !== null && state.roundIndex !== currentCardRoundIndex) {
       resetCardsForNewRound();
       currentCardRoundIndex = state.roundIndex;
+      savePlayerSession();
       showToast(`Round ${state.roundIndex + 1} started. Cards reset.`);
     }
     renderPlayer(state);
@@ -98,6 +109,7 @@ function toggleCell(cardNumber, index) {
     card.selected.add(index);
   }
   if (currentState) renderPlayer(currentState);
+  savePlayerSession();
 }
 
 function renderCard(card, pattern) {
@@ -192,6 +204,7 @@ async function claimBingo(cardNumber) {
     const result = await api("/api/claim", { player, card: cardNumber, bingos: claimBingos });
     newBingos.forEach((bingo) => card.claimedBingos.add(bingo.id));
     renderPlayer(currentState);
+    savePlayerSession();
     showToast(`${newBingos.length} BINGO${newBingos.length === 1 ? "" : "S"} sent. +${result.claim.points} points.`);
   } catch (error) {
     showToast(error.message || "Could not send claim.");
@@ -214,6 +227,82 @@ function showToast(message) {
   toast.textContent = message;
   toast.classList.remove("hidden");
   setTimeout(() => toast.classList.add("hidden"), 2600);
+}
+
+function installPullToRefreshGuard() {
+  let touchStartY = 0;
+  document.addEventListener("touchstart", (event) => {
+    if (event.touches.length !== 1) return;
+    touchStartY = event.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener("touchmove", (event) => {
+    if (event.touches.length !== 1) return;
+    if (event.target.closest("input, select, textarea")) return;
+    const scrollEl = document.scrollingElement || document.documentElement;
+    const isPullingDownAtTop = scrollEl.scrollTop <= 0 && event.touches[0].clientY > touchStartY;
+    if (isPullingDownAtTop) {
+      event.preventDefault();
+    }
+  }, { passive: false });
+}
+
+function savePlayerSession() {
+  if (!player || !cards.length || currentCardRoundIndex === null) return;
+  try {
+    localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify({
+      player,
+      roundIndex: currentCardRoundIndex,
+      cards: cards.map((card) => ({
+        number: card.number,
+        cells: card.cells,
+        selected: [...card.selected],
+        claimedBingos: [...card.claimedBingos],
+      })),
+    }));
+  } catch (error) {
+    console.warn("Could not save bingo card progress.", error);
+  }
+}
+
+function restorePlayerSession(state) {
+  const saved = loadPlayerSession();
+  if (!saved) return;
+  player = saved.player;
+  cards = saved.cards;
+  currentCardRoundIndex = saved.roundIndex;
+  if (currentCardRoundIndex !== state.roundIndex) {
+    resetCardsForNewRound();
+    currentCardRoundIndex = state.roundIndex;
+  }
+  $("#playerName").value = player;
+  $("#cardCount").value = String(Math.max(1, Math.min(3, cards.length)));
+  startPlayerHeartbeat();
+  joinPanel.classList.add("hidden");
+  gamePanel.classList.remove("hidden");
+  savePlayerSession();
+}
+
+function loadPlayerSession() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY) || "null");
+    if (!saved || !saved.player || !Array.isArray(saved.cards) || !saved.cards.length) return null;
+    const restoredCards = saved.cards.slice(0, 3).map((card, index) => ({
+      number: Number(card.number) || index + 1,
+      cells: Array.isArray(card.cells) && card.cells.length === 25 ? card.cells : [],
+      selected: new Set(Array.isArray(card.selected) ? card.selected : [12]),
+      claimedBingos: new Set(Array.isArray(card.claimedBingos) ? card.claimedBingos : []),
+    })).filter((card) => card.cells.length === 25);
+    if (!restoredCards.length) return null;
+    return {
+      player: String(saved.player),
+      roundIndex: Number.isInteger(saved.roundIndex) ? saved.roundIndex : 0,
+      cards: restoredCards,
+    };
+  } catch (error) {
+    console.warn("Could not restore bingo card progress.", error);
+    return null;
+  }
 }
 
 function escapeHtml(value) {
