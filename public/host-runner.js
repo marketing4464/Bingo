@@ -33,7 +33,7 @@ const HostRunbook = (() => {
         </div>
         <div class="host-notes">
           <strong>Player rules to announce</strong>
-          <p>Each player can choose 1-3 cards. Every round accepts regular bingo: any row, column, or diagonal is 100 points. Four Corners, X, and Blackout are bonus points only. Players tap BINGO when they complete a regular line or a bonus pattern.</p>
+          <p>Each player can choose 1-3 cards. Every round accepts regular bingo: any row, column, or diagonal is 100 points. X Bingo and Blackout Bingo are also 100 points when active. Four Corners is 50 points. Players tap BINGO when they complete a regular line or an active bonus pattern.</p>
         </div>
       </div>
     `;

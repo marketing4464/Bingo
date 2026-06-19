@@ -391,8 +391,8 @@ function leaderboardFromClaims() {
 function pointsForBingo(bingo, pattern) {
   if (isRegularLineBingo(bingo.id)) return 100;
   if (bingo.id === "four-corners") return pattern === "Four Corners" ? 50 : 0;
-  if (bingo.id === "x-pattern") return pattern === "X Pattern" ? 50 : 0;
-  if (bingo.id === "coverup" || bingo.id === "blackout") return pattern === "Blackout" ? 150 : 0;
+  if (bingo.id === "x-pattern") return pattern === "X Pattern" ? 100 : 0;
+  if (bingo.id === "coverup" || bingo.id === "blackout") return pattern === "Blackout" ? 100 : 0;
   return 0;
 }
 

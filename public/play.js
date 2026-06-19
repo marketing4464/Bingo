@@ -176,14 +176,14 @@ function completedBingos(selected, pattern) {
   if (pattern === "X Pattern") {
     const x = [0, 4, 6, 8, 12, 16, 18, 20, 24];
     if (x.every((index) => marked[index])) {
-      bonusBingos.push({ id: "x-pattern", label: "X Bingo Bonus", cells: x, points: 50 });
+      bonusBingos.push({ id: "x-pattern", label: "X Bingo", cells: x, points: 100 });
     }
     return [...regularBingos, ...bonusBingos];
   }
 
   if (pattern === "Blackout") {
     if (marked.every(Boolean)) {
-      bonusBingos.push({ id: "blackout", label: "Blackout Bonus", cells: allCells, points: 150 });
+      bonusBingos.push({ id: "blackout", label: "Blackout Bingo", cells: allCells, points: 100 });
     }
     return [...regularBingos, ...bonusBingos];
   }
