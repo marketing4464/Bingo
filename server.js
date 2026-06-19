@@ -283,6 +283,15 @@ function normalizeStateSnapshot(snapshot) {
   };
 }
 
+function clampLivePullTimer() {
+  if (state.status !== "playing" || !state.nextPullAt) return false;
+  const latestAllowedPullAt = Date.now() + PULL_INTERVAL_MS;
+  if (state.nextPullAt <= latestAllowedPullAt) return false;
+  state.nextPullAt = latestAllowedPullAt;
+  markUpdated();
+  return true;
+}
+
 function scheduleStorageSave() {
   if (!isSupabaseConfigured()) return;
   clearTimeout(storageSaveTimer);
@@ -794,7 +803,8 @@ function routeStatic(req, res, pathname) {
 
 async function routeApi(req, res, pathname) {
   await hydrateStateFromStorage({ force: true });
-  if (advanceState()) await flushStateToStorage();
+  const timingClamped = clampLivePullTimer();
+  if (advanceState() || timingClamped) await flushStateToStorage();
   if (req.method === "GET" && pathname === "/api/state") {
     sendJson(res, publicState(req));
     return;
@@ -1023,7 +1033,8 @@ function publicStateForOrigin(origin) {
 
 async function handleApiWebRequest(request, pathname) {
   await hydrateStateFromStorage({ force: true });
-  if (advanceState()) await flushStateToStorage();
+  const timingClamped = clampLivePullTimer();
+  if (advanceState() || timingClamped) await flushStateToStorage();
   const method = request.method;
   const origin = webOrigin(request);
   const requestUrl = new URL(request.url);
