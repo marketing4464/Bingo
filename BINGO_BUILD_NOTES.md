@@ -88,7 +88,7 @@ Use this file as the starting brief for future themed bingo games at On Par Ente
 
 - Cheugy was removed from the deck.
 - Tam Ghost was removed from the deck.
-- Current deck size after adding the approved 30-word pop culture batch: 138 phrases.
+- Current deck size after removing 48 lower-priority phrases: 90 phrases.
 - Current manifest files:
   - `public/assets/google-image-manifest.json`
   - `public/assets/google-image-manifest-quality.json`
