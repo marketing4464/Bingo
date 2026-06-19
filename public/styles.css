@@ -1046,16 +1046,21 @@ select {
 .bingo-cell.selected,
 .bingo-cell.free {
   color: #ffffff;
-  background: #0b3b14;
-  border-color: #ffffff;
-  box-shadow: var(--neon-glow);
+  background: #050505;
+  border-color: rgba(255, 255, 255, 0.88);
+  box-shadow: inset 0 0 0 1px rgba(223, 255, 197, 0.22), 0 0 10px rgba(0, 0, 0, 0.46);
 }
 
 .bingo-cell.win {
-  color: #050505;
-  background: #ffffff;
-  border-color: #ffffff;
-  box-shadow: 0 0 18px rgba(255, 255, 255, 0.78);
+  color: #ffffff;
+  background: #050505;
+  border-color: #dfffbe;
+  outline: 3px solid #dfffbe;
+  outline-offset: -5px;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.72),
+    0 0 20px rgba(223, 255, 197, 0.86),
+    0 0 8px rgba(255, 255, 255, 0.72);
 }
 
 .leaderboard-panel {
