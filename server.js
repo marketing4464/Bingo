@@ -226,6 +226,27 @@ function publicStorageStatus() {
   };
 }
 
+function roleCanAdvanceGameClock(role) {
+  return role === "host" || role === "display";
+}
+
+function roleFromNodeRequest(req) {
+  const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+  return String(url.searchParams.get("role") || req.headers["x-bingo-role"] || "").toLowerCase();
+}
+
+function roleFromWebRequest(request) {
+  const url = new URL(request.url);
+  return String(url.searchParams.get("role") || request.headers.get("x-bingo-role") || "").toLowerCase();
+}
+
+async function prepareStateForRequest(canAdvanceGameClock) {
+  await hydrateStateFromStorage({ force: true });
+  if (!canAdvanceGameClock) return;
+  const timingClamped = clampLivePullTimer();
+  if (advanceState() || timingClamped) await flushStateToStorage();
+}
+
 async function hydrateStateFromStorage({ force = false } = {}) {
   if (!force && storageHydrated) return;
   if (!force && storageHydrationPromise) return storageHydrationPromise;
@@ -802,9 +823,7 @@ function routeStatic(req, res, pathname) {
 }
 
 async function routeApi(req, res, pathname) {
-  await hydrateStateFromStorage({ force: true });
-  const timingClamped = clampLivePullTimer();
-  if (advanceState() || timingClamped) await flushStateToStorage();
+  await prepareStateForRequest(roleCanAdvanceGameClock(roleFromNodeRequest(req)));
   if (req.method === "GET" && pathname === "/api/state") {
     sendJson(res, publicState(req));
     return;
@@ -1032,12 +1051,10 @@ function publicStateForOrigin(origin) {
 }
 
 async function handleApiWebRequest(request, pathname) {
-  await hydrateStateFromStorage({ force: true });
-  const timingClamped = clampLivePullTimer();
-  if (advanceState() || timingClamped) await flushStateToStorage();
   const method = request.method;
   const origin = webOrigin(request);
   const requestUrl = new URL(request.url);
+  await prepareStateForRequest(roleCanAdvanceGameClock(roleFromWebRequest(request)));
 
   if (method === "GET" && pathname === "/api/state") {
     return webJson(publicStateForOrigin(origin));

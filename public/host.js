@@ -1,5 +1,7 @@
 let latestState = null;
 
+setBingoClientRole("host");
+
 const els = {
   roundName: $("#roundName"),
   roundMeta: $("#roundMeta"),

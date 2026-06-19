@@ -2,11 +2,26 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const momentImageCache = new Map();
 let heartbeatId = localStorage.getItem("bingoHeartbeatId") || "";
+let bingoClientRole = inferBingoClientRole();
+
+function inferBingoClientRole() {
+  const pathname = window.location.pathname;
+  if (pathname.includes("display")) return "display";
+  if (pathname.includes("host") || pathname === "/" || pathname.endsWith("/host.html")) return "host";
+  return "player";
+}
+
+function setBingoClientRole(role) {
+  bingoClientRole = String(role || "player").toLowerCase();
+}
 
 function api(path, body = {}) {
   return fetch(path, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "X-Bingo-Role": bingoClientRole,
+    },
     body: JSON.stringify(body),
   }).then(async (response) => {
     const data = await response.json();
@@ -16,7 +31,11 @@ function api(path, body = {}) {
 }
 
 function getState() {
-  return fetch("/api/state", { cache: "no-store" }).then((response) => response.json());
+  const params = new URLSearchParams({ role: bingoClientRole });
+  return fetch(`/api/state?${params.toString()}`, {
+    cache: "no-store",
+    headers: { "X-Bingo-Role": bingoClientRole },
+  }).then((response) => response.json());
 }
 
 function subscribe(onState) {

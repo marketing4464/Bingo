@@ -16,6 +16,8 @@ const playerMeta = $("#playerMeta");
 const playerRecentWords = $("#playerRecentWords");
 const toast = $("#toast");
 
+setBingoClientRole("player");
+
 installPullToRefreshGuard();
 
 joinForm.addEventListener("submit", async (event) => {

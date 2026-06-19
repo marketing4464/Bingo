@@ -21,6 +21,8 @@ let displayWordFitFrame = null;
 let heldCountdownState = null;
 let lastDisplayedMoment = null;
 
+setBingoClientRole("display");
+
 startHeartbeat("display");
 
 subscribe((state) => {
@@ -133,9 +135,9 @@ function renderDisplay(state) {
 
 function scheduleDisplayWordFit() {
   if (displayWordFitFrame) cancelAnimationFrame(displayWordFitFrame);
-    displayWordFitFrame = requestAnimationFrame(() => {
-      displayWordFitFrame = null;
-    fitSingleLineText(displayEls.word, 12);
+  displayWordFitFrame = requestAnimationFrame(() => {
+    displayWordFitFrame = null;
+    fitSingleLineText(displayEls.word, 28);
   });
 }
 
@@ -186,8 +188,8 @@ function renderLeaderboard(state) {
     : nextRound
     ? `Up next: Round ${state.roundIndex + 2} • ${nextRound.name}`
     : "Final leaderboard";
+  const listRows = rows.slice(3, 9);
   displayEls.leaderboardPanel.innerHTML = `
-    ${isEnded ? renderFinalWinners(rows) : ""}
     <div class="break-header event-art-panel ${isEnded ? "final-header" : ""}">
       <div>
         <p class="brand-kicker">${isEnded ? "Final Scores" : "10-Minute Break"}</p>
@@ -199,6 +201,7 @@ function renderLeaderboard(state) {
         <strong id="breakCountdown">${formatClock(state.breakEndsAt - Date.now())}</strong>
       </div>
     </div>
+    ${renderTopLeaders(rows, isEnded)}
     ${isEnded && rows.length ? `
       <div class="winner-banner">
         <span>Overall Winner</span>
@@ -207,15 +210,17 @@ function renderLeaderboard(state) {
       </div>
     ` : ""}
     ${isEnded && rows.length ? renderPrizeClaim(rows) : ""}
-    <div class="leaderboard-list">
-      ${rows.length ? rows.slice(0, 8).map((row, index) => `
+    ${listRows.length ? `
+      <div class="leaderboard-list">
+        ${listRows.map((row, index) => `
         <div class="leaderboard-row">
-          <span class="leaderboard-rank">${index + 1}</span>
+          <span class="leaderboard-rank">${index + 4}</span>
           <span class="leaderboard-name">${escapeHtml(row.player)}</span>
           <span class="leaderboard-score">${row.points} pts</span>
         </div>
-      `).join("") : `<div class="leaderboard-empty">No BINGO claims yet.</div>`}
-    </div>
+      `).join("")}
+      </div>
+    ` : ""}
   `;
   scheduleFinalWinnerFit();
 }
@@ -230,11 +235,14 @@ function updateFinalVideo(shouldShow) {
   }
 }
 
-function renderFinalWinners(rows) {
+function renderTopLeaders(rows, isEnded) {
   const winners = rows.slice(0, 3);
+  const heading = isEnded ? "Tonight's Winners" : "Top 3 Leaders";
+  const emptyTitle = isEnded ? "Final Scores" : "Leaderboard";
+  const emptySubtitle = isEnded ? "Thanks for playing" : "Claims will appear here";
   return `
-    <section class="final-winners-overlay" aria-label="Final winners">
-      <p class="brand-kicker">Tonight's Winners</p>
+    <section class="final-winners-overlay leaderboard-top-three" aria-label="${isEnded ? "Final winners" : "Top three leaders"}">
+      <p class="brand-kicker">${heading}</p>
       ${winners.length ? `
         <div class="final-winner-podium">
           ${winners.map((winner, index) => `
@@ -247,9 +255,9 @@ function renderFinalWinners(rows) {
         </div>
       ` : `
         <div class="final-winner-card no-winners">
-          <span>Final Scores</span>
+          <span>${emptyTitle}</span>
           <strong>No claims yet</strong>
-          <em>Thanks for playing</em>
+          <em>${emptySubtitle}</em>
         </div>
       `}
     </section>
