@@ -35,7 +35,11 @@ function getState() {
   return fetch(`/api/state?${params.toString()}`, {
     cache: "no-store",
     headers: { "X-Bingo-Role": bingoClientRole },
-  }).then((response) => response.json());
+  }).then(async (response) => {
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Could not refresh bingo state");
+    return data;
+  });
 }
 
 function subscribe(onState) {
@@ -96,6 +100,11 @@ function stabilizeLiveState(state, previous) {
   const incomingUpdatedAt = Number(state.updatedAt) || 0;
   const previousUpdatedAt = Number(previous.updatedAt) || 0;
   if (incomingUpdatedAt < previousUpdatedAt) return null;
+
+  const previousRound = Number(previous.roundIndex) || 0;
+  const incomingRound = Number(state.roundIndex) || 0;
+  if (previous.status !== "ended" && incomingRound < previousRound) return null;
+  if ((previous.status === "playing" || previous.status === "break") && state.status === "setup") return null;
 
   const sameLiveRound = state.status === "playing"
     && previous.status === "playing"

@@ -37,11 +37,11 @@ joinForm.addEventListener("submit", async (event) => {
 subscribe((state) => {
   currentState = state;
   if (!attemptedSessionRestore && gamePanel.classList.contains("hidden")) {
-    attemptedSessionRestore = true;
-    restorePlayerSession(state);
+    attemptedSessionRestore = restorePlayerSession(state);
   }
   if (!gamePanel.classList.contains("hidden")) {
-    if (currentCardRoundIndex !== null && state.roundIndex !== currentCardRoundIndex) {
+    if (currentCardRoundIndex !== null && state.roundIndex < currentCardRoundIndex) return;
+    if (currentCardRoundIndex !== null && state.roundIndex > currentCardRoundIndex) {
       dealNewRoundCards(state);
       currentCardRoundIndex = state.roundIndex;
       savePlayerSession();
@@ -271,11 +271,12 @@ function savePlayerSession() {
 
 function restorePlayerSession(state) {
   const saved = loadPlayerSession();
-  if (!saved) return;
+  if (!saved) return true;
   player = saved.player;
   cards = saved.cards;
   currentCardRoundIndex = saved.roundIndex;
-  if (currentCardRoundIndex !== state.roundIndex) {
+  if (currentCardRoundIndex > state.roundIndex) return false;
+  if (currentCardRoundIndex < state.roundIndex) {
     dealNewRoundCards(state);
     currentCardRoundIndex = state.roundIndex;
   }
@@ -285,6 +286,7 @@ function restorePlayerSession(state) {
   joinPanel.classList.add("hidden");
   gamePanel.classList.remove("hidden");
   savePlayerSession();
+  return true;
 }
 
 function loadPlayerSession() {

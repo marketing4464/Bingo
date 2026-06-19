@@ -226,6 +226,22 @@ function publicStorageStatus() {
   };
 }
 
+function shouldBlockUnhydratedStateResponse() {
+  return Boolean(
+    storageStatus.configured
+    && !storageStatus.available
+    && !storageStatus.lastLoadedAt
+    && !storageStatus.lastSavedAt
+  );
+}
+
+function unavailableStateResponse() {
+  return {
+    error: "Game state is temporarily unavailable. Keep your current card on screen.",
+    storage: publicStorageStatus(),
+  };
+}
+
 function roleCanAdvanceGameClock(role) {
   return role === "host" || role === "display";
 }
@@ -288,6 +304,7 @@ function isValidStateSnapshot(snapshot) {
 }
 
 function shouldUseStorageSnapshot(snapshot) {
+  if (!storageStatus.lastLoadedAt && !storageStatus.lastSavedAt) return true;
   const snapshotUpdatedAt = Number(snapshot.updatedAt) || 0;
   const localUpdatedAt = Number(state.updatedAt) || 0;
   return snapshotUpdatedAt >= localUpdatedAt;
@@ -825,6 +842,10 @@ function routeStatic(req, res, pathname) {
 async function routeApi(req, res, pathname) {
   await prepareStateForRequest(roleCanAdvanceGameClock(roleFromNodeRequest(req)));
   if (req.method === "GET" && pathname === "/api/state") {
+    if (shouldBlockUnhydratedStateResponse()) {
+      sendJson(res, unavailableStateResponse(), 503);
+      return;
+    }
     sendJson(res, publicState(req));
     return;
   }
@@ -869,6 +890,11 @@ async function routeApi(req, res, pathname) {
     body = await parseBody(req);
   } catch (error) {
     sendJson(res, { error: "Invalid JSON" }, 400);
+    return;
+  }
+
+  if (shouldBlockUnhydratedStateResponse() && pathname !== "/api/heartbeat") {
+    sendJson(res, unavailableStateResponse(), 503);
     return;
   }
 
@@ -1057,6 +1083,9 @@ async function handleApiWebRequest(request, pathname) {
   await prepareStateForRequest(roleCanAdvanceGameClock(roleFromWebRequest(request)));
 
   if (method === "GET" && pathname === "/api/state") {
+    if (shouldBlockUnhydratedStateResponse()) {
+      return webJson(unavailableStateResponse(), 503);
+    }
     return webJson(publicStateForOrigin(origin));
   }
 
@@ -1080,6 +1109,10 @@ async function handleApiWebRequest(request, pathname) {
     body = await request.json();
   } catch {
     body = {};
+  }
+
+  if (shouldBlockUnhydratedStateResponse() && pathname !== "/api/heartbeat") {
+    return webJson(unavailableStateResponse(), 503);
   }
 
   if (pathname === "/api/start-round") {
