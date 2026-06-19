@@ -23,7 +23,7 @@ joinForm.addEventListener("submit", async (event) => {
   const state = currentState || await getState();
   player = $("#playerName").value.trim() || "Player";
   const count = Math.max(1, Math.min(3, Number($("#cardCount").value || 1)));
-  cards = Array.from({ length: count }, (_, index) => createCard(state.moments, index + 1));
+  cards = dealCards(count, state.moments);
   currentCardRoundIndex = state.roundIndex;
   startPlayerHeartbeat();
   joinPanel.classList.add("hidden");
@@ -40,10 +40,10 @@ subscribe((state) => {
   }
   if (!gamePanel.classList.contains("hidden")) {
     if (currentCardRoundIndex !== null && state.roundIndex !== currentCardRoundIndex) {
-      resetCardsForNewRound();
+      dealNewRoundCards(state);
       currentCardRoundIndex = state.roundIndex;
       savePlayerSession();
-      showToast(`Round ${state.roundIndex + 1} started. Cards reset.`);
+      showToast(`Round ${state.roundIndex + 1} started. New cards dealt.`);
     }
     renderPlayer(state);
   }
@@ -58,11 +58,13 @@ function createCard(moments, number) {
   return { number, cells, selected: new Set([12]), claimedBingos: new Set() };
 }
 
-function resetCardsForNewRound() {
-  cards.forEach((card) => {
-    card.selected = new Set([12]);
-    card.claimedBingos = new Set();
-  });
+function dealCards(count, moments) {
+  return Array.from({ length: count }, (_, index) => createCard(moments, index + 1));
+}
+
+function dealNewRoundCards(state) {
+  const count = Math.max(1, Math.min(3, cards.length || Number($("#cardCount").value || 1)));
+  cards = dealCards(count, state.moments);
 }
 
 function shuffle(items) {
@@ -272,7 +274,7 @@ function restorePlayerSession(state) {
   cards = saved.cards;
   currentCardRoundIndex = saved.roundIndex;
   if (currentCardRoundIndex !== state.roundIndex) {
-    resetCardsForNewRound();
+    dealNewRoundCards(state);
     currentCardRoundIndex = state.roundIndex;
   }
   $("#playerName").value = player;
