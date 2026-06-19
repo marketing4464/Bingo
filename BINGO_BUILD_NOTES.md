@@ -19,7 +19,7 @@ Use this file as the starting brief for future themed bingo games at On Par Ente
 - Rounds: 4 rounds
 - Round play time: 15 minutes each
 - Breaks: 10 minutes between rounds
-- Words/images rotate automatically every 30 seconds while a round is playing
+- Words/images rotate automatically every 20 seconds while a round is playing
 - Event flow is automatic after the host starts the 15-minute opening countdown:
   - Opening countdown lasts 15 minutes
   - Host can skip the countdown and jump straight into Round 1
@@ -123,7 +123,7 @@ Use this file as the starting brief for future themed bingo games at On Par Ente
   - `app/api/[...path]/route.js`
   - `package.json`
 - Important timing constant:
-  - `PULL_INTERVAL_MS = 30 * 1000`
+  - `PULL_INTERVAL_MS = 20 * 1000`
 - The player cards should not auto-mark squares.
 - Players must select squares themselves.
 - Player card marks reset automatically when the next round starts.
@@ -146,4 +146,4 @@ When making a new themed bingo, collect:
 
 Recommended future prompt:
 
-> Make a new On Par digital bingo theme using the existing bingo app as the template. Keep the same player name entry, QR join flow, manual square selection, 30-second word rotation, 15-minute rounds, 10-minute breaks, leaderboard between rounds, 100 points per regular bingo, 50-point special bingo bonuses, up to 3 cards per player, multiple bingos per card, and false-bingo cross-checking. Build a new themed word list, create a Google Images approval sheet, and do not update the live deck until I approve the images.
+> Make a new On Par digital bingo theme using the existing bingo app as the template. Keep the same player name entry, QR join flow, manual square selection, 20-second word rotation, 15-minute rounds, 10-minute breaks, leaderboard between rounds, 100 points per regular bingo, 50-point special bingo bonuses, up to 3 cards per player, multiple bingos per card, and false-bingo cross-checking. Build a new themed word list, create a Google Images approval sheet, and do not update the live deck until I approve the images.

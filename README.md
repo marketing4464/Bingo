@@ -59,7 +59,7 @@ This creates a roughly 90-105 minute event with a few minutes for welcome, winne
 3. Open the display page on the TV/projector.
 4. Let players scan the QR code.
 5. Click **Start Round**.
-6. The display pulls a new random moment every 30 seconds. Click **Pull Next Moment** only if the caller wants to advance early.
+6. The display pulls a new random moment every 20 seconds. Click **Pull Next Moment** only if the caller wants to advance early.
 7. Verify any claims shown in the host console.
 8. Click **Start 10-Min Break** between rounds.
 9. Click **Next Round**, then **Start Round** again.
