@@ -2,6 +2,7 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 const os = require("node:os");
+const crypto = require("node:crypto");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 4173);
@@ -405,16 +406,210 @@ function leaderboardFromClaims() {
   return [...scores.values()].sort((a, b) => b.points - a.points || a.player.localeCompare(b.player));
 }
 
-function pointsForBingo(bingo, pattern) {
-  if (isRegularLineBingo(bingo.id)) return 100;
-  if (bingo.id === "four-corners") return pattern === "Four Corners" ? 50 : 0;
-  if (bingo.id === "x-pattern") return pattern === "X Pattern" ? 100 : 0;
-  if (bingo.id === "coverup" || bingo.id === "blackout") return pattern === "Blackout" ? 100 : 0;
-  return 0;
+function bingoLines() {
+  return [
+    { id: "row-1", label: "Top Row", cells: [0, 1, 2, 3, 4] },
+    { id: "row-2", label: "Second Row", cells: [5, 6, 7, 8, 9] },
+    { id: "row-3", label: "Middle Row", cells: [10, 11, 12, 13, 14] },
+    { id: "row-4", label: "Fourth Row", cells: [15, 16, 17, 18, 19] },
+    { id: "row-5", label: "Bottom Row", cells: [20, 21, 22, 23, 24] },
+    { id: "col-1", label: "B Column", cells: [0, 5, 10, 15, 20] },
+    { id: "col-2", label: "I Column", cells: [1, 6, 11, 16, 21] },
+    { id: "col-3", label: "N Column", cells: [2, 7, 12, 17, 22] },
+    { id: "col-4", label: "G Column", cells: [3, 8, 13, 18, 23] },
+    { id: "col-5", label: "O Column", cells: [4, 9, 14, 19, 24] },
+    { id: "diag-1", label: "Diagonal", cells: [0, 6, 12, 18, 24] },
+    { id: "diag-2", label: "Diagonal", cells: [4, 8, 12, 16, 20] },
+  ];
 }
 
-function isRegularLineBingo(id) {
-  return /^row-[1-5]$/.test(id) || /^col-[1-5]$/.test(id) || id === "diag-1" || id === "diag-2";
+function cardSigningSecret() {
+  return process.env.BINGO_CARD_SECRET
+    || process.env.SUPABASE_SERVICE_ROLE_KEY
+    || process.env.SUPABASE_SECRET_KEY
+    || process.env.SUPABASE_SERVICE_KEY
+    || process.env.SUPABASE_ANON_KEY
+    || DEFAULT_SUPABASE_PUBLISHABLE_KEY;
+}
+
+function signCardPayload(payload) {
+  const encodedPayload = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const signature = crypto
+    .createHmac("sha256", cardSigningSecret())
+    .update(encodedPayload)
+    .digest("base64url");
+  return `${encodedPayload}.${signature}`;
+}
+
+function verifyCardToken(token) {
+  const [encodedPayload, signature] = String(token || "").split(".");
+  if (!encodedPayload || !signature) return null;
+  const expected = crypto
+    .createHmac("sha256", cardSigningSecret())
+    .update(encodedPayload)
+    .digest("base64url");
+  const actualBuffer = Buffer.from(signature);
+  const expectedBuffer = Buffer.from(expected);
+  if (actualBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(actualBuffer, expectedBuffer)) return null;
+  try {
+    return JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf8"));
+  } catch {
+    return null;
+  }
+}
+
+function createSignedCard(player, number) {
+  const pool = shuffleValues(moments.map((moment) => moment.text)).slice(0, 24);
+  const cells = [];
+  for (let index = 0; index < 25; index += 1) {
+    cells.push(index === 12 ? "FREE" : pool.shift());
+  }
+  const payload = {
+    v: 1,
+    player,
+    roundIndex: state.roundIndex,
+    number,
+    cells,
+  };
+  return {
+    number,
+    cells,
+    token: signCardPayload(payload),
+  };
+}
+
+function shuffleValues(items) {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
+  }
+  return copy;
+}
+
+function dealSignedCards(player, count) {
+  const cardCount = Math.max(1, Math.min(3, Number(count || 1)));
+  return Array.from({ length: cardCount }, (_, index) => createSignedCard(player, index + 1));
+}
+
+function normalizeCardCells(cells) {
+  if (!Array.isArray(cells) || cells.length !== 25) return null;
+  return cells.map((cell) => String(cell || "").slice(0, 80));
+}
+
+function sameCells(left, right) {
+  return Array.isArray(left)
+    && Array.isArray(right)
+    && left.length === right.length
+    && left.every((cell, index) => cell === right[index]);
+}
+
+function normalizeSelectedIndices(selected) {
+  const set = new Set(Array.isArray(selected) ? selected : []);
+  set.add(12);
+  return new Set([...set]
+    .map((index) => Number(index))
+    .filter((index) => Number.isInteger(index) && index >= 0 && index < 25));
+}
+
+function completedBingosForCard(cells, selectedIndices, pattern, calledWords) {
+  const marked = Array.from({ length: 25 }, (_, index) => {
+    if (!selectedIndices.has(index)) return false;
+    const word = cells[index];
+    return word === "FREE" || calledWords.has(word);
+  });
+  const allCells = marked.map((_, index) => index);
+  const regularBingos = bingoLines()
+    .filter((line) => line.cells.every((index) => marked[index]))
+    .map((line) => ({ ...line, words: line.cells.map((index) => cells[index]), points: 100 }));
+
+  if (pattern === "Blackout" && marked.every(Boolean)) {
+    return [{ id: "blackout", label: "Blackout Bingo", cells: allCells, words: cells, points: 100 }];
+  }
+
+  if (pattern === "X Pattern") {
+    const x = [0, 4, 6, 8, 12, 16, 18, 20, 24];
+    if (x.every((index) => marked[index])) {
+      return [{ id: "x-pattern", label: "X Bingo", cells: x, words: x.map((index) => cells[index]), points: 100 }];
+    }
+  }
+
+  if (pattern === "Four Corners") {
+    const corners = [0, 4, 20, 24];
+    const bonus = corners.every((index) => marked[index])
+      ? [{ id: "four-corners", label: "Four Corners Bonus", cells: corners, words: corners.map((index) => cells[index]), points: 50 }]
+      : [];
+    return [...regularBingos, ...bonus];
+  }
+
+  return regularBingos;
+}
+
+function alreadyClaimedPattern(player, cardNumber, bingoId) {
+  const currentRound = rounds[state.roundIndex]?.name;
+  return state.claims.some((claim) => {
+    const sameRound = claim.roundIndex === state.roundIndex || claim.round === currentRound;
+    return sameRound
+      && claim.player === player
+      && Number(claim.card) === Number(cardNumber)
+      && Array.isArray(claim.bingos)
+      && claim.bingos.some((bingo) => bingo.id === bingoId);
+  });
+}
+
+function validateClaimBody(body) {
+  if (state.status !== "playing") {
+    return { status: 409, body: { error: "BINGO claims are only accepted during a live round." } };
+  }
+
+  const player = String(body.player || "Player").slice(0, 40);
+  const cardNumber = Number(body.card || 1);
+  const cells = normalizeCardCells(body.cells);
+  const tokenPayload = verifyCardToken(body.cardToken);
+  if (!cells || !tokenPayload) {
+    return { status: 400, body: { error: "Could not verify this bingo card. Refresh your card and try again." } };
+  }
+  if (
+    tokenPayload.v !== 1
+    || tokenPayload.player !== player
+    || tokenPayload.roundIndex !== state.roundIndex
+    || Number(tokenPayload.number) !== cardNumber
+    || !sameCells(tokenPayload.cells, cells)
+  ) {
+    return { status: 409, body: { error: "This bingo card does not match the current round. Refresh your card and try again." } };
+  }
+
+  const calledWords = new Set(state.called.map((word) => word.text));
+  const selectedIndices = normalizeSelectedIndices(body.selected);
+  const requestedIds = new Set((Array.isArray(body.bingos) ? body.bingos : [])
+    .map((bingo) => String(bingo?.id || "").slice(0, 80))
+    .filter(Boolean));
+  const completed = completedBingosForCard(cells, selectedIndices, rounds[state.roundIndex].pattern, calledWords);
+  const candidateBingos = completed.filter((bingo) => !requestedIds.size || requestedIds.has(bingo.id));
+  const uniqueBingos = [...new Map(candidateBingos.map((bingo) => [bingo.id, bingo])).values()];
+  const newBingos = uniqueBingos.filter((bingo) => !alreadyClaimedPattern(player, cardNumber, bingo.id));
+
+  if (!completed.length || !candidateBingos.length) {
+    return { status: 400, body: { error: "No completed BINGO pattern was submitted." } };
+  }
+  if (!newBingos.length) {
+    return { status: 409, body: { error: "That BINGO was already claimed on this card." } };
+  }
+
+  const points = newBingos.reduce((sum, bingo) => sum + bingo.points, 0);
+  const claim = {
+    id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    player,
+    card: cardNumber,
+    bingos: newBingos,
+    bingoCount: newBingos.length,
+    points,
+    pattern: rounds[state.roundIndex].pattern,
+    round: rounds[state.roundIndex].name,
+    roundIndex: state.roundIndex,
+    createdAt: Date.now(),
+  };
+  return { status: 200, body: { ok: true, claim } };
 }
 
 function drawNextMoment({ resetTimer = true } = {}) {
@@ -898,6 +1093,13 @@ async function routeApi(req, res, pathname) {
     return;
   }
 
+  if (pathname === "/api/deal-cards") {
+    const player = String(body.player || "Player").slice(0, 40);
+    const cards = dealSignedCards(player, body.count);
+    sendJson(res, { ok: true, roundIndex: state.roundIndex, cards });
+    return;
+  }
+
   if (pathname === "/api/start-round") {
     startCurrentRound({ resetClaims: state.roundIndex === 0 && state.status !== "break" });
     await commitState();
@@ -981,55 +1183,15 @@ async function routeApi(req, res, pathname) {
   }
 
   if (pathname === "/api/claim") {
-    if (state.status !== "playing") {
-      sendJson(res, { error: "BINGO claims are only accepted during a live round." }, 409);
+    const result = validateClaimBody(body);
+    if (result.status !== 200) {
+      sendJson(res, result.body, result.status);
       return;
     }
-    const calledWords = new Set(state.called.map((word) => word.text));
-    const rawBingos = Array.isArray(body.bingos) && body.bingos.length ? body.bingos.slice(0, 12) : [];
-    const invalidWords = [];
-    const bingos = rawBingos.map((bingo) => {
-      const words = Array.isArray(bingo.words) ? bingo.words.map((word) => String(word || "").slice(0, 80)) : [];
-      for (const word of words) {
-        if (word !== "FREE" && !calledWords.has(word)) invalidWords.push(word);
-      }
-      const id = String(bingo.id || "bingo").slice(0, 80);
-      return {
-        id,
-        label: String(bingo.label || "BINGO").slice(0, 80),
-        words,
-        points: pointsForBingo({ id }, rounds[state.roundIndex].pattern),
-      };
-    });
-    const validBingos = bingos.filter((bingo) => bingo.points > 0);
-    if (!validBingos.length) {
-      sendJson(res, { error: "No BINGO pattern was submitted." }, 400);
-      return;
-    }
-    if (invalidWords.length) {
-      sendJson(res, {
-        error: `False BINGO: these words have not been pulled yet: ${[...new Set(invalidWords)].join(", ")}`,
-        invalidWords: [...new Set(invalidWords)],
-      }, 409);
-      return;
-    }
-    const bingoCount = validBingos.length;
-    const points = validBingos.reduce((sum, bingo) => sum + bingo.points, 0);
-    const claim = {
-      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      player: String(body.player || "Player").slice(0, 40),
-      card: Number(body.card || 1),
-      bingos: validBingos,
-      bingoCount,
-      points,
-      pattern: rounds[state.roundIndex].pattern,
-      round: rounds[state.roundIndex].name,
-      createdAt: Date.now(),
-    };
-    state.claims.unshift(claim);
+    state.claims.unshift(result.body.claim);
     state.claims = state.claims.slice(0, 200);
     await commitState();
-    sendJson(res, { ok: true, claim });
+    sendJson(res, result.body);
     return;
   }
 
@@ -1115,6 +1277,12 @@ async function handleApiWebRequest(request, pathname) {
     return webJson(unavailableStateResponse(), 503);
   }
 
+  if (pathname === "/api/deal-cards") {
+    const player = String(body.player || "Player").slice(0, 40);
+    const cards = dealSignedCards(player, body.count);
+    return webJson({ ok: true, roundIndex: state.roundIndex, cards });
+  }
+
   if (pathname === "/api/start-round") {
     startCurrentRound({ resetClaims: state.roundIndex === 0 && state.status !== "break" });
     await commitState();
@@ -1185,50 +1353,12 @@ async function handleApiWebRequest(request, pathname) {
   }
 
   if (pathname === "/api/claim") {
-    if (state.status !== "playing") {
-      return webJson({ error: "BINGO claims are only accepted during a live round." }, 409);
-    }
-    const calledWords = new Set(state.called.map((word) => word.text));
-    const rawBingos = Array.isArray(body.bingos) && body.bingos.length ? body.bingos.slice(0, 12) : [];
-    const invalidWords = [];
-    const bingos = rawBingos.map((bingo) => {
-      const words = Array.isArray(bingo.words) ? bingo.words.map((word) => String(word || "").slice(0, 80)) : [];
-      for (const word of words) {
-        if (word !== "FREE" && !calledWords.has(word)) invalidWords.push(word);
-      }
-      const id = String(bingo.id || "bingo").slice(0, 80);
-      return {
-        id,
-        label: String(bingo.label || "BINGO").slice(0, 80),
-        words,
-        points: pointsForBingo({ id }, rounds[state.roundIndex].pattern),
-      };
-    });
-    const validBingos = bingos.filter((bingo) => bingo.points > 0);
-    if (!validBingos.length) return webJson({ error: "No BINGO pattern was submitted." }, 400);
-    if (invalidWords.length) {
-      return webJson({
-        error: `False BINGO: these words have not been pulled yet: ${[...new Set(invalidWords)].join(", ")}`,
-        invalidWords: [...new Set(invalidWords)],
-      }, 409);
-    }
-    const bingoCount = validBingos.length;
-    const points = validBingos.reduce((sum, bingo) => sum + bingo.points, 0);
-    const claim = {
-      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      player: String(body.player || "Player").slice(0, 40),
-      card: Number(body.card || 1),
-      bingos: validBingos,
-      bingoCount,
-      points,
-      pattern: rounds[state.roundIndex].pattern,
-      round: rounds[state.roundIndex].name,
-      createdAt: Date.now(),
-    };
-    state.claims.unshift(claim);
+    const result = validateClaimBody(body);
+    if (result.status !== 200) return webJson(result.body, result.status);
+    state.claims.unshift(result.body.claim);
     state.claims = state.claims.slice(0, 200);
     await commitState();
-    return webJson({ ok: true, claim });
+    return webJson(result.body);
   }
 
   return webJson({ error: "Not found" }, 404);

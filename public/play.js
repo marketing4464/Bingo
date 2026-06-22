@@ -22,28 +22,32 @@ installPullToRefreshGuard();
 
 joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const state = currentState || await getState();
-  player = $("#playerName").value.trim() || "Player";
-  const count = Math.max(1, Math.min(3, Number($("#cardCount").value || 1)));
-  cards = dealCards(count, state.moments);
-  currentCardRoundIndex = state.roundIndex;
-  startPlayerHeartbeat();
-  joinPanel.classList.add("hidden");
-  gamePanel.classList.remove("hidden");
-  renderPlayer(state);
-  savePlayerSession();
+  try {
+    const state = currentState || await getState();
+    player = $("#playerName").value.trim() || "Player";
+    const count = Math.max(1, Math.min(3, Number($("#cardCount").value || 1)));
+    const deal = await dealCards(count);
+    cards = deal.cards;
+    currentCardRoundIndex = deal.roundIndex;
+    startPlayerHeartbeat();
+    joinPanel.classList.add("hidden");
+    gamePanel.classList.remove("hidden");
+    renderPlayer(state);
+    savePlayerSession();
+  } catch (error) {
+    showToast(error.message || "Could not deal your cards.");
+  }
 });
 
-subscribe((state) => {
+subscribe(async (state) => {
   currentState = state;
   if (!attemptedSessionRestore && gamePanel.classList.contains("hidden")) {
-    attemptedSessionRestore = restorePlayerSession(state);
+    attemptedSessionRestore = await restorePlayerSession(state);
   }
   if (!gamePanel.classList.contains("hidden")) {
     if (currentCardRoundIndex !== null && state.roundIndex < currentCardRoundIndex) return;
     if (currentCardRoundIndex !== null && state.roundIndex > currentCardRoundIndex) {
-      dealNewRoundCards(state);
-      currentCardRoundIndex = state.roundIndex;
+      await dealNewRoundCards();
       savePlayerSession();
       showToast(`Round ${state.roundIndex + 1} started. New cards dealt.`);
     }
@@ -51,31 +55,25 @@ subscribe((state) => {
   }
 });
 
-function createCard(moments, number) {
-  const pool = shuffle(moments.map((moment) => moment.text)).slice(0, 24);
-  const cells = [];
-  for (let i = 0; i < 25; i += 1) {
-    cells.push(i === 12 ? "FREE" : pool.shift());
-  }
-  return { number, cells, selected: new Set([12]), claimedBingos: new Set() };
+async function dealCards(count) {
+  const result = await api("/api/deal-cards", { player, count });
+  return {
+    roundIndex: result.roundIndex,
+    cards: result.cards.map((card) => ({
+      number: card.number,
+      cells: card.cells,
+      token: card.token,
+      selected: new Set([12]),
+      claimedBingos: new Set(),
+    })),
+  };
 }
 
-function dealCards(count, moments) {
-  return Array.from({ length: count }, (_, index) => createCard(moments, index + 1));
-}
-
-function dealNewRoundCards(state) {
+async function dealNewRoundCards() {
   const count = Math.max(1, Math.min(3, cards.length || Number($("#cardCount").value || 1)));
-  cards = dealCards(count, state.moments);
-}
-
-function shuffle(items) {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
+  const deal = await dealCards(count);
+  cards = deal.cards;
+  currentCardRoundIndex = deal.roundIndex;
 }
 
 function renderPlayer(state) {
@@ -117,7 +115,7 @@ function toggleCell(cardNumber, index) {
 }
 
 function renderCard(card, pattern) {
-  const bingos = completedBingos(card.selected, pattern);
+  const bingos = completedBingos(card, pattern);
   const newBingos = bingos.filter((bingo) => !card.claimedBingos.has(bingo.id));
   const winCells = [...new Set(bingos.flatMap((bingo) => bingo.cells))];
   const heads = ["B", "I", "N", "G", "O"].map((letter) => `<div class="bingo-head">${letter}</div>`).join("");
@@ -143,8 +141,13 @@ function renderCard(card, pattern) {
   `;
 }
 
-function completedBingos(selected, pattern) {
-  const marked = Array.from({ length: 25 }, (_, index) => selected.has(index));
+function completedBingos(card, pattern) {
+  const calledWords = currentState ? calledSet(currentState) : new Set();
+  const marked = Array.from({ length: 25 }, (_, index) => {
+    if (!card.selected.has(index)) return false;
+    const word = card.cells[index];
+    return word === "FREE" || calledWords.has(word);
+  });
   const allCells = marked.map((_, index) => index);
   const lines = [
     { id: "row-1", label: "Top Row", cells: [0, 1, 2, 3, 4] },
@@ -165,25 +168,25 @@ function completedBingos(selected, pattern) {
     .map((line) => ({ ...line, points: 100 }));
   const bonusBingos = [];
 
-  if (pattern === "Four Corners") {
-    const corners = [0, 4, 20, 24];
-    if (corners.every((index) => marked[index])) {
-      bonusBingos.push({ id: "four-corners", label: "Four Corners Bonus", cells: corners, points: 50 });
+  if (pattern === "Blackout") {
+    if (marked.every(Boolean)) {
+      return [{ id: "blackout", label: "Blackout Bingo", cells: allCells, points: 100 }];
     }
-    return [...regularBingos, ...bonusBingos];
+    return regularBingos;
   }
 
   if (pattern === "X Pattern") {
     const x = [0, 4, 6, 8, 12, 16, 18, 20, 24];
     if (x.every((index) => marked[index])) {
-      bonusBingos.push({ id: "x-pattern", label: "X Bingo", cells: x, points: 100 });
+      return [{ id: "x-pattern", label: "X Bingo", cells: x, points: 100 }];
     }
-    return [...regularBingos, ...bonusBingos];
+    return regularBingos;
   }
 
-  if (pattern === "Blackout") {
-    if (marked.every(Boolean)) {
-      bonusBingos.push({ id: "blackout", label: "Blackout Bingo", cells: allCells, points: 100 });
+  if (pattern === "Four Corners") {
+    const corners = [0, 4, 20, 24];
+    if (corners.every((index) => marked[index])) {
+      bonusBingos.push({ id: "four-corners", label: "Four Corners Bonus", cells: corners, points: 50 });
     }
     return [...regularBingos, ...bonusBingos];
   }
@@ -194,7 +197,7 @@ function completedBingos(selected, pattern) {
 async function claimBingo(cardNumber) {
   const card = cards.find((candidate) => candidate.number === cardNumber);
   if (!card || !currentState) return;
-  const newBingos = completedBingos(card.selected, currentState.round.pattern)
+  const newBingos = completedBingos(card, currentState.round.pattern)
     .filter((bingo) => !card.claimedBingos.has(bingo.id));
   if (!newBingos.length) {
     showToast("No new BINGO to claim on this card yet.");
@@ -205,11 +208,18 @@ async function claimBingo(cardNumber) {
       ...bingo,
       words: bingo.cells.map((index) => card.cells[index]),
     }));
-    const result = await api("/api/claim", { player, card: cardNumber, bingos: claimBingos });
-    newBingos.forEach((bingo) => card.claimedBingos.add(bingo.id));
+    const result = await api("/api/claim", {
+      player,
+      card: cardNumber,
+      cardToken: card.token,
+      cells: card.cells,
+      selected: [...card.selected],
+      bingos: claimBingos,
+    });
+    result.claim.bingos.forEach((bingo) => card.claimedBingos.add(bingo.id));
     renderPlayer(currentState);
     savePlayerSession();
-    showToast(`${newBingos.length} BINGO${newBingos.length === 1 ? "" : "S"} sent. +${result.claim.points} points.`);
+    showToast(`${result.claim.bingoCount} BINGO${result.claim.bingoCount === 1 ? "" : "S"} sent. +${result.claim.points} points.`);
   } catch (error) {
     showToast(error.message || "Could not send claim.");
   }
@@ -260,6 +270,7 @@ function savePlayerSession() {
       cards: cards.map((card) => ({
         number: card.number,
         cells: card.cells,
+        token: card.token,
         selected: [...card.selected],
         claimedBingos: [...card.claimedBingos],
       })),
@@ -269,7 +280,7 @@ function savePlayerSession() {
   }
 }
 
-function restorePlayerSession(state) {
+async function restorePlayerSession(state) {
   const saved = loadPlayerSession();
   if (!saved) return true;
   player = saved.player;
@@ -277,8 +288,7 @@ function restorePlayerSession(state) {
   currentCardRoundIndex = saved.roundIndex;
   if (currentCardRoundIndex > state.roundIndex) return false;
   if (currentCardRoundIndex < state.roundIndex) {
-    dealNewRoundCards(state);
-    currentCardRoundIndex = state.roundIndex;
+    await dealNewRoundCards();
   }
   $("#playerName").value = player;
   $("#cardCount").value = String(Math.max(1, Math.min(3, cards.length)));
@@ -296,9 +306,10 @@ function loadPlayerSession() {
     const restoredCards = saved.cards.slice(0, 3).map((card, index) => ({
       number: Number(card.number) || index + 1,
       cells: Array.isArray(card.cells) && card.cells.length === 25 ? card.cells : [],
+      token: String(card.token || ""),
       selected: new Set(Array.isArray(card.selected) ? card.selected : [12]),
       claimedBingos: new Set(Array.isArray(card.claimedBingos) ? card.claimedBingos : []),
-    })).filter((card) => card.cells.length === 25);
+    })).filter((card) => card.cells.length === 25 && card.token);
     if (!restoredCards.length) return null;
     return {
       player: String(saved.player),
