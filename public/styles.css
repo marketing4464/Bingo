@@ -1012,7 +1012,9 @@ select {
   min-height: 48px;
   border-radius: 6px;
   text-align: center;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .bingo-head {
@@ -1025,17 +1027,55 @@ select {
 
 .bingo-cell {
   aspect-ratio: 1;
-  padding: 7px;
+  padding: 6px;
   color: #041207;
   background: #ffffff;
   border: 2px solid rgba(223, 255, 197, 0.92);
-  font-size: clamp(12px, 1.28vw, 15px);
   font-weight: 950;
-  line-height: 1.04;
   cursor: pointer;
   user-select: none;
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
   box-shadow: inset 0 0 0 1px rgba(12, 72, 20, 0.18);
+}
+
+.bingo-cell-text {
+  display: -webkit-box;
+  max-width: 100%;
+  overflow: hidden;
+  color: inherit;
+  line-height: 1.02;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.bingo-cell-text.text-lg {
+  font-size: clamp(13px, 1.32vw, 16px);
+}
+
+.bingo-cell-text.text-md {
+  font-size: clamp(12px, 1.18vw, 15px);
+}
+
+.bingo-cell-text.text-sm {
+  font-size: clamp(10px, 1.02vw, 13px);
+}
+
+.bingo-cell-text.text-xs {
+  font-size: clamp(9px, 0.9vw, 12px);
+  line-height: 0.98;
+}
+
+.free-space-logo {
+  width: min(82%, 58px);
+  max-height: 70%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 0 7px rgba(223, 255, 197, 0.46));
 }
 
 .bingo-cell:hover {
@@ -1798,9 +1838,29 @@ select {
   }
 
   .bingo-cell {
-    padding: 4px;
+    padding: 3px;
+  }
+
+  .bingo-cell-text.text-lg {
+    font-size: clamp(11px, 3.2vw, 14px);
+  }
+
+  .bingo-cell-text.text-md {
     font-size: clamp(10px, 2.9vw, 13px);
-    line-height: 1.04;
+  }
+
+  .bingo-cell-text.text-sm {
+    font-size: clamp(9px, 2.55vw, 12px);
+  }
+
+  .bingo-cell-text.text-xs {
+    font-size: clamp(8px, 2.28vw, 11px);
+    line-height: 0.96;
+  }
+
+  .free-space-logo {
+    width: min(84%, 48px);
+    max-height: 66%;
   }
 
   .card-actions {

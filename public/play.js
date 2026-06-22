@@ -122,7 +122,7 @@ function renderCard(card, pattern) {
   const cells = card.cells.map((word, index) => {
     const isSelected = card.selected.has(index);
     const isWin = winCells.includes(index);
-    return `<div class="bingo-cell ${isSelected ? "selected" : ""} ${word === "FREE" ? "free" : ""} ${isWin ? "win" : ""}" data-card="${card.number}" data-index="${index}">${escapeHtml(word)}</div>`;
+    return `<div class="bingo-cell ${isSelected ? "selected" : ""} ${word === "FREE" ? "free" : ""} ${isWin ? "win" : ""}" data-card="${card.number}" data-index="${index}">${renderCellContent(word)}</div>`;
   }).join("");
   const hasWin = newBingos.length > 0;
   const totalPoints = newBingos.reduce((sum, bingo) => sum + bingo.points, 0);
@@ -139,6 +139,21 @@ function renderCard(card, pattern) {
       </div>
     </article>
   `;
+}
+
+function renderCellContent(word) {
+  if (word === "FREE") {
+    return `<img class="free-space-logo" src="/assets/on-par-logo-white.png" alt="On Par Entertainment free space">`;
+  }
+  return `<span class="bingo-cell-text ${cellTextSizeClass(word)}">${escapeHtml(word)}</span>`;
+}
+
+function cellTextSizeClass(word) {
+  const length = String(word || "").length;
+  if (length >= 19) return "text-xs";
+  if (length >= 14) return "text-sm";
+  if (length >= 10) return "text-md";
+  return "text-lg";
 }
 
 function completedBingos(card, pattern) {
