@@ -943,6 +943,62 @@ h1 {
   gap: 12px;
 }
 
+.player-rules,
+.player-game-rules {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid rgba(223, 255, 197, 0.42);
+  border-radius: var(--radius);
+  background: rgba(5, 26, 8, 0.82);
+  color: #f7ffe9;
+}
+
+.player-rules strong,
+.player-game-rules strong {
+  color: #ffffff;
+  font-size: 15px;
+  line-height: 1.05;
+  text-transform: uppercase;
+  text-shadow: var(--neon-glow);
+}
+
+.player-rules p,
+.player-rules ul {
+  margin: 0;
+}
+
+.player-rules p,
+.player-rules li,
+.player-game-rules span {
+  color: #f2ffe9;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.28;
+}
+
+.player-rules ul {
+  padding-left: 18px;
+}
+
+.player-game-rules {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  align-items: center;
+  margin: 0 0 12px;
+}
+
+.player-game-rules > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.add-card-button {
+  align-self: stretch;
+  white-space: nowrap;
+}
+
 label {
   display: grid;
   gap: 6px;
@@ -1323,19 +1379,46 @@ select {
   font-size: clamp(15px, 1.6vw, 22px);
 }
 
+.pregame-rules {
+  display: grid;
+  gap: 6px;
+  width: min(760px, 100%);
+  margin: clamp(10px, 1.4vw, 18px) auto 0;
+  padding: clamp(10px, 1.2vw, 14px);
+  border: 1px solid rgba(223, 255, 197, 0.62);
+  border-radius: var(--radius);
+  background: rgba(5, 26, 8, 0.72);
+  box-shadow: 0 0 20px rgba(223, 255, 197, 0.16);
+}
+
+.pregame-rules strong {
+  color: #ffffff;
+  font-size: clamp(16px, 1.55vw, 24px);
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: var(--neon-glow);
+}
+
+.pregame-rules span {
+  color: #f2ffe9;
+  font-size: clamp(13px, 1.2vw, 18px);
+  font-weight: 850;
+  line-height: 1.18;
+}
+
 .display-body[data-display-status="break"] .leaderboard-panel,
 .display-body[data-display-status="ended"] .leaderboard-panel {
-  width: min(1320px, 90vw);
-  margin-top: clamp(120px, 22vh, 280px);
+  width: min(1360px, 92vw);
+  margin-top: clamp(54px, 9vh, 116px);
   padding: clamp(10px, 1.2vw, 18px);
   color: #12320f;
 }
 
 .display-body[data-display-status="ended"] .leaderboard-panel {
   display: grid;
-  gap: clamp(12px, 1.8vh, 18px);
-  width: min(1340px, 90vw);
-  margin-top: clamp(78px, 12vh, 150px);
+  gap: clamp(10px, 1.4vh, 16px);
+  width: min(1360px, 92vw);
+  margin-top: clamp(36px, 6vh, 84px);
   padding: 0;
   color: #ffffff;
 }
@@ -1446,23 +1529,7 @@ select {
 }
 
 .display-body[data-display-status="break"] .leaderboard-top-three {
-  margin: clamp(8px, 1vh, 14px) 0 clamp(10px, 1.6vh, 18px);
-}
-
-.display-body[data-display-status="break"] .leaderboard-list {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.display-body[data-display-status="break"] .leaderboard-row {
-  background: rgba(3, 22, 7, 0.76);
-  border-color: rgba(223, 255, 197, 0.46);
-}
-
-.display-body[data-display-status="break"] .leaderboard-name,
-.display-body[data-display-status="break"] .leaderboard-score {
-  color: #ffffff;
-  font-size: clamp(18px, 2.2vw, 30px);
-  text-shadow: 0 0 12px rgba(12, 45, 10, 0.78);
+  margin: clamp(6px, 1vh, 12px) 0 0;
 }
 
 .final-winner-card.no-winners {
@@ -1472,25 +1539,6 @@ select {
 .display-body[data-display-status="ended"] .winner-banner,
 .display-body[data-display-status="ended"] .prize-claim {
   display: none;
-}
-
-.display-body[data-display-status="ended"] .leaderboard-list {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.display-body[data-display-status="ended"] .leaderboard-row {
-  grid-template-columns: 46px minmax(0, 1fr) auto;
-  padding: 10px 14px;
-  border-color: rgba(223, 255, 197, 0.46);
-  background: rgba(3, 22, 7, 0.68);
-}
-
-.display-body[data-display-status="ended"] .leaderboard-name,
-.display-body[data-display-status="ended"] .leaderboard-score {
-  color: #ffffff;
-  font-size: clamp(17px, 2vw, 26px);
-  text-shadow: 0 0 12px rgba(12, 45, 10, 0.78);
 }
 
 .leaderboard-row {
@@ -1808,6 +1856,19 @@ select {
   .player-status {
     margin-inline: -7px;
     padding: 10px 8px;
+  }
+
+  .player-rules,
+  .player-game-rules {
+    padding: 10px;
+  }
+
+  .player-game-rules {
+    grid-template-columns: 1fr;
+  }
+
+  .add-card-button {
+    width: 100%;
   }
 
   .cards {

@@ -17,6 +17,15 @@
             <p class="subtitle">Enter your name, choose up to 3 cards, and play along as moments are called.</p>
           </div>
         </div>
+        <section class="player-rules" aria-label="Pop Culture Moments Bingo rules">
+          <strong>How points work</strong>
+          <p>BINGO claims add points to your score. Points decide the final winners, so keep playing after every BINGO.</p>
+          <ul>
+            <li>Any row, column, or diagonal is 100 points.</li>
+            <li>X Bingo and Blackout are 100-point bonuses when active.</li>
+            <li>Four Corners is a 50-point bonus.</li>
+          </ul>
+        </section>
         <form class="join-form" id="joinForm">
           <label>
             Player name
@@ -39,6 +48,17 @@
           <strong id="playerRound">Round</strong>
           <div class="small" id="playerMeta"></div>
         </div>
+        <section class="player-game-rules" aria-label="Game rules">
+          <div>
+            <strong>BINGO adds points</strong>
+            <span>Points decide the winners. Keep playing after each BINGO.</span>
+          </div>
+          <div>
+            <strong>Scoring</strong>
+            <span>Lines, X, and Blackout are 100. Four Corners is 50.</span>
+          </div>
+          <button class="secondary add-card-button hidden" id="addCardButton" type="button">Add Card</button>
+        </section>
         <div class="cards" id="cards"></div>
         <section class="recent-pulls player-recent">
           <strong>Recently Pulled</strong>

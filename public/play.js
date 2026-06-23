@@ -15,6 +15,7 @@ const playerRound = $("#playerRound");
 const playerMeta = $("#playerMeta");
 const playerRecentWords = $("#playerRecentWords");
 const toast = $("#toast");
+const addCardButton = $("#addCardButton");
 
 setBingoClientRole("player");
 
@@ -38,6 +39,8 @@ joinForm.addEventListener("submit", async (event) => {
     showToast(error.message || "Could not deal your cards.");
   }
 });
+
+addCardButton?.addEventListener("click", addCard);
 
 subscribe(async (state) => {
   currentState = state;
@@ -79,6 +82,7 @@ async function dealNewRoundCards() {
 function renderPlayer(state) {
   playerRound.textContent = `Round ${state.roundIndex + 1}: ${state.round.name}`;
   playerMeta.textContent = `${statusLabel(state.status)} • ${roundRuleLabel(state.round.pattern)} • Current: ${state.currentWord?.text || "waiting"} • Tap your own squares`;
+  renderAddCardButton();
 
   cardsEl.innerHTML = cards.map((card) => renderCard(card, state.round.pattern)).join("");
   renderRecentPulls(state);
@@ -86,6 +90,35 @@ function renderPlayer(state) {
   $$(".claimButton").forEach((button) => {
     button.addEventListener("click", () => claimBingo(Number(button.dataset.card)));
   });
+}
+
+function renderAddCardButton() {
+  if (!addCardButton) return;
+  const canAdd = cards.length > 0 && cards.length < 3;
+  addCardButton.classList.toggle("hidden", !canAdd);
+  addCardButton.textContent = canAdd ? `Add Card ${cards.length + 1}` : "Max 3 Cards";
+}
+
+async function addCard() {
+  if (!player || !cards.length || cards.length >= 3) return;
+  try {
+    const targetCount = Math.min(3, cards.length + 1);
+    const deal = await dealCards(targetCount);
+    const existingNumbers = new Set(cards.map((card) => card.number));
+    const addedCards = deal.cards.filter((card) => !existingNumbers.has(card.number));
+    if (!addedCards.length) {
+      showToast("You already have the maximum cards for this round.");
+      renderAddCardButton();
+      return;
+    }
+    cards = [...cards, ...addedCards].slice(0, 3);
+    currentCardRoundIndex = deal.roundIndex;
+    if (currentState) renderPlayer(currentState);
+    savePlayerSession();
+    showToast(`Card ${cards.length} added. You can play up to 3 cards.`);
+  } catch (error) {
+    showToast(error.message || "Could not add another card.");
+  }
 }
 
 function startPlayerHeartbeat() {
@@ -135,7 +168,7 @@ function renderCard(card, pattern) {
       </div>
       <div class="bingo-grid">${heads}${cells}</div>
       <div class="card-actions">
-        <button class="claimButton ${hasWin ? "gold" : "secondary"}" data-card="${card.number}" ${hasWin ? "" : "disabled"}>${hasWin ? `Claim +${totalPoints}` : "No New Bingo"}</button>
+        <button class="claimButton ${hasWin ? "gold" : "secondary"}" data-card="${card.number}" ${hasWin ? "" : "disabled"} aria-label="${hasWin ? `Send BINGO for ${totalPoints} points` : "No new BINGO on this card yet"}">BINGO</button>
       </div>
     </article>
   `;

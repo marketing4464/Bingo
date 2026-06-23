@@ -167,6 +167,10 @@ function renderPregameCountdown(state) {
         <h2>Starts In</h2>
         <strong class="pregame-countdown" id="pregameCountdown">${formatClock(state.countdownEndsAt - Date.now())}</strong>
         <p class="pregame-copy">${escapeHtml(state.countdownCopy || "Round 1 starts automatically when the countdown ends.")}</p>
+        <div class="pregame-rules">
+          <strong>BINGO adds points</strong>
+          <span>Points determine the winners. Regular line BINGO, X, and Blackout are 100 points. Four Corners is 50 points.</span>
+        </div>
       </div>
       <div class="pregame-qr-card">
         <strong>Scan to play!</strong>
@@ -188,12 +192,11 @@ function renderLeaderboard(state) {
     : nextRound
     ? `Up next: Round ${state.roundIndex + 2} • ${nextRound.name}`
     : "Final leaderboard";
-  const listRows = rows.slice(3, 9);
   displayEls.leaderboardPanel.innerHTML = `
     <div class="break-header event-art-panel ${isEnded ? "final-header" : ""}">
       <div>
         <p class="brand-kicker">${isEnded ? "Final Scores" : "10-Minute Break"}</p>
-        <h2>${isEnded ? "Final Leaderboard" : "Leaderboard"}</h2>
+        <h2>${isEnded ? "Top 3 Winners" : "Top 3 Leaders"}</h2>
         <p class="break-next">${escapeHtml(nextRoundText)}</p>
       </div>
       <div class="break-countdown ${isEnded ? "hidden" : ""}">
@@ -202,25 +205,6 @@ function renderLeaderboard(state) {
       </div>
     </div>
     ${renderTopLeaders(rows, isEnded)}
-    ${isEnded && rows.length ? `
-      <div class="winner-banner">
-        <span>Overall Winner</span>
-        <strong>${escapeHtml(rows[0].player)}</strong>
-        <em>${rows[0].points} pts</em>
-      </div>
-    ` : ""}
-    ${isEnded && rows.length ? renderPrizeClaim(rows) : ""}
-    ${listRows.length ? `
-      <div class="leaderboard-list">
-        ${listRows.map((row, index) => `
-        <div class="leaderboard-row">
-          <span class="leaderboard-rank">${index + 4}</span>
-          <span class="leaderboard-name">${escapeHtml(row.player)}</span>
-          <span class="leaderboard-score">${row.points} pts</span>
-        </div>
-      `).join("")}
-      </div>
-    ` : ""}
   `;
   scheduleFinalWinnerFit();
 }
@@ -237,7 +221,7 @@ function updateFinalVideo(shouldShow) {
 
 function renderTopLeaders(rows, isEnded) {
   const winners = rows.slice(0, 3);
-  const heading = isEnded ? "Tonight's Winners" : "Top 3 Leaders";
+  const heading = isEnded ? "Tonight's Winners" : "BINGOS add points. Points decide the winners.";
   const emptyTitle = isEnded ? "Final Scores" : "Leaderboard";
   const emptySubtitle = isEnded ? "Thanks for playing" : "Claims will appear here";
   return `
