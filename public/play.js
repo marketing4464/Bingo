@@ -4,6 +4,8 @@ let currentState = null;
 let currentCardRoundIndex = null;
 let playerHeartbeatTimer = null;
 let attemptedSessionRestore = false;
+let lastBingoSoundClaimId = null;
+let bingoSoundUnlocked = false;
 
 const PLAYER_STORAGE_KEY = "onParBingoPlayerSession";
 
@@ -16,10 +18,12 @@ const playerMeta = $("#playerMeta");
 const playerRecentWords = $("#playerRecentWords");
 const toast = $("#toast");
 const addCardButton = $("#addCardButton");
+const bingoHorn = $("#bingoHorn");
 
 setBingoClientRole("player");
 
 installPullToRefreshGuard();
+installBingoSoundUnlock();
 
 joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -30,6 +34,7 @@ joinForm.addEventListener("submit", async (event) => {
     const deal = await dealCards(count);
     cards = deal.cards;
     currentCardRoundIndex = deal.roundIndex;
+    rememberLatestClaim(state);
     startPlayerHeartbeat();
     joinPanel.classList.add("hidden");
     gamePanel.classList.remove("hidden");
@@ -54,6 +59,7 @@ subscribe(async (state) => {
       savePlayerSession();
       showToast(`Round ${state.roundIndex + 1} started. New cards dealt.`);
     }
+    playNewBingoSound(state);
     renderPlayer(state);
   }
 });
@@ -97,6 +103,55 @@ function renderAddCardButton() {
   const canAdd = cards.length > 0 && cards.length < 3;
   addCardButton.classList.toggle("hidden", !canAdd);
   addCardButton.textContent = canAdd ? `Add Card ${cards.length + 1}` : "Max 3 Cards";
+}
+
+function rememberLatestClaim(state) {
+  lastBingoSoundClaimId = state?.latestClaim?.id || null;
+}
+
+function playNewBingoSound(state) {
+  const claimId = state?.latestClaim?.id || null;
+  if (!claimId || claimId === lastBingoSoundClaimId) return;
+  lastBingoSoundClaimId = claimId;
+  playBingoHorn();
+}
+
+function installBingoSoundUnlock() {
+  if (!bingoHorn) return;
+  const events = ["pointerdown", "touchstart", "click"];
+  const removeUnlockListeners = () => {
+    events.forEach((eventName) => document.removeEventListener(eventName, unlock));
+  };
+  const unlock = () => {
+    if (bingoSoundUnlocked) return;
+    const previousVolume = bingoHorn.volume;
+    bingoHorn.volume = 0;
+    bingoHorn.play()
+      .then(() => {
+        bingoHorn.pause();
+        bingoHorn.currentTime = 0;
+        bingoHorn.volume = previousVolume;
+        bingoSoundUnlocked = true;
+        removeUnlockListeners();
+      })
+      .catch(() => {
+        bingoHorn.volume = previousVolume;
+      });
+  };
+
+  events.forEach((eventName) => {
+    document.addEventListener(eventName, unlock, { passive: true });
+  });
+}
+
+function playBingoHorn() {
+  if (!bingoHorn) return;
+  bingoHorn.pause();
+  bingoHorn.currentTime = 0;
+  bingoHorn.volume = 1;
+  bingoHorn.play().catch(() => {
+    showToast("BINGO! Sound will play after you tap the screen.");
+  });
 }
 
 async function addCard() {
@@ -334,6 +389,7 @@ async function restorePlayerSession(state) {
   player = saved.player;
   cards = saved.cards;
   currentCardRoundIndex = saved.roundIndex;
+  rememberLatestClaim(state);
   if (currentCardRoundIndex > state.roundIndex) return false;
   if (currentCardRoundIndex < state.roundIndex) {
     await dealNewRoundCards();
