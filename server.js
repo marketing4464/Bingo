@@ -614,6 +614,7 @@ function validateClaimBody(body) {
 
 function drawNextMoment({ resetTimer = true } = {}) {
   if (state.status !== "playing") return false;
+  if (!hasEnoughTimeForNextPull()) return false;
   if (!state.deck.length) {
     state.deck = shuffle(moments.filter((moment) => !state.called.some((word) => word.text === moment.text)));
     if (!state.deck.length) state.deck = shuffle(moments);
@@ -627,6 +628,11 @@ function drawNextMoment({ resetTimer = true } = {}) {
   state.called.unshift(next);
   state.nextPullAt = resetTimer ? Date.now() + PULL_INTERVAL_MS : state.nextPullAt;
   return true;
+}
+
+function hasEnoughTimeForNextPull(now = Date.now()) {
+  if (!state.playEndsAt) return true;
+  return state.playEndsAt - now >= PULL_INTERVAL_MS;
 }
 
 function ensureLiveRoundHasMoment() {
@@ -699,6 +705,11 @@ function advanceState() {
   }
   if (state.status === "break" && state.breakEndsAt && now >= state.breakEndsAt) {
     startNextRound();
+    markUpdated();
+    return true;
+  }
+  if (state.status === "playing" && state.nextPullAt && now >= state.nextPullAt && !hasEnoughTimeForNextPull(now)) {
+    state.nextPullAt = null;
     markUpdated();
     return true;
   }
@@ -1148,6 +1159,10 @@ async function routeApi(req, res, pathname) {
       sendJson(res, { error: "Start the round before pulling words." }, 409);
       return;
     }
+    if (!hasEnoughTimeForNextPull()) {
+      sendJson(res, { error: "Round is ending in less than 20 seconds. No more moments will be pulled." }, 409);
+      return;
+    }
     if (!drawNextMoment({ resetTimer: true })) {
       sendJson(res, { error: "No more words available." }, 409);
       return;
@@ -1323,6 +1338,9 @@ async function handleApiWebRequest(request, pathname) {
   if (pathname === "/api/pull") {
     if (state.status !== "playing") {
       return webJson({ error: "Start the round before pulling words." }, 409);
+    }
+    if (!hasEnoughTimeForNextPull()) {
+      return webJson({ error: "Round is ending in less than 20 seconds. No more moments will be pulled." }, 409);
     }
     if (!drawNextMoment({ resetTimer: true })) {
       return webJson({ error: "No more words available." }, 409);
