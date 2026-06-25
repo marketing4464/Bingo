@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>On Par Pop Culture Bingo Host Guide</title>
+    <style>
+      :root {
+        --ink: #101510;
+        --muted: #4b5c47;
+        --forest: #15551f;
+        --mint: #dfffc5;
+        --line: #c7d8bd;
+        --paper: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: #eef5e9;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.45;
+      }
+
+      main {
+        width: min(980px, calc(100vw - 28px));
+        margin: 0 auto;
+        padding: 28px 0 48px;
+      }
+
+      header,
+      section {
+        margin-bottom: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--paper);
+        padding: 22px;
+        box-shadow: 0 12px 30px rgba(28, 61, 24, 0.09);
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: start;
+        color: #ffffff;
+        background: linear-gradient(135deg, #0f3917, #1d702b);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 6px;
+        font-size: 34px;
+        line-height: 1;
+      }
+
+      h2 {
+        margin-bottom: 12px;
+        color: var(--forest);
+        font-size: 24px;
+        line-height: 1.1;
+      }
+
+      h3 {
+        margin-bottom: 6px;
+        font-size: 17px;
+      }
+
+      a {
+        color: #0d5c23;
+        font-weight: 850;
+      }
+
+      ul,
+      ol {
+        margin: 0;
+        padding-left: 22px;
+      }
+
+      li {
+        margin: 5px 0;
+      }
+
+      .print-button {
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 8px;
+        color: #0d250f;
+        background: var(--mint);
+        padding: 10px 14px;
+        font: inherit;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--mint);
+        font-size: 12px;
+        font-weight: 950;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: #eefbe8;
+        font-weight: 750;
+      }
+
+      .script {
+        border-left: 7px solid var(--forest);
+        background: #f7fbf4;
+      }
+
+      .script p {
+        margin-bottom: 12px;
+        font-size: 18px;
+        font-weight: 750;
+      }
+
+      .callout {
+        border-color: #7fb36d;
+        background: #f1ffe9;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        background: #fbfdf9;
+      }
+
+      .card strong {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--forest);
+        font-size: 15px;
+      }
+
+      .link-box {
+        display: grid;
+        gap: 6px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        background: #f7fbf4;
+      }
+
+      .link-box span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .round-table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      .round-table th,
+      .round-table td {
+        padding: 10px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .round-table th {
+        color: #ffffff;
+        background: var(--forest);
+      }
+
+      .round-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .checklist li {
+        list-style: square;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      @media (max-width: 760px) {
+        header,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        body {
+          background: #ffffff;
+          font-size: 11pt;
+        }
+
+        main {
+          width: 100%;
+          padding: 0;
+        }
+
+        header,
+        section {
+          break-inside: avoid;
+          box-shadow: none;
+        }
+
+        .print-button {
+          display: none;
+        }
+
+        a {
+          color: #000000;
+          text-decoration: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">On Par Entertainment</p>
+          <h1>Pop Culture Moments Bingo Host Guide</h1>
+          <p class="subtitle">Read-aloud script, rules, scoring, dashboard functions, and event operations.</p>
+        </div>
+        <button class="print-button" onclick="window.print()">Print Guide</button>
+      </header>
+
+      <section class="script">
+        <h2>Host Script: Read Before The Game Starts</h2>
+        <p>All right, On Par, let me hear you make some noise!</p>
+        <p>Welcome to Pop Culture Moments Bingo. Tonight is all about big memories, iconic moments, fast fingers, and very loud BINGO energy.</p>
+        <p>To play, scan the QR code on the screen, enter your name, and choose up to three bingo cards. When a pop culture moment appears on the display, tap that square on your card if you have it. The free space is already yours.</p>
+        <p>Here is the important part: BINGOS do not end the whole game. BINGOS add points. The players with the most points at the end are our winners, so keep playing after every BINGO.</p>
+        <p>In Rounds 1, 2, and 3, any row, column, or diagonal counts as a regular BINGO for 100 points. Round 2 also has a Four Corners bonus worth 50 points. Round 3 also has an X Bingo bonus worth 200 points.</p>
+        <p>For the final round, you keep your Round 3 cards. The final round is cover-all blackout only. Fill the whole card for 500 points. Once you hit blackout, that card will be replaced with a fresh card so you can keep chasing points.</p>
+        <p>When you get a BINGO, tap the BINGO button, yell BINGO, use the noise makers on your table, and make sure we hear you. We are giving a bonus prize to the loudest table at the end of the bingo game.</p>
+        <p>So be loud, help your table, keep your cards moving, and get ready. Pop Culture Moments Bingo starts now!</p>
+      </section>
+
+      <section class="callout">
+        <h2>Game Rules At A Glance</h2>
+        <ul>
+          <li>Players can use 1 to 3 cards.</li>
+          <li>Players may add cards on their player screen until they have 3 total.</li>
+          <li>Players tap squares as moments are pulled.</li>
+          <li>Points determine the final winners. BINGO claims add points and gameplay continues.</li>
+          <li>Players should yell BINGO and use the table noise makers every time they receive a BINGO.</li>
+          <li>The loudest table wins a bonus prize at the end of the game.</li>
+          <li>No new moment is pulled when fewer than 20 seconds remain in a round.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Scoring And Round Rules</h2>
+        <table class="round-table">
+          <thead>
+            <tr>
+              <th>Round</th>
+              <th>Valid BINGOS</th>
+              <th>Points</th>
+              <th>Host Reminder</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Round 1: Red Carpet Warm-Up</td>
+              <td>Any row, column, or diagonal</td>
+              <td>100 points</td>
+              <td>Encourage noise on every BINGO.</td>
+            </tr>
+            <tr>
+              <td>Round 2: TV &amp; Movie Icons</td>
+              <td>Any row, column, or diagonal. Four Corners bonus is also active.</td>
+              <td>Regular BINGO 100 points. Four Corners bonus 50 points.</td>
+              <td>Players can claim regular BINGOS and the bonus pattern.</td>
+            </tr>
+            <tr>
+              <td>Round 3: Music Video Moments</td>
+              <td>Any row, column, or diagonal. X Bingo bonus is also active.</td>
+              <td>Regular BINGO 100 points. X Bingo bonus 200 points.</td>
+              <td>Regular BINGOS still count in Round 3.</td>
+            </tr>
+            <tr>
+              <td>Round 4: Viral Finale</td>
+              <td>Cover-all blackout only</td>
+              <td>Blackout 500 points</td>
+              <td>Players keep Round 3 cards. After blackout, that card is replaced.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Portal Links</h2>
+        <div class="grid">
+          <div class="link-box">
+            <span>Host Portal</span>
+            <a href="https://opebingo-popculture.vercel.app/host">https://opebingo-popculture.vercel.app/host</a>
+          </div>
+          <div class="link-box">
+            <span>Display Screen</span>
+            <a href="https://opebingo-popculture.vercel.app/display">https://opebingo-popculture.vercel.app/display</a>
+          </div>
+          <div class="link-box">
+            <span>Player Page</span>
+            <a href="https://opebingo-popculture.vercel.app/play">https://opebingo-popculture.vercel.app/play</a>
+          </div>
+          <div class="link-box">
+            <span>Printable Guide</span>
+            <a href="https://opebingo-popculture.vercel.app/host-guide">https://opebingo-popculture.vercel.app/host-guide</a>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Host Dashboard Functions</h2>
+        <div class="grid">
+          <div class="card">
+            <strong>Open Display</strong>
+            Opens the big-screen display. Use this before players arrive so the QR code and countdown are visible.
+          </div>
+          <div class="card">
+            <strong>Open Player Page</strong>
+            Opens the player card page for testing or helping a guest join.
+          </div>
+          <div class="card">
+            <strong>Print Host Guide</strong>
+            Opens this printable operations module and read-aloud script.
+          </div>
+          <div class="card">
+            <strong>Start 15-Min Countdown</strong>
+            Starts the first countdown screen. Keep this up while players scan and get cards.
+          </div>
+          <div class="card">
+            <strong>Skip Countdown</strong>
+            Starts Round 1 immediately if the room is ready early.
+          </div>
+          <div class="card">
+            <strong>Start Round Now</strong>
+            Starts the current round immediately from setup or recovery.
+          </div>
+          <div class="card">
+            <strong>Pull Next Moment</strong>
+            Manually pulls a moment during a live round. Auto-pull also runs every 20 seconds.
+          </div>
+          <div class="card">
+            <strong>Start 10-Min Break</strong>
+            Ends the current round and shows the leaderboard break screen.
+          </div>
+          <div class="card">
+            <strong>Next Round</strong>
+            Starts the next round from the break screen. The final round keeps Round 3 cards.
+          </div>
+          <div class="card">
+            <strong>Reset Event</strong>
+            Clears the event back to setup. Only use this before a full restart.
+          </div>
+          <div class="card">
+            <strong>Player QR</strong>
+            Shows the player join QR and link. Players scan, enter their name, and choose cards.
+          </div>
+          <div class="card">
+            <strong>Bingo Claims</strong>
+            Shows submitted BINGO claims and point totals as players tap BINGO.
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Run Of Show</h2>
+        <ol>
+          <li>Open the host portal on the host device.</li>
+          <li>Open the display screen on the venue display.</li>
+          <li>Confirm the display QR says Scan to play and players can reach the player page.</li>
+          <li>Put noise makers on all tables before the game starts.</li>
+          <li>Start the 15-minute countdown and read the host script.</li>
+          <li>During each round, let auto-pull run. Use Pull Next Moment only if you need to recover or speed up.</li>
+          <li>When a player yells BINGO, encourage the table to get loud and remind them to tap BINGO on their device.</li>
+          <li>During breaks, check the leaderboard and claims before starting the next round.</li>
+          <li>Before the final round, announce: players keep Round 3 cards, final is blackout only, blackout is 500 points.</li>
+          <li>At the end, announce the top winners and the loudest-table bonus prize.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Quick Troubleshooting</h2>
+        <ul class="checklist">
+          <li>If players see a login screen, make sure they are using the public player link, not a protected preview link.</li>
+          <li>If the display is not changing, refresh the display screen and confirm the host portal is live.</li>
+          <li>If a player needs more cards, have them use Add Card on their player screen, up to 3 total.</li>
+          <li>If a player refreshes, their card progress should restore on the same device.</li>
+          <li>If a round is ending, the game will not pull a new moment in the final 20 seconds.</li>
+          <li>If the host needs to restart the whole event, use Reset Event and type RESET only when you are sure.</li>
+        </ul>
+        <p class="muted">Print one copy for the host and keep a backup copy near the display computer.</p>
+      </section>
+    </main>
+  </body>
+</html>

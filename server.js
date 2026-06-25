@@ -1426,6 +1426,10 @@ function handleRequest(req, res) {
     routeStatic(req, res, "/display.html");
     return;
   }
+  if (url.pathname === "/host-guide") {
+    routeStatic(req, res, "/host-guide.html");
+    return;
+  }
   if (url.pathname === "/play") {
     routeStatic(req, res, "/play.html");
     return;
