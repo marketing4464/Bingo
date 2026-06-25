@@ -665,12 +665,20 @@ function ensureLiveRoundHasMoment() {
   return drawNextMoment({ resetTimer: true });
 }
 
-function startCurrentRound({ resetClaims = false } = {}) {
+function buildRoundDeck(previousRoundCalled = []) {
+  if (!isFinalRoundIndex(state.roundIndex)) return shuffle(moments);
+  const previousTexts = new Set((previousRoundCalled || []).map((moment) => moment?.text).filter(Boolean));
+  const newMoments = moments.filter((moment) => !previousTexts.has(moment.text));
+  const duplicateMoments = moments.filter((moment) => previousTexts.has(moment.text));
+  return [...shuffle(newMoments), ...shuffle(duplicateMoments)];
+}
+
+function startCurrentRound({ resetClaims = false, previousRoundCalled = state.called } = {}) {
   const round = rounds[state.roundIndex] || rounds[rounds.length - 1];
   state.status = "playing";
   state.currentWord = null;
   state.called = [];
-  state.deck = shuffle(moments);
+  state.deck = buildRoundDeck(previousRoundCalled);
   if (resetClaims) state.claims = [];
   state.countdownEndsAt = null;
   state.breakEndsAt = null;
@@ -711,8 +719,9 @@ function startNextRound() {
     startBreakOrEndEvent();
     return;
   }
+  const previousRoundCalled = state.called;
   state.roundIndex += 1;
-  startCurrentRound();
+  startCurrentRound({ previousRoundCalled });
 }
 
 function advanceState() {
