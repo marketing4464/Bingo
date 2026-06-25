@@ -55,9 +55,15 @@ subscribe(async (state) => {
   if (!gamePanel.classList.contains("hidden")) {
     if (currentCardRoundIndex !== null && state.roundIndex < currentCardRoundIndex) return;
     if (currentCardRoundIndex !== null && state.roundIndex > currentCardRoundIndex) {
-      await dealNewRoundCards();
+      if (shouldCarryCardsIntoRound(state)) {
+        currentCardRoundIndex = state.roundIndex;
+        cards.forEach((card) => card.claimedBingos.clear());
+        showToast("Final round started. Keep your cards: blackout only.");
+      } else {
+        await dealNewRoundCards();
+        showToast(`Round ${state.roundIndex + 1} started. New cards dealt.`);
+      }
       savePlayerSession();
-      showToast(`Round ${state.roundIndex + 1} started. New cards dealt.`);
     }
     playNewBingoSound(state);
     renderPlayer(state);
@@ -83,6 +89,13 @@ async function dealNewRoundCards() {
   const deal = await dealCards(count);
   cards = deal.cards;
   currentCardRoundIndex = deal.roundIndex;
+}
+
+function shouldCarryCardsIntoRound(state) {
+  return Boolean(state
+    && state.round?.pattern === "Blackout"
+    && currentCardRoundIndex === state.roundIndex - 1
+    && cards.length);
 }
 
 function renderPlayer(state) {
@@ -273,17 +286,17 @@ function completedBingos(card, pattern) {
 
   if (pattern === "Blackout") {
     if (marked.every(Boolean)) {
-      return [{ id: "blackout", label: "Blackout Bingo", cells: allCells, points: 100 }];
+      return [{ id: "blackout", label: "Blackout Bingo", cells: allCells, points: 500 }];
     }
-    return regularBingos;
+    return [];
   }
 
   if (pattern === "X Pattern") {
     const x = [0, 4, 6, 8, 12, 16, 18, 20, 24];
     if (x.every((index) => marked[index])) {
-      return [{ id: "x-pattern", label: "X Bingo", cells: x, points: 100 }];
+      bonusBingos.push({ id: "x-pattern", label: "X Bingo Bonus", cells: x, points: 200 });
     }
-    return regularBingos;
+    return [...regularBingos, ...bonusBingos];
   }
 
   if (pattern === "Four Corners") {
@@ -320,12 +333,24 @@ async function claimBingo(cardNumber) {
       bingos: claimBingos,
     });
     result.claim.bingos.forEach((bingo) => card.claimedBingos.add(bingo.id));
+    const didBlackout = result.claim.bingos.some((bingo) => bingo.id === "blackout");
+    if (didBlackout && currentState.round.pattern === "Blackout") {
+      await replaceBlackoutCard(cardNumber);
+    }
     renderPlayer(currentState);
     savePlayerSession();
-    showToast(`${result.claim.bingoCount} BINGO${result.claim.bingoCount === 1 ? "" : "S"} sent. +${result.claim.points} points.`);
+    showToast(`${result.claim.bingoCount} BINGO${result.claim.bingoCount === 1 ? "" : "S"} sent. +${result.claim.points} points.${didBlackout ? " New card dealt." : ""}`);
   } catch (error) {
     showToast(error.message || "Could not send claim.");
   }
+}
+
+async function replaceBlackoutCard(cardNumber) {
+  const deal = await dealCards(cardNumber);
+  const replacement = deal.cards.find((card) => card.number === cardNumber);
+  if (!replacement) throw new Error("Could not deal a replacement card.");
+  cards = cards.map((card) => card.number === cardNumber ? replacement : card);
+  currentCardRoundIndex = deal.roundIndex;
 }
 
 function renderRecentPulls(state) {
@@ -392,7 +417,12 @@ async function restorePlayerSession(state) {
   rememberLatestClaim(state);
   if (currentCardRoundIndex > state.roundIndex) return false;
   if (currentCardRoundIndex < state.roundIndex) {
-    await dealNewRoundCards();
+    if (shouldCarryCardsIntoRound(state)) {
+      currentCardRoundIndex = state.roundIndex;
+      cards.forEach((card) => card.claimedBingos.clear());
+    } else {
+      await dealNewRoundCards();
+    }
   }
   $("#playerName").value = player;
   $("#cardCount").value = String(Math.max(1, Math.min(3, cards.length)));

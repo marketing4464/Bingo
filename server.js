@@ -135,6 +135,10 @@ const rounds = [
   { name: "Viral Finale", pattern: "Blackout", playMinutes: 15 },
 ];
 
+function isFinalRoundIndex(roundIndex) {
+  return Number(roundIndex) === rounds.length - 1;
+}
+
 const clients = new Set();
 
 let state = freshState();
@@ -504,6 +508,13 @@ function sameCells(left, right) {
     && left.every((cell, index) => cell === right[index]);
 }
 
+function cardFingerprint(cells) {
+  return crypto
+    .createHash("sha256")
+    .update(JSON.stringify(cells))
+    .digest("base64url");
+}
+
 function normalizeSelectedIndices(selected) {
   const set = new Set(Array.isArray(selected) ? selected : []);
   set.add(12);
@@ -523,15 +534,18 @@ function completedBingosForCard(cells, selectedIndices, pattern, calledWords) {
     .filter((line) => line.cells.every((index) => marked[index]))
     .map((line) => ({ ...line, words: line.cells.map((index) => cells[index]), points: 100 }));
 
-  if (pattern === "Blackout" && marked.every(Boolean)) {
-    return [{ id: "blackout", label: "Blackout Bingo", cells: allCells, words: cells, points: 100 }];
+  if (pattern === "Blackout") {
+    return marked.every(Boolean)
+      ? [{ id: "blackout", label: "Blackout Bingo", cells: allCells, words: cells, points: 500 }]
+      : [];
   }
 
   if (pattern === "X Pattern") {
     const x = [0, 4, 6, 8, 12, 16, 18, 20, 24];
-    if (x.every((index) => marked[index])) {
-      return [{ id: "x-pattern", label: "X Bingo", cells: x, words: x.map((index) => cells[index]), points: 100 }];
-    }
+    const bonus = x.every((index) => marked[index])
+      ? [{ id: "x-pattern", label: "X Bingo Bonus", cells: x, words: x.map((index) => cells[index]), points: 200 }]
+      : [];
+    return [...regularBingos, ...bonus];
   }
 
   if (pattern === "Four Corners") {
@@ -545,13 +559,21 @@ function completedBingosForCard(cells, selectedIndices, pattern, calledWords) {
   return regularBingos;
 }
 
-function alreadyClaimedPattern(player, cardNumber, bingoId) {
+function cardRoundMatchesCurrentRound(cardRoundIndex) {
+  return cardRoundIndex === state.roundIndex
+    || (isFinalRoundIndex(state.roundIndex) && cardRoundIndex === state.roundIndex - 1);
+}
+
+function alreadyClaimedPattern(player, cardNumber, bingoId, fingerprint) {
   const currentRound = rounds[state.roundIndex]?.name;
   return state.claims.some((claim) => {
     const sameRound = claim.roundIndex === state.roundIndex || claim.round === currentRound;
+    const sameCard = claim.cardFingerprint && fingerprint
+      ? claim.cardFingerprint === fingerprint
+      : Number(claim.card) === Number(cardNumber);
     return sameRound
       && claim.player === player
-      && Number(claim.card) === Number(cardNumber)
+      && sameCard
       && Array.isArray(claim.bingos)
       && claim.bingos.some((bingo) => bingo.id === bingoId);
   });
@@ -572,7 +594,7 @@ function validateClaimBody(body) {
   if (
     tokenPayload.v !== 1
     || tokenPayload.player !== player
-    || tokenPayload.roundIndex !== state.roundIndex
+    || !cardRoundMatchesCurrentRound(tokenPayload.roundIndex)
     || Number(tokenPayload.number) !== cardNumber
     || !sameCells(tokenPayload.cells, cells)
   ) {
@@ -581,13 +603,14 @@ function validateClaimBody(body) {
 
   const calledWords = new Set(state.called.map((word) => word.text));
   const selectedIndices = normalizeSelectedIndices(body.selected);
+  const fingerprint = cardFingerprint(cells);
   const requestedIds = new Set((Array.isArray(body.bingos) ? body.bingos : [])
     .map((bingo) => String(bingo?.id || "").slice(0, 80))
     .filter(Boolean));
   const completed = completedBingosForCard(cells, selectedIndices, rounds[state.roundIndex].pattern, calledWords);
   const candidateBingos = completed.filter((bingo) => !requestedIds.size || requestedIds.has(bingo.id));
   const uniqueBingos = [...new Map(candidateBingos.map((bingo) => [bingo.id, bingo])).values()];
-  const newBingos = uniqueBingos.filter((bingo) => !alreadyClaimedPattern(player, cardNumber, bingo.id));
+  const newBingos = uniqueBingos.filter((bingo) => !alreadyClaimedPattern(player, cardNumber, bingo.id, fingerprint));
 
   if (!completed.length || !candidateBingos.length) {
     return { status: 400, body: { error: "No completed BINGO pattern was submitted." } };
@@ -601,6 +624,7 @@ function validateClaimBody(body) {
     id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
     player,
     card: cardNumber,
+    cardFingerprint: fingerprint,
     bingos: newBingos,
     bingoCount: newBingos.length,
     points,

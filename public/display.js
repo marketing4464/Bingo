@@ -169,7 +169,7 @@ function renderPregameCountdown(state) {
         <p class="pregame-copy">${escapeHtml(state.countdownCopy || "Round 1 starts automatically when the countdown ends.")}</p>
         <div class="pregame-rules">
           <strong>BINGO adds points</strong>
-          <span>Points determine the winners. Regular line BINGO, X, and Blackout are 100 points. Four Corners is 50 points.</span>
+          <span>Points determine the winners. Regular BINGO is 100. Round 3 X bonus is 200. Keep Round 3 cards for the final: cover-all blackout only for 500, then that card is replaced. Loudest table wins a prize, so yell BINGO every time.</span>
         </div>
       </div>
       <div class="pregame-qr-card">

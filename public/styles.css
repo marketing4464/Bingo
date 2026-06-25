@@ -854,9 +854,9 @@ h1 {
 
 .display-body[data-display-status="countdown"] .countdown-instructions {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: clamp(8px, 1vw, 14px);
-  width: min(1280px, 100%);
+  width: min(1440px, 100%);
   min-width: 0;
   padding: clamp(8px, 1.1vw, 14px);
   border: 1px solid rgba(223, 255, 197, 0.64);
@@ -884,7 +884,7 @@ h1 {
 
 .countdown-instructions span {
   color: #f2ffe9;
-  font-size: clamp(10px, 0.9vw, 14px);
+  font-size: clamp(10px, 0.82vw, 14px);
   font-weight: 850;
   line-height: 1.15;
 }

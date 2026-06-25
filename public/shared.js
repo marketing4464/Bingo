@@ -135,14 +135,14 @@ function statusLabel(status) {
 function roundRuleLabel(pattern) {
   if (pattern === "Four Corners") return "Any line bingo + Four Corners bonus";
   if (pattern === "X Pattern") return "Any line bingo + X bonus";
-  if (pattern === "Blackout") return "Any line bingo + Blackout bonus";
+  if (pattern === "Blackout") return "Cover-all blackout only";
   return "Any line bingo";
 }
 
 function bonusRuleLabel(pattern) {
   if (pattern === "Four Corners") return "Four Corners bonus +50";
-  if (pattern === "X Pattern") return "X bingo +100";
-  if (pattern === "Blackout") return "Blackout bingo +100";
+  if (pattern === "X Pattern") return "X bingo bonus +200";
+  if (pattern === "Blackout") return "Blackout bingo +500";
   return "No bonus pattern";
 }
 
