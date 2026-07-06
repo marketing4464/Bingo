@@ -12,7 +12,13 @@ const els = {
   skipCountdown: $("#skipCountdown"),
   startRound: $("#startRound"),
   pullWord: $("#pullWord"),
+  pauseRound: $("#pauseRound"),
+  resumeRound: $("#resumeRound"),
+  undoCall: $("#undoCall"),
+  toggleAutoCall: $("#toggleAutoCall"),
+  hypeReminder: $("#hypeReminder"),
   startBreak: $("#startBreak"),
+  endRound: $("#endRound"),
   nextRound: $("#nextRound"),
   resetGame: $("#resetGame"),
   timer: $("#timer"),
@@ -44,7 +50,13 @@ els.startCountdown.addEventListener("click", () => runHostAction("startCountdown
 els.skipCountdown.addEventListener("click", () => runHostAction("skipCountdown"));
 els.startRound.addEventListener("click", () => runHostAction("startRound"));
 els.pullWord.addEventListener("click", () => runHostAction("pullWord"));
+els.pauseRound.addEventListener("click", () => runHostAction("pauseRound"));
+els.resumeRound.addEventListener("click", () => runHostAction("resumeRound"));
+els.undoCall.addEventListener("click", () => runHostAction("undoCall"));
+els.toggleAutoCall.addEventListener("click", () => runHostAction("toggleAutoCall"));
+els.hypeReminder.addEventListener("click", () => runHostAction("hypeReminder"));
 els.startBreak.addEventListener("click", () => runHostAction("startBreak"));
+els.endRound.addEventListener("click", () => runHostAction("endRound"));
 els.nextRound.addEventListener("click", () => runHostAction("nextRound"));
 els.resetGame.addEventListener("click", () => {
   runHostAction("resetGame");
@@ -58,7 +70,7 @@ els.commandCenter.addEventListener("click", (event) => {
 function render(state) {
   const roundNumber = state.roundIndex + 1;
   HostRunbook.render(els.commandCenter, state);
-  els.roundName.textContent = `Round ${roundNumber}: ${state.round.name}`;
+  els.roundName.textContent = `${state.title} • Round ${roundNumber}: ${state.round.name}`;
   els.roundMeta.textContent = `${roundRuleLabel(state.round.pattern)} • ${state.round.playMinutes} minutes of play • words rotate every ${state.autoPullEverySeconds} seconds`;
   els.statusPill.textContent = statusLabel(state.status);
   els.statusPill.className = `status-pill ${state.status}`;
@@ -83,7 +95,14 @@ function render(state) {
   els.skipCountdown.disabled = state.status !== "countdown";
   els.startRound.disabled = state.status !== "setup";
   els.pullWord.disabled = state.status !== "playing";
-  els.startBreak.disabled = state.status !== "playing";
+  els.pauseRound.disabled = state.status !== "playing";
+  els.resumeRound.disabled = state.status !== "paused";
+  els.undoCall.disabled = !state.called.length || !["playing", "paused"].includes(state.status);
+  els.toggleAutoCall.disabled = !["playing", "paused"].includes(state.status);
+  els.toggleAutoCall.textContent = state.autoPullEnabled === false ? "Auto-Call Off" : "Auto-Call On";
+  els.hypeReminder.disabled = state.status === "ended";
+  els.startBreak.disabled = !["playing", "paused"].includes(state.status);
+  els.endRound.disabled = !["playing", "paused"].includes(state.status);
   els.nextRound.disabled = state.roundIndex >= state.rounds.length - 1 || state.status === "playing" || state.status === "ended";
 
   els.calledWords.innerHTML = state.called.length
@@ -144,9 +163,35 @@ async function runHostAction(action) {
       await api("/api/pull");
       return;
     }
+    if (action === "pauseRound") {
+      await api("/api/pause-round");
+      return;
+    }
+    if (action === "resumeRound") {
+      await api("/api/resume-round");
+      return;
+    }
+    if (action === "undoCall") {
+      if (!confirm("Undo the most recent called word?")) return;
+      await api("/api/undo-call");
+      return;
+    }
+    if (action === "toggleAutoCall") {
+      await api("/api/toggle-auto-call", { enabled: latestState?.autoPullEnabled === false });
+      return;
+    }
+    if (action === "hypeReminder") {
+      await api("/api/hype");
+      return;
+    }
     if (action === "startBreak") {
       if (!confirm("Start the leaderboard break now? The current round will stop.")) return;
       await api("/api/start-break");
+      return;
+    }
+    if (action === "endRound") {
+      if (!confirm("End this round now?")) return;
+      await api("/api/end-round");
       return;
     }
     if (action === "nextRound") {
@@ -168,6 +213,8 @@ function renderTimer(state) {
   const now = Date.now();
   if (state.status === "playing") {
     els.timer.textContent = formatClock(state.playEndsAt - now);
+  } else if (state.status === "paused") {
+    els.timer.textContent = formatClock(state.playRemainingMs || 0);
   } else if (state.status === "countdown") {
     els.timer.textContent = formatClock(state.countdownEndsAt - now);
   } else if (state.status === "break") {

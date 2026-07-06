@@ -20,6 +20,7 @@ let claimAlertTimer = null;
 let displayWordFitFrame = null;
 let heldCountdownState = null;
 let lastDisplayedMoment = null;
+let visibleHypeUpdatedAt = null;
 
 setBingoClientRole("display");
 
@@ -74,7 +75,9 @@ function stableDisplayState(state) {
 
 function updateDisplayTimers(state) {
   const target = state.status === "countdown" ? state.countdownEndsAt : state.status === "playing" ? state.playEndsAt : state.breakEndsAt;
-  const timeText = state.status === "setup" || state.status === "ended" ? "00:00" : formatClock(target - Date.now());
+  const timeText = state.status === "paused"
+    ? formatClock(state.playRemainingMs || 0)
+    : state.status === "setup" || state.status === "ended" ? "00:00" : formatClock(target - Date.now());
   displayEls.timer.textContent = timeText;
   const breakCountdown = $("#breakCountdown");
   if (breakCountdown) breakCountdown.textContent = state.status === "break" ? timeText : "00:00";
@@ -127,6 +130,7 @@ function renderDisplay(state) {
   }
 
   renderClaimAlert(state);
+  renderHypeAlert(state);
 
   displayEls.recent.innerHTML = state.called.slice(0, 10)
     .map((word, index) => `<span class="word-chip ${index === 0 ? "current-pull" : ""}">${escapeHtml(word.text)}</span>`)
@@ -283,6 +287,21 @@ function renderClaimAlert(state) {
     <div class="bingo-alert-title">BINGO!</div>
     <div class="bingo-alert-name">${escapeHtml(claim.player)}</div>
     <div class="bingo-alert-points">+${claim.points || 100} points</div>
+  `;
+  displayEls.bingoAlert.classList.remove("hidden");
+  clearTimeout(claimAlertTimer);
+  claimAlertTimer = setTimeout(() => {
+    displayEls.bingoAlert.classList.add("hidden");
+  }, 7000);
+}
+
+function renderHypeAlert(state) {
+  if (!state.hypeMessage || !state.hypeUpdatedAt || state.hypeUpdatedAt === visibleHypeUpdatedAt) return;
+  visibleHypeUpdatedAt = state.hypeUpdatedAt;
+  displayEls.bingoAlert.innerHTML = `
+    <div class="bingo-alert-title">Make Some Noise</div>
+    <div class="bingo-alert-name">${escapeHtml(state.hypeMessage)}</div>
+    <div class="bingo-alert-points">Loudest table wins a prize</div>
   `;
   displayEls.bingoAlert.classList.remove("hidden");
   clearTimeout(claimAlertTimer);

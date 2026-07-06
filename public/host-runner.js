@@ -70,6 +70,14 @@ const HostRunbook = (() => {
           : "The round is live, but no current moment is visible. Pull the next moment to recover.",
       };
     }
+    if (state.status === "paused") {
+      return {
+        label: "Resume Round",
+        action: "resumeRound",
+        kind: "primary",
+        detail: "The round clock and auto-calling are paused. Resume when the room is ready.",
+      };
+    }
     if (state.status === "break") {
       return {
         label: "Start Next Round",
@@ -98,6 +106,7 @@ const HostRunbook = (() => {
     if (state.status === "setup") return "Ready To Launch";
     if (state.status === "countdown") return "Countdown Is Live";
     if (state.status === "playing") return `Round ${state.roundIndex + 1} Is Live`;
+    if (state.status === "paused") return `Round ${state.roundIndex + 1} Is Paused`;
     if (state.status === "break") return "Break + Leaderboard";
     if (state.status === "ended") return "Final Winners";
     return "Host Console";
@@ -108,7 +117,7 @@ const HostRunbook = (() => {
     return [
       { number: "1", text: "Open the display screen and confirm the QR code says Scan to play.", state: status === "setup" ? "active" : "done" },
       { number: "2", text: "Start the 15-minute countdown and let players enter names and choose up to 3 cards.", state: status === "countdown" ? "active" : stepDone(status, ["playing", "break", "ended"]) },
-      { number: "3", text: "Round 1 starts automatically. Regular BINGO scores in rounds 1-3; the final round is blackout only.", state: status === "playing" ? "active" : stepDone(status, ["break", "ended"]) },
+      { number: "3", text: "Round 1 starts automatically. Regular BINGO scores in rounds 1-3; the final round is blackout only.", state: status === "playing" || status === "paused" ? "active" : stepDone(status, ["break", "ended"]) },
       { number: "4", text: "During breaks, confirm leaderboard and claims before the next round starts.", state: status === "break" ? "active" : stepDone(status, ["ended"]) },
       { number: "5", text: "At the end, leave the final winner video running and announce prize pickup.", state: status === "ended" ? "active" : "waiting" },
     ];

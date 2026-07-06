@@ -127,6 +127,7 @@ function formatClock(ms) {
 function statusLabel(status) {
   if (status === "countdown") return "Countdown to Start";
   if (status === "playing") return "Live Round";
+  if (status === "paused") return "Round Paused";
   if (status === "break") return "10-Minute Break";
   if (status === "ended") return "Event Complete";
   return "Ready";

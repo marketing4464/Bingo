@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>On Par Themed Bingo Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="dashboard-body">
+    <main class="app-shell dashboard-shell">
+      <header class="topbar">
+        <div class="brand-lockup">
+          <img class="brand-logo" src="/assets/on-par-logo-white.png" alt="On Par Entertainment logo" />
+          <div>
+            <p class="brand-kicker">On Par Entertainment</p>
+            <h1>Themed Bingo Dashboard</h1>
+            <p class="subtitle">Create, approve, save, and launch live bingo games.</p>
+          </div>
+        </div>
+        <nav class="nav-actions">
+          <a href="/" target="_blank"><button class="secondary">Host</button></a>
+          <a href="/display" target="_blank"><button class="secondary">Display</button></a>
+          <a href="/play" target="_blank"><button class="secondary">Player</button></a>
+        </nav>
+      </header>
+
+      <section class="dashboard-grid">
+        <aside class="panel dashboard-sidebar">
+          <div class="panel-header">
+            <div>
+              <h2>Saved Games</h2>
+              <p class="subtitle">Drafts, review, approved, and live themes.</p>
+            </div>
+          </div>
+
+          <form class="create-game-form" id="createGameForm">
+            <label>
+              Game title
+              <input id="newGameTitle" name="title" placeholder="Love Island Bingo" />
+            </label>
+            <label>
+              Theme
+              <input id="newGameTheme" name="theme" placeholder="Love Island" required />
+            </label>
+            <button type="submit">Create Theme</button>
+          </form>
+
+          <div class="saved-games-list" id="savedGamesList"></div>
+        </aside>
+
+        <section class="panel dashboard-editor">
+          <div class="panel-header">
+            <div>
+              <h2 id="editorTitle">Choose a saved game</h2>
+              <p class="subtitle" id="editorMeta">Deck and image approvals appear here.</p>
+            </div>
+            <span class="status-pill setup" id="editorStatus">Draft</span>
+          </div>
+
+          <div class="dashboard-toolbar">
+            <label>
+              Title
+              <input id="gameTitle" />
+            </label>
+            <label>
+              Theme
+              <input id="gameTheme" />
+            </label>
+            <button id="saveGame">Save</button>
+            <button class="secondary" id="generateWords">Generate Words</button>
+            <button class="secondary" id="recommendAll">Recommend Images</button>
+            <button class="gold" id="startLive">Start Live Game</button>
+          </div>
+
+          <div class="dashboard-progress">
+            <div class="stat"><b id="deckCount">0</b><span>Words</span></div>
+            <div class="stat"><b id="approvedCount">0</b><span>Images Approved</span></div>
+            <div class="stat"><b id="missingCount">0</b><span>Missing Images</span></div>
+            <div class="stat"><b id="readyState">No</b><span>Ready</span></div>
+          </div>
+
+          <div class="manual-word-row">
+            <input id="manualWord" placeholder="Add word or phrase" />
+            <input id="manualDescription" placeholder="Optional description" />
+            <button id="addWord">Add Word</button>
+          </div>
+
+          <div class="deck-list" id="deckList"></div>
+        </section>
+      </section>
+    </main>
+
+    <div class="toast hidden" id="dashboardToast"></div>
+    <script src="/dashboard.js"></script>
+  </body>
+</html>

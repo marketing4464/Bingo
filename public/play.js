@@ -6,6 +6,7 @@ let playerHeartbeatTimer = null;
 let attemptedSessionRestore = false;
 let lastBingoSoundClaimId = null;
 let bingoSoundUnlocked = false;
+let lastHypeUpdatedAt = null;
 
 const PLAYER_STORAGE_KEY = "onParBingoPlayerSession";
 
@@ -66,6 +67,7 @@ subscribe(async (state) => {
       savePlayerSession();
     }
     playNewBingoSound(state);
+    showHypeMessage(state);
     renderPlayer(state);
   }
 });
@@ -206,6 +208,11 @@ cardsEl.addEventListener("click", (event) => {
 function toggleCell(cardNumber, index) {
   const card = cards.find((candidate) => candidate.number === cardNumber);
   if (!card || index === 12) return;
+  const word = card.cells[index];
+  if (!calledSet(currentState || {}).has(word)) {
+    showToast(`${word} has not been called yet.`);
+    return;
+  }
   if (card.selected.has(index)) {
     card.selected.delete(index);
   } else {
@@ -213,6 +220,12 @@ function toggleCell(cardNumber, index) {
   }
   if (currentState) renderPlayer(currentState);
   savePlayerSession();
+}
+
+function showHypeMessage(state) {
+  if (!state?.hypeMessage || !state.hypeUpdatedAt || state.hypeUpdatedAt === lastHypeUpdatedAt) return;
+  lastHypeUpdatedAt = state.hypeUpdatedAt;
+  showToast(state.hypeMessage);
 }
 
 function renderCard(card, pattern) {

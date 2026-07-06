@@ -7,6 +7,8 @@ const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 4173);
 const PUBLIC_DIR = path.join(__dirname, "public");
+const DATA_DIR = path.join(__dirname, "data");
+const THEMED_GAMES_PATH = process.env.BINGO_GAMES_DATA_PATH || path.join(DATA_DIR, "themed-bingo-games.json");
 const GOOGLE_IMAGE_MANIFEST_PATH = path.join(PUBLIC_DIR, "assets", "google-image-manifest.json");
 const PULL_INTERVAL_MS = 20 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
@@ -34,6 +36,13 @@ const presence = {
   display: new Map(),
   player: new Map(),
 };
+
+const HYPE_MESSAGES = [
+  "Don't forget to yell BINGO!",
+  "Make some noise when you win!",
+  "The loudest table wins a prize at the end!",
+  "When you get BINGO, we want to hear you!",
+];
 
 const moments = [
   { text: "Barbie", category: "Movies" },
@@ -129,10 +138,10 @@ const moments = [
 ];
 
 const rounds = [
-  { name: "Red Carpet Warm-Up", pattern: "Any Line", playMinutes: 15 },
-  { name: "TV & Movie Icons", pattern: "Four Corners", playMinutes: 15 },
-  { name: "Music Video Moments", pattern: "X Pattern", playMinutes: 15 },
-  { name: "Viral Finale", pattern: "Blackout", playMinutes: 15 },
+  { name: "Round 1", pattern: "Any Line", playMinutes: 20, points: 100 },
+  { name: "Round 2", pattern: "Four Corners", playMinutes: 20, points: 100, bonusPoints: 50 },
+  { name: "Round 3", pattern: "X Pattern", playMinutes: 20, points: 100, bonusPoints: 200 },
+  { name: "Final Round", pattern: "Blackout", playMinutes: 30, points: 500 },
 ];
 
 function isFinalRoundIndex(roundIndex) {
@@ -141,21 +150,287 @@ function isFinalRoundIndex(roundIndex) {
 
 const clients = new Set();
 
+let gameStore = loadGameStore();
 let state = freshState();
 
-function freshState() {
+function loadGameStore() {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(THEMED_GAMES_PATH, "utf8"));
+    const games = Array.isArray(parsed.games) ? parsed.games.map(normalizeGame).filter(Boolean) : [];
+    if (games.length) {
+      return {
+        activeGameId: parsed.activeGameId || games[0].id,
+        games,
+      };
+    }
+  } catch {
+    // First run uses the built-in pop culture deck.
+  }
+  const defaultGame = createDefaultPopCultureGame();
   return {
+    activeGameId: defaultGame.id,
+    games: [defaultGame],
+  };
+}
+
+function saveGameStore() {
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(THEMED_GAMES_PATH, JSON.stringify(gameStore, null, 2));
+  } catch (error) {
+    console.warn("Could not save themed bingo games:", error.message);
+  }
+}
+
+function createDefaultPopCultureGame() {
+  const now = new Date().toISOString();
+  return {
+    id: "pop-culture-default",
     title: "Pop Culture Moments Bingo",
+    theme: "Pop Culture",
+    status: "approved",
+    roundSettings: rounds,
+    createdAt: now,
+    updatedAt: now,
+    wordDeck: moments.map((moment) => {
+      const manifestItem = googleImageManifest[moment.text] || {};
+      const imageUrl = manifestItem.image || generatedImageDataUrl(moment.text, "Pop Culture");
+      return {
+        id: slugId(moment.text),
+        word: moment.text,
+        description: moment.category,
+        approvedImageUrl: imageUrl,
+        imageSourceUrl: manifestItem.sourceUrl || manifestItem.page || imageUrl,
+        imageStatus: "approved",
+        notes: "",
+        imageRecommendations: [{
+          id: `${slugId(moment.text)}-default`,
+          imageUrl,
+          thumbnailUrl: imageUrl,
+          sourceUrl: manifestItem.sourceUrl || manifestItem.page || imageUrl,
+          sourceName: manifestItem.source || "Approved image",
+          status: "approved",
+        }],
+      };
+    }),
+  };
+}
+
+function normalizeGame(game) {
+  if (!game || typeof game !== "object") return null;
+  const now = new Date().toISOString();
+  const id = String(game.id || crypto.randomUUID());
+  const title = String(game.title || game.theme || "Untitled Bingo Game").slice(0, 100);
+  const theme = String(game.theme || title).slice(0, 100);
+  const wordDeck = Array.isArray(game.wordDeck) ? game.wordDeck.map(normalizeDeckItem).filter(Boolean) : [];
+  return {
+    id,
+    title,
+    theme,
+    status: normalizeGameStatus(game.status, wordDeck),
+    roundSettings: Array.isArray(game.roundSettings) ? game.roundSettings : rounds,
+    createdAt: game.createdAt || now,
+    updatedAt: game.updatedAt || now,
+    wordDeck,
+  };
+}
+
+function normalizeDeckItem(item) {
+  if (!item || typeof item !== "object") return null;
+  const word = String(item.word || item.text || "").trim().slice(0, 80);
+  if (!word) return null;
+  const imageRecommendations = Array.isArray(item.imageRecommendations)
+    ? item.imageRecommendations.map(normalizeRecommendation).filter(Boolean)
+    : [];
+  return {
+    id: String(item.id || slugId(word)),
+    word,
+    description: String(item.description || item.category || "").slice(0, 160),
+    approvedImageUrl: String(item.approvedImageUrl || item.imageUrl || ""),
+    imageSourceUrl: String(item.imageSourceUrl || ""),
+    imageStatus: ["pending", "approved", "denied"].includes(item.imageStatus) ? item.imageStatus : "pending",
+    notes: String(item.notes || "").slice(0, 500),
+    imageRecommendations,
+  };
+}
+
+function normalizeRecommendation(item) {
+  if (!item || typeof item !== "object") return null;
+  const imageUrl = String(item.imageUrl || item.link || item.url || "");
+  if (!imageUrl) return null;
+  return {
+    id: String(item.id || crypto.randomUUID()),
+    imageUrl,
+    thumbnailUrl: String(item.thumbnailUrl || item.thumbnail || imageUrl),
+    sourceUrl: String(item.sourceUrl || item.contextLink || imageUrl),
+    sourceName: String(item.sourceName || item.displayLink || item.source || "Image result").slice(0, 120),
+    status: ["pending", "approved", "denied"].includes(item.status) ? item.status : "pending",
+  };
+}
+
+function normalizeGameStatus(status, wordDeck) {
+  const safeStatus = String(status || "draft");
+  if (["draft", "image review", "approved", "live", "completed"].includes(safeStatus)) return safeStatus;
+  return gameReadyFromDeck(wordDeck).ready ? "approved" : "draft";
+}
+
+function slugId(value) {
+  const slug = String(value || "item")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 54) || "item";
+  return `${slug}-${crypto.createHash("sha1").update(String(value)).digest("hex").slice(0, 8)}`;
+}
+
+function getActiveGame() {
+  return gameStore.games.find((game) => game.id === gameStore.activeGameId)
+    || gameStore.games.find((game) => game.status === "live")
+    || gameStore.games[0]
+    || createDefaultPopCultureGame();
+}
+
+function gameReadyFromDeck(wordDeck) {
+  const deck = Array.isArray(wordDeck) ? wordDeck : [];
+  const approved = deck.filter((item) => item.imageStatus === "approved" && item.approvedImageUrl);
+  const missing = deck.length - approved.length;
+  return {
+    ready: deck.length >= 24 && missing === 0,
+    approvedCount: approved.length,
+    totalCount: deck.length,
+    missingCount: missing,
+  };
+}
+
+function publicGameSummary(game) {
+  const progress = gameReadyFromDeck(game.wordDeck);
+  return {
+    id: game.id,
+    title: game.title,
+    theme: game.theme,
+    status: game.status,
+    createdAt: game.createdAt,
+    updatedAt: game.updatedAt,
+    wordCount: game.wordDeck.length,
+    imageApprovalProgress: progress,
+  };
+}
+
+function publicGameDetail(game) {
+  return {
+    ...publicGameSummary(game),
+    roundSettings: game.roundSettings,
+    wordDeck: game.wordDeck,
+  };
+}
+
+function activeMoments() {
+  const game = getActiveGame();
+  const approvedDeck = game.wordDeck
+    .filter((item) => item.imageStatus === "approved" && item.approvedImageUrl)
+    .map((item) => momentFromDeckItem(item, game.theme));
+  return approvedDeck.length >= 24 ? approvedDeck : moments;
+}
+
+function momentFromDeckItem(item, theme) {
+  return {
+    id: item.id,
+    text: item.word,
+    category: item.description || theme || "Theme Bingo",
+    approvedImageUrl: item.approvedImageUrl,
+    imageSourceUrl: item.imageSourceUrl,
+  };
+}
+
+function createGameFromTheme({ title, theme, count = 75 }) {
+  const now = new Date().toISOString();
+  const safeTheme = String(theme || title || "Theme Night").trim().slice(0, 100) || "Theme Night";
+  const safeTitle = String(title || `${safeTheme} Bingo`).trim().slice(0, 100) || `${safeTheme} Bingo`;
+  const wordDeck = generateThemeDeck(safeTheme, count).map((item) => ({
+    ...item,
+    imageRecommendations: [],
+  }));
+  return normalizeGame({
+    id: crypto.randomUUID(),
+    title: safeTitle,
+    theme: safeTheme,
+    status: "draft",
+    roundSettings: rounds,
+    createdAt: now,
+    updatedAt: now,
+    wordDeck,
+  });
+}
+
+function generateThemeDeck(theme, count = 75) {
+  const themeName = String(theme || "Theme").trim() || "Theme";
+  const lower = themeName.toLowerCase();
+  const selected = [];
+  const add = (word, description = themeName) => {
+    const clean = String(word || "").trim();
+    if (!clean || selected.some((item) => item.word.toLowerCase() === clean.toLowerCase())) return;
+    selected.push({
+      id: slugId(`${themeName}-${clean}`),
+      word: clean.slice(0, 80),
+      description: String(description || themeName).slice(0, 160),
+      approvedImageUrl: "",
+      imageSourceUrl: "",
+      imageStatus: "pending",
+      notes: "",
+    });
+  };
+
+  const pools = [
+    ["love island", ["Bombshell", "Casa Amor", "Text Alert", "Recoupling", "Fire Pit", "Hideaway", "Snog Marry Pie", "Movie Night", "Daybeds", "Pull for a Chat", "Head Turned", "Loyalty Test", "The Villa", "Beach Hut", "Final Dates"]],
+    ["golf", ["Birdie", "Bogey", "Eagle", "Putter", "Driver", "Fairway", "Green", "Caddy", "Tee Time", "Mulligan", "Hole in One", "Sand Trap", "Clubhouse", "Scorecard", "Cart Path"]],
+    ["christmas", ["Santa", "Reindeer", "Snowman", "Candy Cane", "Hot Cocoa", "Tree Lighting", "Ugly Sweater", "Mistletoe", "Stocking", "Sleigh Bells", "Gingerbread", "North Pole", "Gift Wrap", "Holiday Lights", "Snow Globe"]],
+    ["karaoke", ["Power Ballad", "Duet", "Mic Drop", "Crowd Favorite", "Encore", "High Note", "Sing Along", "Stage Lights", "Opening Act", "Dance Break", "Air Guitar", "Classic Hit", "Request Slip", "Chorus", "Final Song"]],
+    ["sports", ["Championship", "Mascot", "Overtime", "Halftime", "Fan Cam", "Touchdown", "Home Run", "Fast Break", "Penalty Shot", "Victory Lap", "Bracket", "Rivalry", "MVP", "Tailgate", "Final Score"]],
+    ["pop", moments.map((moment) => moment.text)],
+  ];
+  for (const [key, words] of pools) {
+    if (lower.includes(key)) words.forEach((word) => add(word));
+  }
+
+  const genericNouns = ["Opening Moment", "Fan Favorite", "Plot Twist", "Signature Look", "Catchphrase", "Dance Break", "Wildcard", "Throwback", "Icon", "Glow Up", "Challenge", "Double Take", "Big Reveal", "Main Character", "Photo Op", "Hot Take", "Soundtrack", "Scene Stealer", "Finale", "Crowd Reaction", "Team Player", "Lucky Shot", "Bonus Round", "Table Toast", "Victory Pose"];
+  const templates = [
+    (word) => `${themeName} ${word}`,
+    (word) => `${word}`,
+    (word) => `${themeName} ${word.replace("Moment", "Memory")}`,
+  ];
+  let templateIndex = 0;
+  while (selected.length < Math.max(24, Math.min(100, Number(count) || 75))) {
+    const noun = genericNouns[selected.length % genericNouns.length];
+    const cycle = Math.floor(templateIndex / genericNouns.length) + 1;
+    const candidate = templates[templateIndex % templates.length](noun);
+    add(cycle > 2 ? `${candidate} ${cycle}` : candidate);
+    templateIndex += 1;
+    if (templateIndex > 400) break;
+  }
+  return selected.slice(0, Math.max(24, Math.min(100, Number(count) || 75)));
+}
+
+function freshState() {
+  const activeGame = getActiveGame();
+  return {
+    gameId: activeGame.id,
+    title: activeGame.title,
+    theme: activeGame.theme,
     venue: "On Par Entertainment",
     roundIndex: 0,
     status: "setup",
     currentWord: null,
     called: [],
-    deck: shuffle(moments),
+    deck: shuffle(activeMoments()),
     claims: [],
+    autoPullEnabled: true,
+    hypeMessage: HYPE_MESSAGES[0],
+    hypeUpdatedAt: Date.now(),
     countdownEndsAt: null,
     breakEndsAt: null,
     playEndsAt: null,
+    pausedAt: null,
+    playRemainingMs: null,
     nextPullAt: null,
     updatedAt: Date.now(),
   };
@@ -170,7 +445,8 @@ function publicState(req) {
     ...state,
     round,
     rounds,
-    moments,
+    moments: activeMoments(),
+    activeGame: publicGameSummary(getActiveGame()),
     joinUrl,
     qrUrl: joinUrl,
     autoPullEverySeconds: PULL_INTERVAL_MS / 1000,
@@ -320,8 +596,9 @@ function normalizeStateSnapshot(snapshot) {
     ...freshState(),
     ...snapshot,
     called: Array.isArray(snapshot.called) ? snapshot.called : [],
-    deck: Array.isArray(snapshot.deck) ? snapshot.deck : shuffle(moments),
+    deck: Array.isArray(snapshot.deck) ? snapshot.deck : shuffle(activeMoments()),
     claims: Array.isArray(snapshot.claims) ? snapshot.claims : [],
+    autoPullEnabled: snapshot.autoPullEnabled !== false,
     updatedAt: Number(snapshot.updatedAt) || Date.now(),
   };
 }
@@ -463,7 +740,8 @@ function verifyCardToken(token) {
 }
 
 function createSignedCard(player, number) {
-  const pool = shuffleValues(moments.map((moment) => moment.text)).slice(0, 24);
+  const sourceMoments = activeMoments();
+  const pool = shuffleValues(sourceMoments.map((moment) => moment.text)).slice(0, 24);
   const cells = [];
   for (let index = 0; index < 25; index += 1) {
     cells.push(index === 12 ? "FREE" : pool.shift());
@@ -639,9 +917,10 @@ function validateClaimBody(body) {
 function drawNextMoment({ resetTimer = true } = {}) {
   if (state.status !== "playing") return false;
   if (!hasEnoughTimeForNextPull()) return false;
+  const sourceMoments = activeMoments();
   if (!state.deck.length) {
-    state.deck = shuffle(moments.filter((moment) => !state.called.some((word) => word.text === moment.text)));
-    if (!state.deck.length) state.deck = shuffle(moments);
+    state.deck = shuffle(sourceMoments.filter((moment) => !state.called.some((word) => word.text === moment.text)));
+    if (!state.deck.length) state.deck = shuffle(sourceMoments);
   }
   const next = state.deck.shift();
   if (!next) {
@@ -666,10 +945,11 @@ function ensureLiveRoundHasMoment() {
 }
 
 function buildRoundDeck(previousRoundCalled = []) {
-  if (!isFinalRoundIndex(state.roundIndex)) return shuffle(moments);
+  const sourceMoments = activeMoments();
+  if (!isFinalRoundIndex(state.roundIndex)) return shuffle(sourceMoments);
   const previousTexts = new Set((previousRoundCalled || []).map((moment) => moment?.text).filter(Boolean));
-  const newMoments = moments.filter((moment) => !previousTexts.has(moment.text));
-  const duplicateMoments = moments.filter((moment) => previousTexts.has(moment.text));
+  const newMoments = sourceMoments.filter((moment) => !previousTexts.has(moment.text));
+  const duplicateMoments = sourceMoments.filter((moment) => previousTexts.has(moment.text));
   return [...shuffle(newMoments), ...shuffle(duplicateMoments)];
 }
 
@@ -682,6 +962,8 @@ function startCurrentRound({ resetClaims = false, previousRoundCalled = state.ca
   if (resetClaims) state.claims = [];
   state.countdownEndsAt = null;
   state.breakEndsAt = null;
+  state.pausedAt = null;
+  state.playRemainingMs = null;
   state.playEndsAt = Date.now() + round.playMinutes * 60 * 1000;
   state.nextPullAt = Date.now() + PULL_INTERVAL_MS;
   drawNextMoment({ resetTimer: true });
@@ -697,13 +979,18 @@ function startOpeningCountdown() {
   state.countdownEndsAt = Date.now() + PREGAME_COUNTDOWN_MS;
   state.breakEndsAt = null;
   state.playEndsAt = null;
+  state.pausedAt = null;
+  state.playRemainingMs = null;
   state.nextPullAt = null;
+  state.autoPullEnabled = true;
 }
 
 function startBreakOrEndEvent() {
   state.currentWord = null;
   state.countdownEndsAt = null;
   state.playEndsAt = null;
+  state.pausedAt = null;
+  state.playRemainingMs = null;
   state.nextPullAt = null;
   if (state.roundIndex >= rounds.length - 1) {
     state.status = "ended";
@@ -746,7 +1033,7 @@ function advanceState() {
     markUpdated();
     return true;
   }
-  if (state.status === "playing" && state.nextPullAt && now >= state.nextPullAt && drawNextMoment()) {
+  if (state.status === "playing" && state.autoPullEnabled !== false && state.nextPullAt && now >= state.nextPullAt && drawNextMoment()) {
     markUpdated();
     return true;
   }
@@ -755,6 +1042,45 @@ function advanceState() {
     return true;
   }
   return false;
+}
+
+function pauseRound() {
+  if (state.status !== "playing") return false;
+  const now = Date.now();
+  state.status = "paused";
+  state.pausedAt = now;
+  state.playRemainingMs = state.playEndsAt ? Math.max(0, state.playEndsAt - now) : null;
+  state.nextPullRemainingMs = state.nextPullAt ? Math.max(0, state.nextPullAt - now) : PULL_INTERVAL_MS;
+  state.playEndsAt = null;
+  state.nextPullAt = null;
+  return true;
+}
+
+function resumeRound() {
+  if (state.status !== "paused") return false;
+  const now = Date.now();
+  state.status = "playing";
+  state.playEndsAt = state.playRemainingMs ? now + state.playRemainingMs : null;
+  state.nextPullAt = now + Math.max(1000, Number(state.nextPullRemainingMs || PULL_INTERVAL_MS));
+  state.pausedAt = null;
+  state.playRemainingMs = null;
+  state.nextPullRemainingMs = null;
+  return true;
+}
+
+function undoLastCall() {
+  const last = state.called.shift();
+  if (!last) return false;
+  state.deck.unshift(last);
+  state.currentWord = state.called[0] || null;
+  state.nextPullAt = state.status === "playing" ? Date.now() + PULL_INTERVAL_MS : state.nextPullAt;
+  return true;
+}
+
+function sendHypeReminder(message) {
+  const clean = String(message || HYPE_MESSAGES[Math.floor(Math.random() * HYPE_MESSAGES.length)]).slice(0, 160);
+  state.hypeMessage = clean || HYPE_MESSAGES[0];
+  state.hypeUpdatedAt = Date.now();
 }
 
 function prunePresence() {
@@ -787,7 +1113,7 @@ function eventHealth(joinUrl) {
   return {
     ok: Boolean(joinUrl && storageHealthy && state.deck.length >= 0 && hasCurrentMoment),
     joinReady: Boolean(joinUrl),
-    deckReady: state.status === "playing" ? Boolean(state.deck.length || state.currentWord) : moments.length >= 24,
+    deckReady: state.status === "playing" ? Boolean(state.deck.length || state.currentWord) : activeMoments().length >= 24,
     currentMomentReady: hasCurrentMoment,
     storageHealthy,
     displayConnected: presence.display.size > 0,
@@ -850,6 +1176,200 @@ function sendJson(res, body, status = 200) {
     "Cache-Control": "no-store",
   });
   res.end(JSON.stringify(body));
+}
+
+function adminGamesPayload() {
+  return {
+    ok: true,
+    activeGameId: gameStore.activeGameId,
+    imageSearchConfigured: imageSearchConfigured(),
+    games: gameStore.games.map(publicGameSummary),
+    details: gameStore.games.map(publicGameDetail),
+  };
+}
+
+function findGameOrThrow(id) {
+  const game = gameStore.games.find((candidate) => candidate.id === id);
+  if (!game) {
+    const error = new Error("Game not found.");
+    error.status = 404;
+    throw error;
+  }
+  return game;
+}
+
+function touchGame(game) {
+  game.updatedAt = new Date().toISOString();
+  game.status = normalizeGameStatus(game.status, game.wordDeck);
+}
+
+async function handleAdminApi(pathname, body = {}) {
+  if (pathname === "/api/admin/games/create") {
+    const game = createGameFromTheme(body);
+    gameStore.games.unshift(game);
+    saveGameStore();
+    return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
+  }
+
+  if (pathname === "/api/admin/games/save") {
+    const incoming = normalizeGame(body.game || body);
+    if (!incoming) return { error: "Invalid game payload.", status: 400 };
+    const index = gameStore.games.findIndex((game) => game.id === incoming.id);
+    incoming.updatedAt = new Date().toISOString();
+    if (index >= 0) gameStore.games[index] = incoming;
+    else gameStore.games.unshift(incoming);
+    saveGameStore();
+    return { ok: true, game: publicGameDetail(incoming), ...adminGamesPayload() };
+  }
+
+  if (pathname === "/api/admin/games/delete") {
+    const id = String(body.id || "");
+    if (gameStore.games.length <= 1) return { error: "Keep at least one saved game.", status: 409 };
+    gameStore.games = gameStore.games.filter((game) => game.id !== id);
+    if (gameStore.activeGameId === id) gameStore.activeGameId = gameStore.games[0]?.id || "";
+    saveGameStore();
+    return adminGamesPayload();
+  }
+
+  if (pathname === "/api/admin/games/duplicate") {
+    const source = findGameOrThrow(String(body.id || ""));
+    const now = new Date().toISOString();
+    const copy = normalizeGame({
+      ...JSON.parse(JSON.stringify(source)),
+      id: crypto.randomUUID(),
+      title: `${source.title} Copy`,
+      status: "draft",
+      createdAt: now,
+      updatedAt: now,
+    });
+    gameStore.games.unshift(copy);
+    saveGameStore();
+    return { ok: true, game: publicGameDetail(copy), ...adminGamesPayload() };
+  }
+
+  if (pathname === "/api/admin/games/generate-words") {
+    const game = findGameOrThrow(String(body.id || ""));
+    game.theme = String(body.theme || game.theme).slice(0, 100);
+    game.title = String(body.title || game.title || `${game.theme} Bingo`).slice(0, 100);
+    game.wordDeck = generateThemeDeck(game.theme, body.count || game.wordDeck.length || 75);
+    game.status = "draft";
+    touchGame(game);
+    saveGameStore();
+    return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
+  }
+
+  if (pathname === "/api/admin/games/recommend-images") {
+    const game = findGameOrThrow(String(body.id || ""));
+    const itemIds = body.itemId
+      ? [String(body.itemId)]
+      : game.wordDeck.filter((item) => item.imageStatus !== "approved").map((item) => item.id);
+    for (const itemId of itemIds.slice(0, 100)) {
+      const item = game.wordDeck.find((candidate) => candidate.id === itemId);
+      if (!item) continue;
+      item.imageRecommendations = await getImageRecommendations(game, item);
+      if (item.imageStatus !== "approved") item.imageStatus = "pending";
+    }
+    game.status = "image review";
+    touchGame(game);
+    saveGameStore();
+    return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
+  }
+
+  if (pathname === "/api/admin/games/approve-image") {
+    const game = findGameOrThrow(String(body.id || ""));
+    const item = game.wordDeck.find((candidate) => candidate.id === String(body.itemId || ""));
+    if (!item) return { error: "Word deck item not found.", status: 404 };
+    const rec = item.imageRecommendations.find((candidate) => candidate.id === String(body.recommendationId || ""))
+      || normalizeRecommendation({
+        imageUrl: body.imageUrl,
+        thumbnailUrl: body.imageUrl,
+        sourceUrl: body.sourceUrl || body.imageUrl,
+        sourceName: body.sourceName || "Custom image",
+      });
+    if (!rec) return { error: "Choose an image to approve.", status: 400 };
+    item.imageRecommendations = item.imageRecommendations.map((candidate) => ({
+      ...candidate,
+      status: candidate.id === rec.id ? "approved" : candidate.status === "approved" ? "pending" : candidate.status,
+    }));
+    if (!item.imageRecommendations.some((candidate) => candidate.id === rec.id)) {
+      rec.status = "approved";
+      item.imageRecommendations.unshift(rec);
+    }
+    item.approvedImageUrl = rec.imageUrl;
+    item.imageSourceUrl = rec.sourceUrl || rec.imageUrl;
+    item.imageStatus = "approved";
+    game.status = gameReadyFromDeck(game.wordDeck).ready ? "approved" : "image review";
+    touchGame(game);
+    saveGameStore();
+    imageCache.clear();
+    return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
+  }
+
+  if (pathname === "/api/admin/games/deny-image") {
+    const game = findGameOrThrow(String(body.id || ""));
+    const item = game.wordDeck.find((candidate) => candidate.id === String(body.itemId || ""));
+    if (!item) return { error: "Word deck item not found.", status: 404 };
+    const rec = item.imageRecommendations.find((candidate) => candidate.id === String(body.recommendationId || ""));
+    if (rec) rec.status = "denied";
+    if (item.approvedImageUrl && rec?.imageUrl === item.approvedImageUrl) {
+      item.approvedImageUrl = "";
+      item.imageSourceUrl = "";
+      item.imageStatus = "pending";
+    }
+    game.status = "image review";
+    touchGame(game);
+    saveGameStore();
+    imageCache.clear();
+    return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
+  }
+
+  if (pathname === "/api/admin/games/custom-image") {
+    const game = findGameOrThrow(String(body.id || ""));
+    const item = game.wordDeck.find((candidate) => candidate.id === String(body.itemId || ""));
+    const imageUrl = String(body.imageUrl || "").trim();
+    if (!item) return { error: "Word deck item not found.", status: 404 };
+    if (!imageUrl) return { error: "Paste an image URL first.", status: 400 };
+    const rec = normalizeRecommendation({
+      imageUrl,
+      thumbnailUrl: imageUrl,
+      sourceUrl: String(body.sourceUrl || imageUrl),
+      sourceName: "Custom image",
+      status: "approved",
+    });
+    item.imageRecommendations.unshift(rec);
+    item.approvedImageUrl = imageUrl;
+    item.imageSourceUrl = rec.sourceUrl;
+    item.imageStatus = "approved";
+    game.status = gameReadyFromDeck(game.wordDeck).ready ? "approved" : "image review";
+    touchGame(game);
+    saveGameStore();
+    imageCache.clear();
+    return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
+  }
+
+  if (pathname === "/api/admin/games/start-live") {
+    const game = findGameOrThrow(String(body.id || ""));
+    const progress = gameReadyFromDeck(game.wordDeck);
+    if (!progress.ready) {
+      return {
+        error: `Approve images for every word before going live. ${progress.approvedCount}/${progress.totalCount} approved.`,
+        status: 409,
+      };
+    }
+    for (const candidate of gameStore.games) {
+      if (candidate.status === "live") candidate.status = "completed";
+    }
+    game.status = "live";
+    touchGame(game);
+    gameStore.activeGameId = game.id;
+    state = freshState();
+    saveGameStore();
+    await commitState();
+    imageCache.clear();
+    return { ok: true, liveState: publicStateForOrigin(""), game: publicGameDetail(game), ...adminGamesPayload() };
+  }
+
+  return { error: "Not found", status: 404 };
 }
 
 function imageSearchQuery(text, category) {
@@ -934,6 +1454,20 @@ async function findMomentImage(text, category) {
   const key = `${text}|${category || ""}`;
   if (imageCache.has(key)) return imageCache.get(key);
 
+  const activeItem = getActiveGame().wordDeck.find((item) => item.word === text && item.approvedImageUrl);
+  if (activeItem) {
+    const result = {
+      ok: true,
+      url: activeItem.approvedImageUrl,
+      title: activeItem.word,
+      query: imageSearchQuery(text, category),
+      source: activeItem.imageSourceUrl || "Approved theme image",
+      cached: true,
+    };
+    imageCache.set(key, result);
+    return result;
+  }
+
   const query = imageSearchQuery(text, category);
   const manifestItem = googleImageManifest[text];
   if (manifestItem?.image) {
@@ -1007,20 +1541,136 @@ async function googleImageSearch(query) {
       if (item?.link) return { ok: true, url: item.link, title: item.title || query };
     }
   }
+  return null;
+}
 
-  const params = new URLSearchParams({ tbm: "isch", q: query, safe: "active", hl: "en" });
-  const response = await fetch(`https://www.google.com/search?${params}`, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36",
-      "Accept-Language": "en-US,en;q=0.9",
-    },
+function imageSearchConfigured() {
+  return Boolean(
+    (process.env.GOOGLE_API_KEY && (process.env.GOOGLE_CX || process.env.GOOGLE_SEARCH_ENGINE_ID))
+    || process.env.BING_IMAGE_SEARCH_KEY
+    || process.env.SERPAPI_KEY
+  );
+}
+
+async function getImageRecommendations(game, item) {
+  const query = `${item.word} ${game.theme} bingo visual`;
+  const results = [];
+  results.push(...await googleImageRecommendations(query));
+  results.push(...await bingImageRecommendations(query));
+  results.push(...await serpApiImageRecommendations(query));
+  if (!results.length) {
+    results.push(...[0, 1, 2].map((index) => generatedRecommendation(game, item, index)));
+  }
+  return results.slice(0, 6).map((result, index) => normalizeRecommendation({
+    id: `${item.id}-rec-${Date.now()}-${index}`,
+    ...result,
+    status: "pending",
+  }));
+}
+
+async function googleImageRecommendations(query) {
+  const apiKey = process.env.GOOGLE_API_KEY;
+  const searchEngineId = process.env.GOOGLE_CX || process.env.GOOGLE_SEARCH_ENGINE_ID;
+  if (!apiKey || !searchEngineId) return [];
+  const params = new URLSearchParams({
+    key: apiKey,
+    cx: searchEngineId,
+    searchType: "image",
+    num: "6",
+    safe: "active",
+    q: query,
   });
-  if (!response.ok) return null;
-  const html = await response.text();
-  const candidates = [...html.matchAll(/https?:\/\/[^"'<>\\ ]+\.(?:jpg|jpeg|png|webp)(?:\?[^"'<>\\ ]*)?/gi)]
-    .map((match) => match[0].replaceAll("\\u003d", "=").replaceAll("\\u0026", "&"))
-    .filter((url) => !/google|gstatic|logo|favicon|sprite/i.test(url));
-  return candidates[0] ? { ok: true, url: candidates[0], title: query } : null;
+  const response = await fetch(`https://www.googleapis.com/customsearch/v1?${params}`);
+  if (!response.ok) return [];
+  const data = await response.json();
+  return (data.items || []).map((item) => ({
+    imageUrl: item.link,
+    thumbnailUrl: item.image?.thumbnailLink || item.link,
+    sourceUrl: item.image?.contextLink || item.link,
+    sourceName: item.displayLink || "Google Custom Search",
+  }));
+}
+
+async function bingImageRecommendations(query) {
+  const key = process.env.BING_IMAGE_SEARCH_KEY;
+  if (!key) return [];
+  const endpoint = (process.env.BING_IMAGE_SEARCH_ENDPOINT || "https://api.bing.microsoft.com/v7.0/images/search").replace(/\/$/, "");
+  const params = new URLSearchParams({ q: query, safeSearch: "Moderate", count: "6" });
+  const response = await fetch(`${endpoint}?${params}`, {
+    headers: { "Ocp-Apim-Subscription-Key": key },
+  });
+  if (!response.ok) return [];
+  const data = await response.json();
+  return (data.value || []).map((item) => ({
+    imageUrl: item.contentUrl,
+    thumbnailUrl: item.thumbnailUrl || item.contentUrl,
+    sourceUrl: item.hostPageUrl || item.contentUrl,
+    sourceName: item.hostPageDisplayUrl || "Bing Image Search",
+  }));
+}
+
+async function serpApiImageRecommendations(query) {
+  const key = process.env.SERPAPI_KEY;
+  if (!key) return [];
+  const params = new URLSearchParams({
+    engine: "google_images",
+    api_key: key,
+    safe: "active",
+    q: query,
+  });
+  const response = await fetch(`https://serpapi.com/search.json?${params}`);
+  if (!response.ok) return [];
+  const data = await response.json();
+  return (data.images_results || []).slice(0, 6).map((item) => ({
+    imageUrl: item.original || item.thumbnail,
+    thumbnailUrl: item.thumbnail || item.original,
+    sourceUrl: item.link || item.original,
+    sourceName: item.source || "SerpAPI",
+  }));
+}
+
+function generatedRecommendation(game, item, index = 0) {
+  const imageUrl = generatedImageDataUrl(item.word, game.theme, index);
+  return {
+    imageUrl,
+    thumbnailUrl: imageUrl,
+    sourceUrl: imageUrl,
+    sourceName: "Generated placeholder",
+  };
+}
+
+function escapeSvg(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[char]);
+}
+
+function generatedImageDataUrl(word, theme, variant = 0) {
+  const palettes = [
+    ["#071407", "#dfffc5", "#1f6f52"],
+    ["#101010", "#ffffff", "#2d7f3e"],
+    ["#082319", "#f4ffed", "#4d9a44"],
+  ];
+  const [background, foreground, accent] = palettes[variant % palettes.length];
+  const safeWord = escapeSvg(word);
+  const safeTheme = escapeSvg(theme || "Theme Bingo");
+  const initials = escapeSvg(String(word || "?").split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase());
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760">
+      <rect width="1200" height="760" rx="34" fill="${background}"/>
+      <path d="M0 620 C210 520 332 720 520 606 C720 486 850 552 1200 402 L1200 760 L0 760 Z" fill="${accent}" opacity="0.7"/>
+      <rect x="56" y="56" width="1088" height="648" rx="28" fill="none" stroke="${foreground}" stroke-width="10" opacity="0.84"/>
+      <circle cx="600" cy="312" r="132" fill="${foreground}" opacity="0.92"/>
+      <text x="600" y="354" text-anchor="middle" font-family="Arial, sans-serif" font-size="108" font-weight="900" fill="${background}">${initials}</text>
+      <text x="600" y="536" text-anchor="middle" font-family="Arial, sans-serif" font-size="66" font-weight="900" fill="${foreground}">${safeWord}</text>
+      <text x="600" y="608" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="800" fill="${foreground}" opacity="0.78">${safeTheme}</text>
+    </svg>
+  `;
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 }
 
 function parseBody(req) {
@@ -1068,6 +1718,8 @@ function routeStatic(req, res, pathname) {
       ".png": "image/png",
       ".jpg": "image/jpeg",
       ".jpeg": "image/jpeg",
+      ".svg": "image/svg+xml",
+      ".webp": "image/webp",
       ".mp4": "video/mp4",
     };
     res.writeHead(200, {
@@ -1091,6 +1743,11 @@ async function routeApi(req, res, pathname) {
 
   if (req.method === "GET" && pathname === "/api/storage-status") {
     sendJson(res, { ok: true, storage: publicStorageStatus() });
+    return;
+  }
+
+  if (req.method === "GET" && pathname === "/api/admin/games") {
+    sendJson(res, adminGamesPayload());
     return;
   }
 
@@ -1134,6 +1791,16 @@ async function routeApi(req, res, pathname) {
 
   if (shouldBlockUnhydratedStateResponse() && pathname !== "/api/heartbeat") {
     sendJson(res, unavailableStateResponse(), 503);
+    return;
+  }
+
+  if (pathname.startsWith("/api/admin/games/")) {
+    try {
+      const result = await handleAdminApi(pathname, body);
+      sendJson(res, result, result.status || 200);
+    } catch (error) {
+      sendJson(res, { error: error.message || "Admin action failed." }, error.status || 500);
+    }
     return;
   }
 
@@ -1200,6 +1867,58 @@ async function routeApi(req, res, pathname) {
       sendJson(res, { error: "No more words available." }, 409);
       return;
     }
+    await commitState();
+    sendJson(res, publicState(req));
+    return;
+  }
+
+  if (pathname === "/api/pause-round") {
+    if (!pauseRound()) {
+      sendJson(res, { error: "Only a live round can be paused." }, 409);
+      return;
+    }
+    await commitState();
+    sendJson(res, publicState(req));
+    return;
+  }
+
+  if (pathname === "/api/resume-round") {
+    if (!resumeRound()) {
+      sendJson(res, { error: "Only a paused round can be resumed." }, 409);
+      return;
+    }
+    await commitState();
+    sendJson(res, publicState(req));
+    return;
+  }
+
+  if (pathname === "/api/end-round") {
+    startBreakOrEndEvent();
+    await commitState();
+    sendJson(res, publicState(req));
+    return;
+  }
+
+  if (pathname === "/api/undo-call") {
+    if (!undoLastCall()) {
+      sendJson(res, { error: "There is no called word to undo." }, 409);
+      return;
+    }
+    await commitState();
+    sendJson(res, publicState(req));
+    return;
+  }
+
+  if (pathname === "/api/toggle-auto-call") {
+    state.autoPullEnabled = body.enabled === undefined ? state.autoPullEnabled === false : Boolean(body.enabled);
+    if (state.status === "playing" && state.autoPullEnabled && !state.nextPullAt) state.nextPullAt = Date.now() + PULL_INTERVAL_MS;
+    await commitState();
+    sendJson(res, publicState(req));
+    return;
+  }
+
+  if (pathname === "/api/hype") {
+    sendHypeReminder(body.message);
     await commitState();
     sendJson(res, publicState(req));
     return;
@@ -1273,7 +1992,8 @@ function publicStateForOrigin(origin) {
     ...state,
     round,
     rounds,
-    moments,
+    moments: activeMoments(),
+    activeGame: publicGameSummary(getActiveGame()),
     joinUrl,
     qrUrl: joinUrl,
     autoPullEverySeconds: PULL_INTERVAL_MS / 1000,
@@ -1310,6 +2030,10 @@ async function handleApiWebRequest(request, pathname) {
     return webJson({ ok: true, storage: publicStorageStatus() });
   }
 
+  if (method === "GET" && pathname === "/api/admin/games") {
+    return webJson(adminGamesPayload());
+  }
+
   if (method !== "POST") {
     return webJson({ error: "Not found" }, 404);
   }
@@ -1323,6 +2047,15 @@ async function handleApiWebRequest(request, pathname) {
 
   if (shouldBlockUnhydratedStateResponse() && pathname !== "/api/heartbeat") {
     return webJson(unavailableStateResponse(), 503);
+  }
+
+  if (pathname.startsWith("/api/admin/games/")) {
+    try {
+      const result = await handleAdminApi(pathname, body);
+      return webJson(result, result.status || 200);
+    } catch (error) {
+      return webJson({ error: error.message || "Admin action failed." }, error.status || 500);
+    }
   }
 
   if (pathname === "/api/deal-cards") {
@@ -1382,6 +2115,43 @@ async function handleApiWebRequest(request, pathname) {
     return webJson(publicStateForOrigin(origin));
   }
 
+  if (pathname === "/api/pause-round") {
+    if (!pauseRound()) return webJson({ error: "Only a live round can be paused." }, 409);
+    await commitState();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/resume-round") {
+    if (!resumeRound()) return webJson({ error: "Only a paused round can be resumed." }, 409);
+    await commitState();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/end-round") {
+    startBreakOrEndEvent();
+    await commitState();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/undo-call") {
+    if (!undoLastCall()) return webJson({ error: "There is no called word to undo." }, 409);
+    await commitState();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/toggle-auto-call") {
+    state.autoPullEnabled = body.enabled === undefined ? state.autoPullEnabled === false : Boolean(body.enabled);
+    if (state.status === "playing" && state.autoPullEnabled && !state.nextPullAt) state.nextPullAt = Date.now() + PULL_INTERVAL_MS;
+    await commitState();
+    return webJson(publicStateForOrigin(origin));
+  }
+
+  if (pathname === "/api/hype") {
+    sendHypeReminder(body.message);
+    await commitState();
+    return webJson(publicStateForOrigin(origin));
+  }
+
   if (pathname === "/api/start-break") {
     startBreakOrEndEvent();
     await commitState();
@@ -1417,9 +2187,17 @@ async function handleApiWebRequest(request, pathname) {
 
 function handleRequest(req, res) {
   const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+  if (url.pathname === "/favicon.ico") {
+    routeStatic(req, res, "/assets/on-par-logo.png");
+    return;
+  }
   if (url.pathname === "/host") {
     res.writeHead(302, { Location: "/" });
     res.end();
+    return;
+  }
+  if (url.pathname === "/dashboard") {
+    routeStatic(req, res, "/dashboard.html");
     return;
   }
   if (url.pathname === "/display") {

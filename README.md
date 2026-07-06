@@ -15,6 +15,12 @@ Open the host console:
 http://localhost:3000
 ```
 
+Open the themed-game admin dashboard:
+
+```text
+http://localhost:3000/dashboard
+```
+
 For the original local Node server, run:
 
 ```bash
@@ -38,7 +44,7 @@ After connecting the GitHub repo to Vercel, use the default Next.js build comman
 npm run build
 ```
 
-Use the host console to open the big-screen display and show the QR code. Players scan the QR code, enter their name, and choose 1-3 bingo cards.
+Use the dashboard to create themed games, edit decks, review image recommendations, approve images, and start a saved game live. Then use the host console to open the big-screen display and show the QR code. Players scan the QR code, enter their name, and choose 1-3 bingo cards.
 
 If players see a Vercel login after scanning the QR code, the display is likely running on a protected preview deployment. Open the production deployment for the event, or set `PUBLIC_JOIN_URL` / `NEXT_PUBLIC_JOIN_URL` to the public player URL, for example `https://your-public-domain.com/play`.
 
@@ -68,7 +74,13 @@ Players must tap/select their own squares as the moments are called. Their BINGO
 
 Each regular BINGO is worth 100 points. Four corners, X bingo, and coverup add a 50-point bonus; the coverup round scores 150 points for the coverup claim. A player can claim multiple BINGOs on the same card as new lines or patterns are completed, and the break screen shows the overall points leaderboard.
 
-Pulled-word images use the saved Google Images manifest at `public/assets/google-image-manifest.json`. It contains one Google Images thumbnail for every bingo phrase. If a new phrase is added later and is not in the manifest, the app can still try Google Custom Search with `GOOGLE_API_KEY` and `GOOGLE_CX`, then fall back to local art if Google returns no usable image.
+Pulled-word images use approved images from the active saved game. The default Pop Culture game is pre-approved from `public/assets/google-image-manifest.json`. New themed games can fetch recommendations through official image-search APIs only:
+
+- Google Custom Search JSON API: `GOOGLE_API_KEY` and `GOOGLE_CX`
+- Bing Image Search: `BING_IMAGE_SEARCH_KEY` and optional `BING_IMAGE_SEARCH_ENDPOINT`
+- SerpAPI Google Images: `SERPAPI_KEY`
+
+If no image-search API is configured, the dashboard creates generated placeholder recommendations so admins can still test the approval workflow without scraping image search pages.
 
 Without Supabase configuration, game state is stored in memory and a server restart resets the event.
 
