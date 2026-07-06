@@ -14,6 +14,7 @@ const PULL_INTERVAL_MS = 20 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
 const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
 const GAME_STATE_ROW_ID = "current";
+const GAME_STORE_ROW_ID = "themed-games";
 const SUPABASE_STATE_TABLE = "on_par_bingo_state";
 const DEFAULT_SUPABASE_URL = "https://tmnstuthbllnoqgepotn.supabase.co";
 const DEFAULT_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_G74TdOYv0R0AML1WZTfxJQ_YZqJa7jE";
@@ -22,6 +23,8 @@ const imageCache = new Map();
 let googleImageManifest = loadGoogleImageManifest();
 let storageHydrationPromise = null;
 let storageHydrated = false;
+let gameStoreHydrationPromise = null;
+let gameStoreHydrated = false;
 let storageSaveTimer = null;
 let storageStatus = {
   provider: "supabase",
@@ -159,6 +162,7 @@ function loadGameStore() {
     const games = Array.isArray(parsed.games) ? parsed.games.map(normalizeGame).filter(Boolean) : [];
     if (games.length) {
       return {
+        updatedAt: Number(parsed.updatedAt) || Date.now(),
         activeGameId: parsed.activeGameId || games[0].id,
         games,
       };
@@ -168,18 +172,78 @@ function loadGameStore() {
   }
   const defaultGame = createDefaultPopCultureGame();
   return {
+    updatedAt: Date.now(),
     activeGameId: defaultGame.id,
     games: [defaultGame],
   };
 }
 
 function saveGameStore() {
+  gameStore.updatedAt = Date.now();
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
     fs.writeFileSync(THEMED_GAMES_PATH, JSON.stringify(gameStore, null, 2));
   } catch (error) {
     console.warn("Could not save themed bingo games:", error.message);
   }
+  saveGameStoreToStorage().catch((error) => {
+    console.warn("Could not save themed bingo games to Supabase:", error.message);
+  });
+}
+
+function normalizeGameStoreSnapshot(snapshot) {
+  const games = Array.isArray(snapshot?.games) ? snapshot.games.map(normalizeGame).filter(Boolean) : [];
+  if (!games.length) return null;
+  return {
+    updatedAt: Number(snapshot.updatedAt) || Date.now(),
+    activeGameId: snapshot.activeGameId || games[0].id,
+    games,
+  };
+}
+
+async function hydrateGameStoreFromStorage({ force = false } = {}) {
+  if (!force && gameStoreHydrated) return;
+  if (!force && gameStoreHydrationPromise) return gameStoreHydrationPromise;
+  if (force) {
+    gameStoreHydrationPromise = null;
+    gameStoreHydrated = false;
+  }
+  gameStoreHydrationPromise = (async () => {
+    if (!isSupabaseConfigured()) {
+      gameStoreHydrated = true;
+      return;
+    }
+    try {
+      const rows = await supabaseRequest(
+        `${SUPABASE_STATE_TABLE}?id=eq.${encodeURIComponent(GAME_STORE_ROW_ID)}&select=state`,
+      );
+      const snapshot = normalizeGameStoreSnapshot(Array.isArray(rows) ? rows[0]?.state : null);
+      if (snapshot && (Number(snapshot.updatedAt) || 0) >= (Number(gameStore.updatedAt) || 0)) {
+        gameStore = snapshot;
+      }
+    } catch (error) {
+      console.warn("Supabase themed game load skipped:", error.message || error);
+    } finally {
+      gameStoreHydrated = true;
+      gameStoreHydrationPromise = null;
+    }
+  })();
+  return gameStoreHydrationPromise;
+}
+
+async function saveGameStoreToStorage() {
+  if (!isSupabaseConfigured()) return;
+  await supabaseRequest(`${SUPABASE_STATE_TABLE}?on_conflict=id`, {
+    method: "POST",
+    headers: {
+      Prefer: "resolution=merge-duplicates",
+    },
+    body: JSON.stringify({
+      id: GAME_STORE_ROW_ID,
+      state: gameStore,
+      updated_at: new Date().toISOString(),
+    }),
+  });
 }
 
 function createDefaultPopCultureGame() {
@@ -538,6 +602,7 @@ function roleFromWebRequest(request) {
 }
 
 async function prepareStateForRequest(canAdvanceGameClock) {
+  await hydrateGameStoreFromStorage();
   await hydrateStateFromStorage({ force: true });
   if (!canAdvanceGameClock) return;
   const timingClamped = clampLivePullTimer();
