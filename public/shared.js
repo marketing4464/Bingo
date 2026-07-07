@@ -3,6 +3,7 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const momentImageCache = new Map();
 let heartbeatId = localStorage.getItem("bingoHeartbeatId") || "";
 let bingoClientRole = inferBingoClientRole();
+let supabaseClientConfigPromise = null;
 
 function inferBingoClientRole() {
   const pathname = window.location.pathname;
@@ -31,6 +32,16 @@ function api(path, body = {}) {
 }
 
 function getState() {
+  if (bingoClientRole === "player") {
+    return getPlayerStateFromSupabase().catch((error) => {
+      console.warn("Could not refresh bingo state from Supabase; falling back to server.", error);
+      return getStateFromServer();
+    });
+  }
+  return getStateFromServer();
+}
+
+function getStateFromServer() {
   const params = new URLSearchParams({ role: bingoClientRole });
   return fetch(`/api/state?${params.toString()}`, {
     cache: "no-store",
@@ -40,6 +51,57 @@ function getState() {
     if (!response.ok) throw new Error(data.error || "Could not refresh bingo state");
     return data;
   });
+}
+
+async function getPlayerStateFromSupabase() {
+  const config = await loadSupabaseClientConfig();
+  if (!config?.url || !config?.key || !config?.publicStateTable) throw new Error("Supabase client config is incomplete");
+  const params = new URLSearchParams({
+    id: "eq.current",
+    select: "state",
+    limit: "1",
+  });
+  const response = await fetch(`${config.url}/rest/v1/${config.publicStateTable}?${params.toString()}`, {
+    cache: "no-store",
+    headers: {
+      apikey: config.key,
+      Authorization: `Bearer ${config.key}`,
+    },
+  });
+  const rows = await response.json();
+  if (!response.ok) throw new Error(rows?.message || "Could not refresh bingo state from Supabase");
+  const state = Array.isArray(rows) ? rows[0]?.state : null;
+  if (!state) throw new Error("Supabase bingo state is not ready yet");
+  return normalizeRemotePlayerState(state);
+}
+
+function loadSupabaseClientConfig() {
+  if (!supabaseClientConfigPromise) {
+    supabaseClientConfigPromise = fetch("/api/client-config", { cache: "no-store" })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Could not load client config");
+        return data.supabase;
+      });
+  }
+  return supabaseClientConfigPromise;
+}
+
+function normalizeRemotePlayerState(state) {
+  const joinUrl = absoluteUrl(state.joinUrl || "/play");
+  return {
+    ...state,
+    joinUrl,
+    qrUrl: absoluteUrl(state.qrUrl || joinUrl),
+  };
+}
+
+function absoluteUrl(value) {
+  try {
+    return new URL(value, window.location.origin).href;
+  } catch {
+    return new URL("/play", window.location.origin).href;
+  }
 }
 
 function subscribe(onState) {

@@ -16,6 +16,7 @@ const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
 const GAME_STATE_ROW_ID = "current";
 const GAME_STORE_ROW_ID = "themed-games";
 const SUPABASE_STATE_TABLE = "on_par_bingo_state";
+const SUPABASE_PUBLIC_STATE_TABLE = "on_par_bingo_public_state";
 const DEFAULT_SUPABASE_URL = "https://tmnstuthbllnoqgepotn.supabase.co";
 const DEFAULT_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_G74TdOYv0R0AML1WZTfxJQ_YZqJa7jE";
 const PUBLIC_JOIN_URL = publicJoinUrlFromEnv();
@@ -380,6 +381,23 @@ function publicGameSummary(game) {
   };
 }
 
+function compactMoment(moment) {
+  if (!moment || typeof moment !== "object") return null;
+  const text = String(moment.text || moment.word || "").slice(0, 80);
+  if (!text) return null;
+  return {
+    id: String(moment.id || slugId(text)),
+    text,
+    category: String(moment.category || moment.description || "").slice(0, 160),
+  };
+}
+
+function compactMoments(items) {
+  return (Array.isArray(items) ? items : [])
+    .map(compactMoment)
+    .filter(Boolean);
+}
+
 function publicGameDetail(game) {
   return {
     ...publicGameSummary(game),
@@ -401,8 +419,6 @@ function momentFromDeckItem(item, theme) {
     id: item.id,
     text: item.word,
     category: item.description || theme || "Theme Bingo",
-    approvedImageUrl: item.approvedImageUrl,
-    imageSourceUrl: item.imageSourceUrl,
   };
 }
 
@@ -523,6 +539,38 @@ function publicState(req) {
   };
 }
 
+function playerPublicStateForOrigin(origin) {
+  const publicState = publicStateForOrigin(origin);
+  return {
+    gameId: publicState.gameId,
+    title: publicState.title,
+    theme: publicState.theme,
+    venue: publicState.venue,
+    roundIndex: publicState.roundIndex,
+    status: publicState.status,
+    currentWord: publicState.currentWord,
+    called: publicState.called,
+    autoPullEnabled: publicState.autoPullEnabled,
+    hypeMessage: publicState.hypeMessage,
+    hypeUpdatedAt: publicState.hypeUpdatedAt,
+    countdownEndsAt: publicState.countdownEndsAt,
+    breakEndsAt: publicState.breakEndsAt,
+    playEndsAt: publicState.playEndsAt,
+    pausedAt: publicState.pausedAt,
+    playRemainingMs: publicState.playRemainingMs,
+    nextPullAt: publicState.nextPullAt,
+    updatedAt: publicState.updatedAt,
+    round: publicState.round,
+    rounds: publicState.rounds,
+    joinUrl: publicState.joinUrl,
+    qrUrl: publicState.qrUrl,
+    autoPullEverySeconds: publicState.autoPullEverySeconds,
+    pregameCountdownSeconds: publicState.pregameCountdownSeconds,
+    latestClaim: publicState.latestClaim,
+    serverTime: publicState.serverTime,
+  };
+}
+
 function shuffle(items) {
   const copy = items.map((item) => ({ ...item }));
   for (let i = copy.length - 1; i > 0; i -= 1) {
@@ -552,6 +600,18 @@ function supabaseConfig() {
       || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       || process.env.SUPABASE_ANON_KEY
       || DEFAULT_SUPABASE_PUBLISHABLE_KEY,
+  };
+}
+
+function supabaseBrowserConfig() {
+  const config = supabaseConfig();
+  const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    || process.env.SUPABASE_ANON_KEY
+    || DEFAULT_SUPABASE_PUBLISHABLE_KEY;
+  return {
+    url: config.url,
+    key: publishableKey,
+    publicStateTable: SUPABASE_PUBLIC_STATE_TABLE,
   };
 }
 
@@ -660,8 +720,9 @@ function normalizeStateSnapshot(snapshot) {
   return {
     ...freshState(),
     ...snapshot,
-    called: Array.isArray(snapshot.called) ? snapshot.called : [],
-    deck: Array.isArray(snapshot.deck) ? snapshot.deck : shuffle(activeMoments()),
+    currentWord: compactMoment(snapshot.currentWord),
+    called: compactMoments(snapshot.called),
+    deck: Array.isArray(snapshot.deck) ? compactMoments(snapshot.deck) : shuffle(activeMoments()),
     claims: Array.isArray(snapshot.claims) ? snapshot.claims : [],
     autoPullEnabled: snapshot.autoPullEnabled !== false,
     updatedAt: Number(snapshot.updatedAt) || Date.now(),
@@ -703,6 +764,17 @@ async function flushStateToStorage() {
 }
 
 async function saveStateToStorage() {
+  await Promise.all([
+    saveFullStateToStorage(),
+    savePublicStateToStorage(),
+  ]);
+  storageStatus.configured = true;
+  storageStatus.available = true;
+  storageStatus.lastSavedAt = Date.now();
+  storageStatus.error = null;
+}
+
+async function saveFullStateToStorage() {
   await supabaseRequest(`${SUPABASE_STATE_TABLE}?on_conflict=id`, {
     method: "POST",
     headers: {
@@ -714,10 +786,20 @@ async function saveStateToStorage() {
       updated_at: new Date().toISOString(),
     }),
   });
-  storageStatus.configured = true;
-  storageStatus.available = true;
-  storageStatus.lastSavedAt = Date.now();
-  storageStatus.error = null;
+}
+
+async function savePublicStateToStorage() {
+  await supabaseRequest(`${SUPABASE_PUBLIC_STATE_TABLE}?on_conflict=id`, {
+    method: "POST",
+    headers: {
+      Prefer: "resolution=merge-duplicates",
+    },
+    body: JSON.stringify({
+      id: GAME_STATE_ROW_ID,
+      state: playerPublicStateForOrigin(""),
+      updated_at: new Date().toISOString(),
+    }),
+  });
 }
 
 async function supabaseRequest(pathname, options = {}) {
@@ -1811,6 +1893,11 @@ async function routeApi(req, res, pathname) {
     return;
   }
 
+  if (req.method === "GET" && pathname === "/api/client-config") {
+    sendJson(res, { ok: true, supabase: supabaseBrowserConfig() });
+    return;
+  }
+
   if (req.method === "GET" && pathname === "/api/admin/games") {
     sendJson(res, adminGamesPayload());
     return;
@@ -2093,6 +2180,10 @@ async function handleApiWebRequest(request, pathname) {
 
   if (method === "GET" && pathname === "/api/storage-status") {
     return webJson({ ok: true, storage: publicStorageStatus() });
+  }
+
+  if (method === "GET" && pathname === "/api/client-config") {
+    return webJson({ ok: true, supabase: supabaseBrowserConfig() });
   }
 
   if (method === "GET" && pathname === "/api/admin/games") {
