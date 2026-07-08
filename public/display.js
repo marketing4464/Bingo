@@ -288,6 +288,7 @@ function renderClaimAlert(state) {
     <div class="bingo-alert-name">${escapeHtml(claim.player)}</div>
     <div class="bingo-alert-points">+${claim.points || 100} points</div>
   `;
+  displayEls.bingoAlert.classList.remove("hype-alert");
   displayEls.bingoAlert.classList.remove("hidden");
   clearTimeout(claimAlertTimer);
   claimAlertTimer = setTimeout(() => {
@@ -299,10 +300,10 @@ function renderHypeAlert(state) {
   if (!state.hypeMessage || !state.hypeUpdatedAt || state.hypeUpdatedAt === visibleHypeUpdatedAt) return;
   visibleHypeUpdatedAt = state.hypeUpdatedAt;
   displayEls.bingoAlert.innerHTML = `
-    <div class="bingo-alert-title">Make Some Noise</div>
-    <div class="bingo-alert-name">${escapeHtml(state.hypeMessage)}</div>
-    <div class="bingo-alert-points">Loudest table wins a prize</div>
+    <div class="bingo-alert-title">make some noise</div>
+    <div class="bingo-alert-points">prizes for the loudest table</div>
   `;
+  displayEls.bingoAlert.classList.add("hype-alert");
   displayEls.bingoAlert.classList.remove("hidden");
   clearTimeout(claimAlertTimer);
   claimAlertTimer = setTimeout(() => {

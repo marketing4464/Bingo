@@ -42,10 +42,7 @@ const presence = {
 };
 
 const HYPE_MESSAGES = [
-  "Don't forget to yell BINGO!",
-  "Make some noise when you win!",
-  "The loudest table wins a prize at the end!",
-  "When you get BINGO, we want to hear you!",
+  "make some noise - prizes for the loudest table",
 ];
 
 const moments = [

@@ -8,10 +8,7 @@ const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
 
 const HYPE_MESSAGES = [
-  "Don't forget to yell BINGO!",
-  "Make some noise when you win!",
-  "The loudest table wins a prize at the end!",
-  "When you get BINGO, we want to hear you!",
+  "make some noise - prizes for the loudest table",
 ];
 
 const moments = [
@@ -211,7 +208,7 @@ function freshState() {
     deck: shuffle(moments),
     claims: [],
     autoPullEnabled: true,
-    hypeMessage: "Don't forget to yell BINGO!",
+    hypeMessage: HYPE_MESSAGES[0],
     hypeUpdatedAt: now,
     countdownEndsAt: null,
     breakEndsAt: null,
