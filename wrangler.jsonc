@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "opebingo",
+  "main": "cloudflare-worker.js",
+  "compatibility_date": "2026-07-08",
+  "assets": {
+    "directory": "public",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "PUBLIC_JOIN_URL": "https://www.opebingo.com/play",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://tmnstuthbllnoqgepotn.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_G74TdOYv0R0AML1WZTfxJQ_YZqJa7jE"
+  }
+}

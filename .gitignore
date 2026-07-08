@@ -4,6 +4,10 @@ node_modules/
 .vercel/
 outputs/
 .next/
+.open-next/
+.wrangler/
+dist-worker/
+dist-worker-route/
 .tools/
 .vercel
 .env*
