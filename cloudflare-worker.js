@@ -10,6 +10,7 @@ const PLAYER_STATE_CACHE_MS = 1000;
 
 let cachedState = null;
 let cachedStateLoadedAt = 0;
+let cachedImageManifest = null;
 
 const HYPE_MESSAGES = [
   "make some noise - prizes for the loudest table",
@@ -66,7 +67,8 @@ async function handleApi(request, env, url) {
     }
     if (request.method === "GET" && url.pathname === "/api/moment-image") {
       const text = url.searchParams.get("text") || "";
-      return json({ ok: true, url: momentImageUrl(text), source: "cloudflare-static" });
+      const category = url.searchParams.get("category") || "";
+      return json(await findMomentImage(env, text, category));
     }
     if (request.method === "GET" && url.pathname === "/api/state") {
       const role = roleFromRequest(request, url);
@@ -648,6 +650,55 @@ function touch(state) {
 
 function slugId(text) {
   return String(text).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 60);
+}
+
+async function findMomentImage(env, text, category = "") {
+  const manifest = await loadImageManifest(env);
+  const manifestItem = manifest[text];
+  if (manifestItem?.image) {
+    return {
+      ok: true,
+      url: manifestItem.image,
+      title: manifestItem.alt || text,
+      query: manifestItem.query || imageSearchQuery(text, category),
+      source: manifestItem.source || "Approved image manifest",
+      width: manifestItem.width,
+      height: manifestItem.height,
+      qualityScore: manifestItem.qualityScore,
+      cached: true,
+    };
+  }
+
+  return {
+    ok: true,
+    url: momentImageUrl(text),
+    title: text,
+    query: imageSearchQuery(text, category),
+    source: "cloudflare-static-fallback",
+  };
+}
+
+async function loadImageManifest(env) {
+  if (cachedImageManifest) return cachedImageManifest;
+  try {
+    const response = await env.ASSETS.fetch(new Request("https://assets.local/assets/google-image-manifest.json"));
+    if (response.ok) {
+      cachedImageManifest = await response.json();
+      return cachedImageManifest;
+    }
+  } catch {
+    // Fall through to an empty manifest so the generated fallback still works.
+  }
+  cachedImageManifest = {};
+  return cachedImageManifest;
+}
+
+function imageSearchQuery(text, category) {
+  if (category === "Movies") return `${text} film`;
+  if (category === "TV") return `${text} TV series`;
+  if (category === "Music") return `${text} song`;
+  if (category === "Internet") return `pop culture moment ${text} meme`;
+  return `pop culture moment ${text}`;
 }
 
 function momentImageUrl(text) {
