@@ -3,6 +3,12 @@
   "name": "opebingo",
   "main": "cloudflare-worker.js",
   "compatibility_date": "2026-07-08",
+  "routes": [
+    {
+      "pattern": "www.opebingo.com/*",
+      "zone_name": "opebingo.com"
+    }
+  ],
   "assets": {
     "directory": "public",
     "binding": "ASSETS"

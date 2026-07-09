@@ -6,6 +6,10 @@ const DEFAULT_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_G74TdOYv0R0AML1WZTfxJQ_
 const PULL_INTERVAL_MS = 20 * 1000;
 const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
+const PLAYER_STATE_CACHE_MS = 1000;
+
+let cachedState = null;
+let cachedStateLoadedAt = 0;
 
 const HYPE_MESSAGES = [
   "make some noise - prizes for the loudest table",
@@ -73,19 +77,21 @@ async function handleApi(request, env, url) {
 
     if (request.method !== "POST") return json({ error: "Not found" }, 404);
     const body = await readJson(request);
-    let state = await loadState(env);
     const pathname = url.pathname;
 
     if (pathname === "/api/heartbeat") {
       return json({ ok: true, id: String(body.id || crypto.randomUUID()).slice(0, 80) });
     }
     if (pathname === "/api/deal-cards") {
+      const state = await loadState(env, { allowCached: true });
       const player = String(body.player || "Player").slice(0, 40);
       const count = Math.max(1, Math.min(3, Number(body.count || 1)));
       const cards = [];
       for (let index = 0; index < count; index += 1) cards.push(await createSignedCard(env, state, player, index + 1));
       return json({ ok: true, roundIndex: state.roundIndex, cards });
     }
+
+    let state = await loadState(env);
     if (pathname === "/api/start-countdown") {
       state = startOpeningCountdown();
       await saveState(env, state);
@@ -220,10 +226,14 @@ function freshState() {
   };
 }
 
-async function loadState(env) {
+async function loadState(env, { allowCached = false } = {}) {
+  if (allowCached && cachedState && Date.now() - cachedStateLoadedAt < PLAYER_STATE_CACHE_MS) return structuredClone(cachedState);
   const rows = await supabaseRequest(env, `${SUPABASE_STATE_TABLE}?id=eq.${GAME_STATE_ROW_ID}&select=state`);
   const snapshot = Array.isArray(rows) ? rows[0]?.state : null;
-  return normalizeState(snapshot);
+  const state = normalizeState(snapshot);
+  cachedState = structuredClone(state);
+  cachedStateLoadedAt = Date.now();
+  return state;
 }
 
 function normalizeState(snapshot) {
@@ -268,6 +278,8 @@ function advanceState(state) {
 
 async function saveState(env, state) {
   touch(state);
+  cachedState = structuredClone(state);
+  cachedStateLoadedAt = Date.now();
   await Promise.all([
     supabaseRequest(env, `${SUPABASE_STATE_TABLE}?on_conflict=id`, {
       method: "POST",
