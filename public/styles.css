@@ -178,6 +178,38 @@ h1 {
   justify-content: flex-end;
 }
 
+.app-switcher {
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(82px, 1fr));
+  overflow: hidden;
+  border: 1px solid rgba(223, 255, 197, 0.58);
+  border-radius: var(--radius);
+  background: rgba(5, 24, 8, 0.84);
+}
+
+.app-switcher a {
+  display: grid;
+  min-height: 44px;
+  place-items: center;
+  padding: 0 16px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.app-switcher a + a {
+  border-left: 1px solid rgba(223, 255, 197, 0.34);
+}
+
+.app-switcher a:hover {
+  color: #ffffff;
+  background: rgba(61, 141, 53, 0.32);
+}
+
+.app-switcher a.active {
+  color: #102612;
+  background: var(--gold);
+}
+
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);

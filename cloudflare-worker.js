@@ -7,6 +7,7 @@ const PULL_INTERVAL_MS = 20 * 1000;
 const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
 const PLAYER_STATE_CACHE_MS = 1000;
+const TRIVIA_CONTROL_ROOM_URL = "https://on-par-themed-trivia.vercel.app/host";
 
 let cachedState = null;
 let cachedStateLoadedAt = 0;
@@ -52,6 +53,9 @@ const rounds = [
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/trivia" || url.pathname === "/trivia/") {
+      return Response.redirect(TRIVIA_CONTROL_ROOM_URL, 302);
+    }
     if (url.pathname.startsWith("/api/")) return handleApi(request, env, url);
     return env.ASSETS.fetch(assetRequest(request, url));
   },
