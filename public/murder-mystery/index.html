@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ope! Murder at the Puttery</title>
+    <link rel="icon" href="/murder-mystery/assets/case-board.svg" />
+    <link rel="stylesheet" href="/murder-mystery/styles.css" />
+  </head>
+  <body>
+    <main class="mobile-shell">
+      <section class="hero">
+        <img src="/murder-mystery/assets/case-board.svg" alt="" />
+        <div>
+          <img class="ope-wordmark" src="/murder-mystery/assets/on-par/on-par-logo-white.png" alt="On Par Entertainment" />
+          <p class="eyebrow">On Par live mystery</p>
+          <h1>Ope! Murder at the Puttery</h1>
+          <p class="lede">Join your team, scan QR clue stations around the venue, gather suspect statements, and submit your final accusation.</p>
+        </div>
+      </section>
+
+      <section class="panel" id="joinPanel">
+        <h2>Join the case</h2>
+        <p class="lede join-lede">Enter your team details first. Your narrated opening briefing will begin after you join.</p>
+        <form id="joinForm" class="stack">
+          <label>Detective name <input id="playerName" autocomplete="name" maxlength="40" required /></label>
+          <label>Team name <input id="teamName" maxlength="40" placeholder="Table 4, The Snack Pack, etc." required /></label>
+          <button type="submit">Join the Investigation</button>
+        </form>
+      </section>
+
+      <section class="panel intro-gate hidden" id="introPanel">
+        <div class="section-title">
+          <h2>Opening Case Briefing</h2>
+          <span>Team joined</span>
+        </div>
+        <p class="lede intro-team-line" id="introTeamLine">Your team is in. Watch the briefing before opening your case file.</p>
+        <video
+          class="intro-video"
+          id="playerIntroVideo"
+          src="/murder-mystery/assets/videos/opening-live-action-plot.webm"
+          poster="/murder-mystery/assets/on-par/on-par-venue-establishing.png"
+          controls
+          playsinline
+          preload="metadata"
+        ></video>
+        <div class="intro-actions">
+          <p class="message" id="introPlaybackMessage" aria-live="polite">The briefing will begin after your team joins.</p>
+          <button id="continueToCaseFile" type="button">Continue to Case File</button>
+        </div>
+      </section>
+
+      <section class="hidden" id="gamePanel">
+        <div class="status-strip">
+          <div><span>Act</span><strong id="currentAct">Arrival</strong></div>
+          <div><span>Team</span><strong id="teamStatus">Not joined</strong></div>
+          <div><span>Score</span><strong id="teamScore">0</strong></div>
+        </div>
+
+        <section class="panel venue-route-panel">
+          <details>
+            <summary>
+              <span class="case-record-number">MAP</span>
+              <span class="case-record-title"><small>On Par field route</small><strong>Find the QR Stations</strong></span>
+              <span class="case-record-status">Open</span>
+            </summary>
+            <div class="venue-route-body">
+              <img src="/murder-mystery/assets/location-map.svg" alt="On Par venue route with seven numbered public clue stations" />
+              <p>In each act, visit both active numbered stations. Your host may send your team to either one first to keep the room moving.</p>
+              <div class="route-key">
+                <span><i class="act-one"></i>1-2: scene and route</span>
+                <span><i class="act-two"></i>3-4: scorecard and trophy</span>
+                <span><i class="act-three"></i>5-6: map and voucher</span>
+                <span><i class="act-four"></i>7: final clip</span>
+              </div>
+              <small>All three courses - Wild Axe, Great Escape, and Level Up - have nine holes. Stay in public aisles and outside active play areas.</small>
+            </div>
+          </details>
+        </section>
+
+        <section class="panel case-file-panel" id="caseFilePanel">
+          <div class="section-title case-file-heading">
+            <div>
+              <p class="eyebrow">Detective archive</p>
+              <h2>Team Case File</h2>
+            </div>
+            <span id="caseFileCount">0 / 7 secured</span>
+          </div>
+
+          <details class="case-record opening-record">
+            <summary>
+              <span class="case-record-number">00</span>
+              <span class="case-record-title"><small>Opening record</small><strong>Incident Briefing</strong></span>
+              <span class="case-record-status">Replay</span>
+            </summary>
+            <div class="case-record-body">
+              <figure class="case-video-frame">
+                <video
+                  src="/murder-mystery/assets/videos/opening-live-action-plot.webm"
+                  poster="/murder-mystery/assets/on-par/on-par-venue-establishing.png"
+                  controls
+                  playsinline
+                  preload="metadata"
+                ></video>
+                <figcaption>The original narrated briefing from the night Rex Mulligan was found at On Par.</figcaption>
+              </figure>
+            </div>
+          </details>
+
+          <div class="case-file-divider">
+            <h3>Collected Evidence</h3>
+            <span>Unlocked records</span>
+          </div>
+          <div class="case-file-list" id="caseFileList">
+            <p class="empty-case-file">No station evidence has been secured.</p>
+          </div>
+
+          <div class="case-file-divider notebook-divider">
+            <h3>Detective Notes</h3>
+            <span id="notesStatus" aria-live="polite">Saved for your team</span>
+          </div>
+          <form class="case-notebook" id="notesForm">
+            <label for="caseNotes">Team notebook</label>
+            <textarea
+              id="caseNotes"
+              maxlength="4000"
+              placeholder="Track alibis, suspicious times, clue connections, and your leading theory..."
+            ></textarea>
+            <div class="notebook-actions">
+              <span id="notesCount">0 / 4000</span>
+              <button type="submit">Save Notes</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel evidence-intake-panel">
+          <div class="section-title">
+            <h2>Evidence Intake</h2>
+            <span>QR station code</span>
+          </div>
+          <form id="unlockForm" class="inline-form">
+            <input id="clueCode" aria-label="Station clue code" placeholder="Enter clue code" autocomplete="off" />
+            <button type="submit">Unlock</button>
+          </form>
+          <p class="message" id="unlockMessage"></p>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2>Live Missions</h2>
+            <span>Host scored</span>
+          </div>
+          <div id="missionList" class="mission-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2>Suspects</h2>
+            <span>Posted dossiers</span>
+          </div>
+          <div class="suspect-list" id="suspectList"></div>
+        </section>
+
+        <section class="panel hidden" id="accusePanel">
+          <h2>Final Accusation</h2>
+          <form id="accuseForm" class="stack"></form>
+          <p class="message" id="accuseMessage"></p>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2>Leaderboard</h2>
+            <span>Live</span>
+          </div>
+          <ol class="leaderboard" id="leaderboard"></ol>
+        </section>
+      </section>
+    </main>
+    <div class="toast hidden" id="toast"></div>
+    <script src="/murder-mystery/app.js"></script>
+  </body>
+</html>

@@ -13,6 +13,20 @@
     "directory": "public",
     "binding": "ASSETS"
   },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MURDER_MYSTERY_STATE",
+        "class_name": "MurderMysteryState"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "murder-mystery-v1",
+      "new_sqlite_classes": ["MurderMysteryState"]
+    }
+  ],
   "vars": {
     "PUBLIC_JOIN_URL": "https://www.opebingo.com/play",
     "NEXT_PUBLIC_SUPABASE_URL": "https://tmnstuthbllnoqgepotn.supabase.co",

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Printable QR Station Kit | Ope! Murder at the Puttery</title>
+    <link rel="icon" href="/murder-mystery/assets/case-board.svg" />
+    <link rel="stylesheet" href="/murder-mystery/styles.css" />
+  </head>
+  <body class="station-kit-body">
+    <main class="station-kit-shell">
+      <header class="host-top station-kit-header">
+        <div>
+          <img class="station-kit-brand" src="/murder-mystery/assets/on-par/on-par-logo-white.png" alt="On Par Entertainment" />
+          <p class="eyebrow">Printable QR station kit</p>
+          <h1>Self-Guided Investigation Cards</h1>
+          <p class="lede">Print these cards and post them at the tour-matched On Par landmarks. Each scan opens a narrated scene, virtual statement, physical observation, and optional hint ladder without extra staff.</p>
+        </div>
+        <nav class="host-links no-print">
+          <a href="/murder-mystery/host">Host Console</a>
+          <button type="button" onclick="window.print()">Print Cards</button>
+        </nav>
+      </header>
+      <section class="station-print-grid" id="stationPrintGrid"></section>
+    </main>
+    <script src="/murder-mystery/qrcode-generator.js"></script>
+    <script src="/murder-mystery/station-kit.js"></script>
+  </body>
+</html>

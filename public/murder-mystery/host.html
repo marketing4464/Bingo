@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Host Console | Ope! Murder at the Puttery</title>
+    <link rel="icon" href="/murder-mystery/assets/case-board.svg" />
+    <link rel="stylesheet" href="/murder-mystery/styles.css" />
+  </head>
+  <body class="host-body">
+    <main class="host-shell">
+      <header class="host-top">
+        <div>
+          <p class="eyebrow">Host console</p>
+          <h1>Ope! Murder at the Puttery</h1>
+          <p class="lede">Advance acts, manage QR clue stations, approve live missions, and track final accusations.</p>
+        </div>
+        <nav class="host-links">
+          <div class="mystery-app-switcher" role="group" aria-label="On Par game apps">
+            <a href="/host">Bingo</a>
+            <a href="/trivia">Trivia</a>
+            <a class="active" href="/murder-mystery/host" aria-current="page">Murder Mystery</a>
+          </div>
+          <div class="host-tools">
+            <a href="/murder-mystery/intro" target="_blank">Opening Video</a>
+            <a href="/murder-mystery/display" target="_blank">Open Display</a>
+            <a href="/murder-mystery" target="_blank">Open Player View</a>
+            <a href="/murder-mystery/station-kit" target="_blank">QR Station Kit</a>
+            <a href="/murder-mystery/module" target="_blank">Printable Module</a>
+            <a href="/murder-mystery/assets/downloads/ope-murder-mystery-printable-module.pdf" target="_blank">Download PDF</a>
+          </div>
+        </nav>
+      </header>
+
+      <section class="host-grid">
+        <article class="panel">
+          <div class="section-title">
+            <h2>Run Control</h2>
+            <span id="hostActName">Arrival</span>
+          </div>
+          <div class="act-buttons" id="actButtons"></div>
+          <div class="host-note" id="hostPrompt"></div>
+        </article>
+
+        <article class="panel qr-panel">
+          <div class="section-title">
+            <h2>Player Join</h2>
+            <span>Scan or type</span>
+          </div>
+          <div id="qrCode" class="qr-code"></div>
+          <code id="joinUrl"></code>
+        </article>
+
+        <article class="panel wide">
+          <div class="section-title">
+            <h2>Active QR Stations</h2>
+            <span>Post around venue</span>
+          </div>
+          <div class="code-grid" id="codeGrid"></div>
+        </article>
+
+        <article class="panel">
+          <div class="section-title">
+            <h2>Teams</h2>
+            <span id="teamCount">0</span>
+          </div>
+          <div class="team-list" id="teamList"></div>
+        </article>
+
+        <article class="panel">
+          <div class="section-title">
+            <h2>Mission Review</h2>
+            <span>Pending first</span>
+          </div>
+          <div class="submission-list" id="submissionList"></div>
+        </article>
+
+        <article class="panel wide">
+          <div class="section-title">
+            <h2>Final Accusations</h2>
+            <span>Auto scored</span>
+          </div>
+          <div class="submission-list" id="accusationList"></div>
+        </article>
+
+        <article class="panel wide danger-panel">
+          <div class="section-title">
+            <h2>Reset Event</h2>
+            <span>Clears all live data</span>
+          </div>
+          <p>Use after a rehearsal or completed event. This removes teams, scores, submissions, accusations, and returns the game to Arrival.</p>
+          <form id="resetForm" class="inline-form">
+            <input id="resetConfirm" aria-label="Reset confirmation" placeholder="Type RESET to confirm" autocomplete="off" />
+            <button class="danger" type="submit">Reset Event</button>
+          </form>
+          <p class="message" id="resetMessage"></p>
+        </article>
+      </section>
+    </main>
+    <script src="/murder-mystery/qrcode-generator.js"></script>
+    <script src="/murder-mystery/host.js"></script>
+  </body>
+</html>
