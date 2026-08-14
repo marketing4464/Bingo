@@ -8,6 +8,7 @@
     "build": "next build",
     "cf:preview": "wrangler dev",
     "cf:deploy": "wrangler deploy",
+    "mystery:sync": "node scripts/sync-murder-mystery-data.mjs",
     "start": "next start",
     "local": "node server.js"
   },

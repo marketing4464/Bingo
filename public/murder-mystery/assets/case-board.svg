@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420" role="img" aria-label="Mystery case board">
+  <rect width="420" height="420" rx="28" fill="#211d1a"/>
+  <path d="M42 92h336v244H42z" fill="#2c2721" stroke="#e5bd63" stroke-width="6"/>
+  <path d="M91 139h88v116H91z" fill="#f8f2e8"/>
+  <path d="M236 127h91v70h-91z" fill="#3e6b58"/>
+  <path d="M224 244h108v48H224z" fill="#8a3944"/>
+  <path d="M144 299h72v34h-72z" fill="#406f86"/>
+  <g fill="none" stroke="#e5bd63" stroke-width="5" stroke-linecap="round">
+    <path d="M179 157l57 6M164 253l76-76M282 197l-18 47M216 316l52-24"/>
+  </g>
+  <g fill="#e5bd63">
+    <circle cx="179" cy="157" r="9"/><circle cx="236" cy="163" r="9"/><circle cx="164" cy="253" r="9"/><circle cx="240" cy="177" r="9"/><circle cx="282" cy="197" r="9"/><circle cx="264" cy="244" r="9"/><circle cx="216" cy="316" r="9"/><circle cx="268" cy="292" r="9"/>
+  </g>
+  <path d="M117 166h36M117 190h43M117 214h27" stroke="#211d1a" stroke-width="9" stroke-linecap="round"/>
+  <path d="M253 151h55M253 173h38" stroke="#f8f2e8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M244 268h68" stroke="#f8f2e8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M160 316h40" stroke="#f8f2e8" stroke-width="8" stroke-linecap="round"/>
+  <text x="210" y="383" text-anchor="middle" fill="#e5bd63" font-family="Arial, sans-serif" font-size="28" font-weight="800">CASE 413</text>
+</svg>

@@ -29,6 +29,30 @@ npm run local
 
 That opens the host console at `http://localhost:4173`.
 
+## Cloudflare deployment
+
+The `opebingo` Cloudflare Worker serves Bingo and the venue murder mystery from the same domain:
+
+- Bingo host: `https://www.opebingo.com/host`
+- Murder Mystery player: `https://www.opebingo.com/murder-mystery`
+- Murder Mystery host: `https://www.opebingo.com/murder-mystery/host`
+- Murder Mystery display: `https://www.opebingo.com/murder-mystery/display`
+- QR station kit: `https://www.opebingo.com/murder-mystery/station-kit`
+- Printable event module: `https://www.opebingo.com/murder-mystery/module`
+
+The mystery route is mapped to public landmarks visible in On Par's December 2025 venue tour: the Wild Axe public rail, shuffleboard end cap, mini-golf pencil return, Great Escape entrance, Level Up overlook, darts lounge, and central wave-mural lounge. Scarlet and Ivory starting orders split traffic while three progressive hints at each station keep the deduction difficult but fair.
+
+The murder mystery uses the `MURDER_MYSTERY_STATE` SQLite-backed Durable Object. Its teams, notes, progress, scores, and accusations are isolated from the Supabase-backed Bingo event.
+
+Preview or deploy with:
+
+```bash
+npm run cf:preview
+npm run cf:deploy
+```
+
+When the source mystery definition changes in the sibling `ope-murder-mystery` project, regenerate the Worker-safe game data with `npm run mystery:sync`.
+
 ## Deploy to Vercel
 
 This project is Next.js-compatible for Vercel:

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-labelledby="venueMapTitle venueMapDesc">
+  <title id="venueMapTitle">On Par Entertainment murder mystery clue route</title>
+  <desc id="venueMapDesc">A not-to-scale guest route showing seven public QR stations at Wild Axe, shuffleboard, mini-golf check-in, Great Escape, Level Up, the darts lounge, and the central wave-mural lounge.</desc>
+  <rect width="900" height="520" fill="#12100e"/>
+  <rect x="20" y="18" width="860" height="484" rx="8" fill="#1d1916" stroke="#d6a23a" stroke-width="3"/>
+
+  <text x="44" y="51" fill="#f8f2e8" font-family="Arial, sans-serif" font-size="24" font-weight="900">ON PAR GUEST CLUE ROUTE</text>
+  <text x="856" y="50" text-anchor="end" fill="#bdb1a5" font-family="Arial, sans-serif" font-size="13" font-weight="700">SCHEMATIC - NOT TO SCALE</text>
+
+  <g font-family="Arial, sans-serif">
+    <rect x="45" y="74" width="235" height="174" rx="6" fill="#302237" stroke="#b989d1" stroke-width="2"/>
+    <text x="65" y="105" fill="#f8f2e8" font-size="22" font-weight="900">GREAT ESCAPE</text>
+    <text x="65" y="126" fill="#d8cce0" font-size="13" font-weight="700">9-hole course</text>
+    <path d="M76 205h174M88 188h150M104 170h118" stroke="#b989d1" stroke-width="5" stroke-linecap="round" opacity="0.72"/>
+    <path d="M115 148l47-26 47 26" fill="none" stroke="#d6a23a" stroke-width="6" stroke-linejoin="round"/>
+
+    <rect x="302" y="74" width="245" height="174" rx="6" fill="#173f3a" stroke="#55b69e" stroke-width="2"/>
+    <text x="322" y="105" fill="#f8f2e8" font-size="22" font-weight="900">LEVEL UP</text>
+    <text x="322" y="126" fill="#c5e5dc" font-size="13" font-weight="700">9-hole course</text>
+    <path d="M326 204l42-60 40 31 42-51 68 80" fill="none" stroke="#55b69e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+    <rect x="454" y="151" width="50" height="57" rx="5" fill="#a33e32" stroke="#f1b75d" stroke-width="3"/>
+
+    <rect x="569" y="74" width="286" height="174" rx="6" fill="#4b2229" stroke="#d86474" stroke-width="2"/>
+    <text x="589" y="105" fill="#f8f2e8" font-size="22" font-weight="900">WILD AXE</text>
+    <text x="589" y="126" fill="#f0c8cf" font-size="13" font-weight="700">9-hole course and public rail</text>
+    <path d="M614 203l42-59 42 59 42-59 42 59" fill="none" stroke="#d86474" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+    <path d="M593 220h236" stroke="#d6a23a" stroke-width="6" stroke-dasharray="10 8"/>
+
+    <rect x="45" y="271" width="213" height="195" rx="6" fill="#342820" stroke="#a98a70" stroke-width="2"/>
+    <text x="65" y="303" fill="#f8f2e8" font-size="21" font-weight="900">DARTS LOUNGE</text>
+    <text x="65" y="324" fill="#d8c8b9" font-size="13" font-weight="700">Knight and digital lanes</text>
+    <circle cx="101" cy="378" r="31" fill="none" stroke="#d6a23a" stroke-width="6"/>
+    <circle cx="101" cy="378" r="15" fill="none" stroke="#d6a23a" stroke-width="4"/>
+    <path d="M157 348h73M157 376h73M157 404h73" stroke="#a98a70" stroke-width="8" stroke-linecap="round"/>
+
+    <rect x="280" y="271" width="291" height="195" rx="6" fill="#252c30" stroke="#6da2bd" stroke-width="2"/>
+    <text x="300" y="303" fill="#f8f2e8" font-size="21" font-weight="900">CENTRAL FLOOR</text>
+    <text x="300" y="324" fill="#c8dbe4" font-size="13" font-weight="700">Check-in, pencil return and wave lounge</text>
+    <path d="M310 366c25-22 50-22 75 0s50 22 75 0 50-22 76 0" fill="none" stroke="#55b69e" stroke-width="7" stroke-linecap="round"/>
+    <rect x="312" y="396" width="96" height="42" rx="4" fill="#3b342e" stroke="#d6a23a" stroke-width="2"/>
+    <text x="360" y="422" text-anchor="middle" fill="#f8f2e8" font-size="13" font-weight="800">PUTTERS</text>
+    <rect x="446" y="396" width="96" height="42" rx="4" fill="#173f3a" stroke="#55b69e" stroke-width="2"/>
+    <text x="494" y="422" text-anchor="middle" fill="#f8f2e8" font-size="13" font-weight="800">LOUNGE</text>
+
+    <rect x="593" y="271" width="262" height="116" rx="6" fill="#1f3340" stroke="#6da2bd" stroke-width="2"/>
+    <text x="613" y="303" fill="#f8f2e8" font-size="20" font-weight="900">SHUFFLEBOARD</text>
+    <text x="613" y="324" fill="#c8dbe4" font-size="13" font-weight="700">Public end cap and green-wall corridor</text>
+    <path d="M620 352h205" stroke="#6da2bd" stroke-width="13" stroke-linecap="round"/>
+
+    <rect x="593" y="405" width="262" height="61" rx="6" fill="#29231f" stroke="#877567" stroke-width="2"/>
+    <text x="613" y="432" fill="#f8f2e8" font-size="17" font-weight="900">ENTRANCE + LOGO WALL</text>
+    <text x="613" y="452" fill="#c9bdb2" font-size="12" font-weight="700">Start, branch assignment and exit</text>
+  </g>
+
+  <path d="M724 436C574 485 196 485 145 378C104 291 134 222 164 166C256 237 347 239 424 166C501 238 633 246 720 166C806 239 801 301 724 331C655 357 565 365 494 365C437 365 406 390 360 417" fill="none" stroke="#d6a23a" stroke-width="5" stroke-linecap="round" stroke-dasharray="11 12" opacity="0.82"/>
+
+  <g font-family="Arial, sans-serif" font-size="20" font-weight="900" text-anchor="middle">
+    <g transform="translate(724 166)"><circle r="23" fill="#8f2f40" stroke="#fff3d8" stroke-width="3"/><text y="7" fill="#fff3d8">1</text></g>
+    <g transform="translate(724 331)"><circle r="23" fill="#8f2f40" stroke="#fff3d8" stroke-width="3"/><text y="7" fill="#fff3d8">2</text></g>
+    <g transform="translate(360 417)"><circle r="23" fill="#d6a23a" stroke="#fff3d8" stroke-width="3"/><text y="7" fill="#1a1512">3</text></g>
+    <g transform="translate(164 166)"><circle r="23" fill="#d6a23a" stroke="#fff3d8" stroke-width="3"/><text y="7" fill="#1a1512">4</text></g>
+    <g transform="translate(424 166)"><circle r="23" fill="#2d8069" stroke="#fff3d8" stroke-width="3"/><text y="7" fill="#fff3d8">5</text></g>
+    <g transform="translate(145 378)"><circle r="23" fill="#2d8069" stroke="#fff3d8" stroke-width="3"/><text y="7" fill="#fff3d8">6</text></g>
+    <g transform="translate(494 365)"><circle r="23" fill="#3d708b" stroke="#fff3d8" stroke-width="3"/><text y="7" fill="#fff3d8">7</text></g>
+  </g>
+</svg>

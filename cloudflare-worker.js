@@ -1,3 +1,7 @@
+import { handleMurderMysteryApi, MurderMysteryState } from "./murder-mystery-worker.js";
+
+export { MurderMysteryState };
+
 const GAME_STATE_ROW_ID = "current";
 const SUPABASE_STATE_TABLE = "on_par_bingo_state";
 const SUPABASE_PUBLIC_STATE_TABLE = "on_par_bingo_public_state";
@@ -55,6 +59,9 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === "/trivia" || url.pathname === "/trivia/") {
       return Response.redirect(TRIVIA_CONTROL_ROOM_URL, 302);
+    }
+    if (url.pathname.startsWith("/murder-mystery/api/")) {
+      return handleMurderMysteryApi(request, env, url);
     }
     if (url.pathname.startsWith("/api/")) return handleApi(request, env, url);
     return env.ASSETS.fetch(assetRequest(request, url));
@@ -198,9 +205,19 @@ function assetRequest(request, url) {
     ["/display", "/display.html"],
     ["/host-guide", "/host-guide.html"],
     ["/play", "/play.html"],
+    ["/murder-mystery", "/murder-mystery/index.html"],
+    ["/murder-mystery/", "/murder-mystery/index.html"],
+    ["/murder-mystery/play", "/murder-mystery/index.html"],
+    ["/murder-mystery/host", "/murder-mystery/host.html"],
+    ["/murder-mystery/display", "/murder-mystery/display.html"],
+    ["/murder-mystery/intro", "/murder-mystery/intro.html"],
+    ["/murder-mystery/module", "/murder-mystery/printable-module.html"],
+    ["/murder-mystery/station-kit", "/murder-mystery/station-kit.html"],
     ["/favicon.ico", "/assets/on-par-logo.png"],
   ]);
-  const pathname = rewrites.get(url.pathname) || url.pathname;
+  const pathname = url.pathname.startsWith("/murder-mystery/station/")
+    ? "/murder-mystery/station.html"
+    : rewrites.get(url.pathname) || url.pathname;
   const nextUrl = new URL(request.url);
   nextUrl.pathname = pathname;
   return new Request(nextUrl, request);
@@ -244,15 +261,16 @@ async function loadState(env, { allowCached = false } = {}) {
 
 function normalizeState(snapshot) {
   if (!snapshot || typeof snapshot !== "object" || !Array.isArray(snapshot.deck)) return freshState();
+  const { murderMystery: _legacyMysteryState, ...bingoSnapshot } = snapshot;
   return {
     ...freshState(),
-    ...snapshot,
-    currentWord: compactMoment(snapshot.currentWord),
-    called: compactMoments(snapshot.called),
-    deck: compactMoments(snapshot.deck),
-    claims: Array.isArray(snapshot.claims) ? snapshot.claims : [],
-    autoPullEnabled: snapshot.autoPullEnabled !== false,
-    updatedAt: Number(snapshot.updatedAt) || Date.now(),
+    ...bingoSnapshot,
+    currentWord: compactMoment(bingoSnapshot.currentWord),
+    called: compactMoments(bingoSnapshot.called),
+    deck: compactMoments(bingoSnapshot.deck),
+    claims: Array.isArray(bingoSnapshot.claims) ? bingoSnapshot.claims : [],
+    autoPullEnabled: bingoSnapshot.autoPullEnabled !== false,
+    updatedAt: Number(bingoSnapshot.updatedAt) || Date.now(),
   };
 }
 
