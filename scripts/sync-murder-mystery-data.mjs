@@ -16,3 +16,14 @@ const outputPath = path.join(projectRoot, "murder-mystery-data.js");
 const output = `// Generated from ope-murder-mystery/server.js by scripts/sync-murder-mystery-data.mjs.\nexport const mysteryGame = ${JSON.stringify(game, null, 2)};\n`;
 fs.writeFileSync(outputPath, output);
 console.log(outputPath);
+
+const sourceVideoDir = path.join(sourceRoot, "public", "assets", "videos");
+const outputVideoDir = path.join(projectRoot, "public", "murder-mystery", "assets", "videos");
+fs.mkdirSync(outputVideoDir, { recursive: true });
+
+const videoFiles = fs.readdirSync(sourceVideoDir).filter((file) => file.endsWith(".webm"));
+for (const file of videoFiles) {
+  fs.copyFileSync(path.join(sourceVideoDir, file), path.join(outputVideoDir, file));
+}
+
+console.log(`Synced ${videoFiles.length} murder mystery videos to ${outputVideoDir}`);
