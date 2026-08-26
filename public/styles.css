@@ -1,19 +1,19 @@
 :root {
-  --ink: #f8fff4;
-  --muted: #d4eac9;
-  --paper: #0f2411;
-  --cream: #143a18;
-  --teal: #9fd783;
-  --green: #baf4a1;
-  --coral: #fffbdf;
-  --gold: #dfffc5;
-  --forest: #185d24;
-  --forest-bright: #3d8d35;
-  --blue: #c9ffd9;
-  --charcoal: #050505;
-  --steel: #214a25;
-  --neon-glow: 0 0 16px rgba(223, 255, 197, 0.9), 0 0 42px rgba(152, 221, 99, 0.48);
-  --shadow: 0 22px 60px rgba(0, 0, 0, 0.52);
+  --ink: #fff9ed;
+  --muted: #cde7ff;
+  --paper: #0c1038;
+  --cream: #151a4c;
+  --teal: #6bd6ff;
+  --green: #9ee7c5;
+  --coral: #ff6f91;
+  --gold: #ffd66b;
+  --forest: #24318f;
+  --forest-bright: #4a79ff;
+  --blue: #7bdcff;
+  --charcoal: #060815;
+  --steel: #27305f;
+  --neon-glow: 0 0 18px rgba(255, 214, 107, 0.72), 0 0 46px rgba(107, 214, 255, 0.34);
+  --shadow: 0 24px 70px rgba(3, 8, 35, 0.58);
   --radius: 8px;
 }
 
@@ -24,11 +24,15 @@
 body {
   margin: 0;
   min-height: 100vh;
+  position: relative;
+  isolation: isolate;
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background-color: #0b2f12;
+  background-color: #080d2f;
   background-image:
-    linear-gradient(180deg, rgba(6, 30, 8, 0.66), rgba(6, 30, 8, 0.76)),
+    linear-gradient(180deg, rgba(8, 12, 48, 0.58), rgba(12, 8, 48, 0.88)),
+    linear-gradient(120deg, rgba(74, 121, 255, 0.38), transparent 48%),
+    linear-gradient(300deg, rgba(255, 111, 145, 0.28), transparent 54%),
     url("/assets/event-art/bingo-countdown-screen.png");
   background-position: center;
   background-size: cover;
@@ -45,17 +49,32 @@ body.player-body {
 }
 
 body::before {
-  content: none;
+  content: "";
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(circle, rgba(232, 255, 213, 0.28) 0 7px, transparent 8px),
-    linear-gradient(rgba(232, 255, 213, 0.2), rgba(232, 255, 213, 0.2));
-  background-size: 74px 34px, 74px 100%;
-  background-position: 14px 0, 51px 0;
-  opacity: 0.44;
+    linear-gradient(45deg, transparent 0 47%, rgba(255, 214, 107, 0.26) 48% 52%, transparent 53% 100%),
+    linear-gradient(135deg, transparent 0 47%, rgba(107, 214, 255, 0.18) 48% 52%, transparent 53% 100%);
+  background-size: 88px 88px, 126px 126px;
+  background-position: 12px 18px, 54px 20px;
+  opacity: 0.4;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  height: clamp(120px, 18vh, 230px);
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(6, 8, 32, 0), rgba(6, 8, 32, 0.88) 46%),
+    linear-gradient(90deg, rgba(15, 21, 78, 0.92), rgba(50, 31, 122, 0.78), rgba(15, 21, 78, 0.92));
+  clip-path: polygon(0 58%, 6% 58%, 6% 42%, 8% 42%, 8% 29%, 10% 42%, 12% 42%, 12% 58%, 20% 58%, 20% 34%, 22% 34%, 22% 18%, 25% 34%, 27% 34%, 27% 58%, 38% 58%, 38% 47%, 40% 47%, 40% 31%, 42% 47%, 44% 47%, 44% 58%, 56% 58%, 56% 40%, 58% 40%, 58% 22%, 61% 40%, 63% 40%, 63% 58%, 74% 58%, 74% 48%, 76% 48%, 76% 33%, 78% 48%, 80% 48%, 80% 58%, 90% 58%, 90% 43%, 92% 43%, 92% 28%, 94% 43%, 96% 43%, 96% 58%, 100% 58%, 100% 100%, 0 100%);
 }
 
 button,
@@ -110,6 +129,8 @@ a {
 }
 
 .app-shell {
+  position: relative;
+  z-index: 1;
   width: min(1440px, calc(100vw - 32px));
   margin: 0 auto;
   padding: 24px 0 36px;
@@ -641,6 +662,7 @@ h1 {
   gap: clamp(8px, 1.2vh, 14px);
   padding: clamp(12px, 1.6vw, 22px);
   position: relative;
+  z-index: 1;
   overflow: hidden;
   background-color: #0b2f12;
   background-image:
@@ -965,6 +987,8 @@ h1 {
 }
 
 .player-shell {
+  position: relative;
+  z-index: 1;
   width: min(980px, calc(100vw - 24px));
   margin: 0 auto;
   padding: 18px 0 28px;
@@ -2056,6 +2080,385 @@ select {
 
 .is-busy button {
   cursor: wait;
+}
+
+/* Disney and Pixar theme layer */
+button {
+  color: #10143e;
+  background:
+    linear-gradient(180deg, #fff2b7, #ffd66b 58%, #f2a93b);
+  border: 1px solid rgba(255, 244, 188, 0.86);
+  box-shadow: 0 10px 28px rgba(255, 188, 73, 0.28), var(--neon-glow);
+}
+
+button.secondary {
+  color: #f7fbff;
+  background:
+    linear-gradient(180deg, rgba(39, 48, 95, 0.94), rgba(14, 20, 63, 0.94));
+  border-color: rgba(123, 220, 255, 0.38);
+}
+
+button.warning {
+  background:
+    linear-gradient(180deg, #ff6f91, #bd315f);
+  border-color: rgba(255, 225, 235, 0.72);
+}
+
+button.gold {
+  color: #11133f;
+  background:
+    linear-gradient(180deg, #fff7cc, #ffd66b 56%, #ffb044);
+}
+
+a {
+  color: #ffe39a;
+}
+
+.brand-logo {
+  background:
+    linear-gradient(180deg, rgba(11, 16, 56, 0.94), rgba(31, 27, 92, 0.94));
+  border-color: rgba(255, 214, 107, 0.72);
+  box-shadow: 0 16px 38px rgba(4, 7, 33, 0.44), 0 0 22px rgba(255, 214, 107, 0.2);
+}
+
+.brand-kicker {
+  color: #ffd66b;
+}
+
+h1 {
+  color: #fff9ed;
+  text-shadow: 0 0 28px rgba(255, 214, 107, 0.36), 0 6px 18px rgba(3, 5, 24, 0.58);
+}
+
+.subtitle {
+  color: #d9ecff;
+}
+
+.app-switcher {
+  border-color: rgba(255, 214, 107, 0.55);
+  background: rgba(7, 10, 43, 0.86);
+}
+
+.app-switcher a {
+  color: #cde7ff;
+}
+
+.app-switcher a:hover {
+  background: rgba(74, 121, 255, 0.28);
+}
+
+.app-switcher a.active {
+  color: #11133f;
+  background:
+    linear-gradient(180deg, #fff2b7, #ffd66b);
+}
+
+.panel,
+.card {
+  border-color: rgba(255, 214, 107, 0.34);
+  background:
+    linear-gradient(180deg, rgba(26, 33, 101, 0.9), rgba(9, 12, 48, 0.96)),
+    #10143e;
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before,
+.bingo-card::before,
+.host-command-center::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(45deg, transparent 0 48%, rgba(255, 214, 107, 0.16) 49% 51%, transparent 52% 100%),
+    linear-gradient(135deg, transparent 0 48%, rgba(123, 220, 255, 0.12) 49% 51%, transparent 52% 100%);
+  background-size: 74px 74px, 106px 106px;
+  opacity: 0.22;
+}
+
+.panel > *,
+.bingo-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.host-health-tile,
+.host-steps,
+.host-notes,
+.player-rules,
+.player-game-rules {
+  border-color: rgba(123, 220, 255, 0.3);
+  background: rgba(8, 12, 48, 0.78);
+}
+
+.host-health-tile.ok {
+  border-color: rgba(255, 214, 107, 0.72);
+  box-shadow: inset 4px 0 0 #ffd66b;
+}
+
+.host-step span,
+.round-number,
+.leaderboard-rank {
+  color: #11133f;
+  background: #ffd66b;
+}
+
+.host-step.active span {
+  background: #4a79ff;
+  box-shadow: 0 0 18px rgba(123, 220, 255, 0.55);
+}
+
+.status-pill {
+  color: #11133f;
+  background: #ffd66b;
+}
+
+.status-pill.setup {
+  color: #fff9ed;
+  background: rgba(9, 12, 48, 0.92);
+  border-color: rgba(255, 214, 107, 0.46);
+}
+
+.status-pill.countdown,
+.status-pill.ended {
+  color: #11133f;
+  background: #9ee7c5;
+}
+
+.draw-box {
+  border-color: #ffd66b;
+  background:
+    linear-gradient(180deg, rgba(255, 214, 107, 0.12), transparent 32%),
+    linear-gradient(135deg, rgba(74, 121, 255, 0.72), rgba(155, 44, 255, 0.48) 45%, rgba(9, 12, 48, 0.96));
+  box-shadow:
+    inset 0 0 58px rgba(123, 220, 255, 0.16),
+    0 0 34px rgba(255, 214, 107, 0.34),
+    var(--shadow);
+}
+
+.display-moment-box {
+  border-color: rgba(255, 214, 107, 0.94);
+  background:
+    linear-gradient(180deg, rgba(255, 249, 237, 0.08), transparent 30%),
+    linear-gradient(135deg, rgba(24, 31, 95, 0.96), rgba(74, 43, 150, 0.94));
+}
+
+.moment-art {
+  border-color: #fff2b7;
+  background: #080c31;
+  box-shadow: 0 18px 38px rgba(5, 8, 36, 0.5), 0 0 22px rgba(255, 214, 107, 0.24);
+}
+
+.draw-word {
+  color: #fff9ed;
+  text-shadow: 0 0 28px rgba(255, 214, 107, 0.56), 0 8px 24px rgba(3, 5, 24, 0.82);
+}
+
+.draw-category {
+  color: #ffd66b;
+}
+
+.stat,
+.schedule-row,
+.claim,
+.player-status,
+input,
+select {
+  border-color: rgba(123, 220, 255, 0.28);
+  background: rgba(7, 10, 43, 0.88);
+}
+
+.stat b,
+.display-recent-pulls > strong,
+.host-health-tile strong,
+.host-steps > strong,
+.host-notes > strong {
+  color: #fff9ed;
+}
+
+.word-chip {
+  color: #11133f;
+  background: #ffd66b;
+  border-color: rgba(255, 249, 237, 0.4);
+}
+
+.word-chip.current-pull,
+.display-recent-pulls .word-chip.current-pull {
+  color: #11133f;
+  background: #9ee7c5;
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.display-recent-pulls .word-chip {
+  color: #fff9ed;
+  background: rgba(9, 12, 48, 0.78);
+  border-color: rgba(255, 214, 107, 0.38);
+}
+
+.display-shell {
+  background-color: #080d2f;
+  background-image:
+    linear-gradient(180deg, rgba(8, 12, 48, 0.48), rgba(7, 8, 35, 0.76)),
+    linear-gradient(120deg, rgba(74, 121, 255, 0.42), transparent 48%),
+    linear-gradient(300deg, rgba(255, 111, 145, 0.22), transparent 56%),
+    url("/assets/event-art/bingo-countdown-screen.png");
+}
+
+.display-shell::before {
+  background-image:
+    linear-gradient(45deg, transparent 0 48%, rgba(255, 214, 107, 0.22) 49% 51%, transparent 52% 100%),
+    linear-gradient(135deg, transparent 0 48%, rgba(123, 220, 255, 0.18) 49% 51%, transparent 52% 100%);
+  background-size: 90px 90px, 132px 132px;
+  opacity: 0.34;
+}
+
+.display-shell > .final-leaderboard-video {
+  background: #080d2f;
+}
+
+.display-body::after {
+  content: none;
+}
+
+.display-body[data-display-status="countdown"] .display-shell {
+  background-image:
+    linear-gradient(180deg, rgba(8, 12, 48, 0.08), rgba(8, 12, 48, 0.18)),
+    url("/assets/event-art/bingo-countdown-screen.png");
+}
+
+.display-body[data-display-status="break"] .display-shell,
+.display-body[data-display-status="ended"] .display-shell {
+  background-image:
+    linear-gradient(180deg, rgba(8, 12, 48, 0.1), rgba(8, 12, 48, 0.24)),
+    url("/assets/event-art/bingo-leaderboard-screen.png");
+}
+
+.countdown-instructions,
+.display-body[data-display-status="countdown"] .join-strip,
+.pregame-panel,
+.pregame-qr-card,
+.break-countdown,
+.final-winner-card,
+.winner-banner,
+.prize-claim {
+  border-color: rgba(255, 214, 107, 0.5);
+  background:
+    linear-gradient(180deg, rgba(28, 35, 105, 0.84), rgba(8, 12, 48, 0.86));
+  box-shadow: 0 0 26px rgba(255, 214, 107, 0.2), var(--shadow);
+}
+
+.countdown-instructions strong,
+.pregame-qr-card strong,
+.pregame-rules strong,
+.display-body[data-display-status="countdown"] .join-strip strong,
+.final-winner-card strong,
+.bingo-alert-title {
+  text-shadow: 0 0 26px rgba(255, 214, 107, 0.56), 0 7px 22px rgba(3, 5, 24, 0.7);
+}
+
+.pregame-countdown,
+.timer {
+  color: #fff9ed;
+  text-shadow: 0 0 30px rgba(255, 214, 107, 0.54), 0 7px 22px rgba(3, 5, 24, 0.7);
+}
+
+.leaderboard-row {
+  background: rgba(255, 249, 237, 0.84);
+  border-color: rgba(255, 214, 107, 0.46);
+}
+
+.leaderboard-name,
+.leaderboard-score {
+  color: #121748;
+}
+
+.bingo-alert {
+  border-color: #ffd66b;
+  background:
+    linear-gradient(180deg, rgba(35, 49, 143, 0.96), rgba(10, 14, 52, 0.98));
+  box-shadow: 0 30px 90px rgba(3, 5, 24, 0.74), 0 0 46px rgba(255, 214, 107, 0.44);
+}
+
+.bingo-alert-points,
+.final-winner-card em,
+.winner-banner em {
+  color: #ffd66b;
+}
+
+.bingo-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(28, 35, 105, 0.96), rgba(8, 12, 48, 0.98));
+  border-color: rgba(255, 214, 107, 0.42);
+}
+
+.card-title {
+  color: #fff9ed;
+}
+
+.bingo-head {
+  color: #11133f;
+  background:
+    linear-gradient(180deg, #fff7cc, #ffd66b);
+  box-shadow: 0 0 16px rgba(255, 214, 107, 0.48);
+}
+
+.bingo-cell {
+  color: #121748;
+  background:
+    linear-gradient(180deg, #fffaf0, #dff4ff);
+  border-color: rgba(255, 214, 107, 0.46);
+  box-shadow: inset 0 0 0 1px rgba(74, 121, 255, 0.12);
+}
+
+.bingo-cell:nth-child(5n + 1) {
+  background: linear-gradient(180deg, #fffaf0, #ffe7f0);
+}
+
+.bingo-cell:nth-child(5n + 2) {
+  background: linear-gradient(180deg, #fffaf0, #e3fbff);
+}
+
+.bingo-cell:nth-child(5n + 3) {
+  background: linear-gradient(180deg, #fffaf0, #fff2c7);
+}
+
+.bingo-cell.selected,
+.bingo-cell.free {
+  color: #fff9ed;
+  background:
+    linear-gradient(180deg, #4a79ff, #7b35e8);
+  border-color: rgba(255, 214, 107, 0.86);
+  box-shadow: inset 0 0 0 1px rgba(255, 249, 237, 0.28), 0 0 16px rgba(123, 220, 255, 0.3);
+}
+
+.bingo-cell.win {
+  color: #11133f;
+  background:
+    linear-gradient(180deg, #fff8d8, #ffd66b);
+  border-color: #fff9ed;
+  outline-color: #fff9ed;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 249, 237, 0.76),
+    0 0 22px rgba(255, 214, 107, 0.88),
+    0 0 12px rgba(123, 220, 255, 0.72);
+}
+
+.free-space-logo {
+  filter: drop-shadow(0 0 8px rgba(255, 214, 107, 0.55));
+}
+
+.toast {
+  background:
+    linear-gradient(180deg, rgba(35, 49, 143, 0.98), rgba(9, 12, 48, 0.98));
+  border-color: rgba(255, 214, 107, 0.52);
+  box-shadow: 0 18px 38px rgba(3, 5, 24, 0.42);
 }
 
 @media (max-width: 860px) {

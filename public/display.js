@@ -162,12 +162,12 @@ function fitSingleLineText(element, minSize) {
 }
 
 function renderPregameCountdown(state) {
-  displayEls.title.textContent = "Bingo Night";
+  displayEls.title.textContent = "Disney & Pixar Bingo";
   displayEls.round.textContent = "Opening countdown";
   displayEls.leaderboardPanel.innerHTML = `
     <div class="pregame-layout">
       <div class="pregame-panel event-art-panel">
-        <p class="brand-kicker">Players Join Now</p>
+        <p class="brand-kicker">The Story Starts Soon</p>
         <h2>Starts In</h2>
         <strong class="pregame-countdown" id="pregameCountdown">${formatClock(state.countdownEndsAt - Date.now())}</strong>
         <p class="pregame-copy">${escapeHtml(state.countdownCopy || "Round 1 starts automatically when the countdown ends.")}</p>
@@ -179,7 +179,7 @@ function renderPregameCountdown(state) {
       <div class="pregame-qr-card">
         <strong>Scan to play!</strong>
         <span>${escapeHtml(state.joinUrl)}</span>
-        <img id="pregameQr" alt="QR code to join Pop Culture Moments Bingo" />
+        <img id="pregameQr" alt="QR code to join Disney and Pixar Bingo" />
       </div>
     </div>
   `;

@@ -236,7 +236,7 @@ async function setMomentImage(image, moment) {
   };
 
   if (!moment) {
-    await applyMomentImage(image, key, momentImageUrl(null), "fallback", "Pop Culture Moments Bingo image");
+    await applyMomentImage(image, key, momentImageUrl(null), "fallback", "Disney and Pixar Bingo image");
     return;
   }
 
@@ -288,20 +288,20 @@ function preloadImage(url) {
 }
 
 function momentImageUrl(moment) {
-  const fallback = { text: "Pop Culture Moments Bingo", category: "Bingo" };
+  const fallback = { text: "Disney & Pixar Bingo", category: "Story Magic" };
   const item = moment || fallback;
   const palettes = [
-    ["#050505", "#0b3d2e", "#151515"],
-    ["#101010", "#123f2d", "#0d1712"],
-    ["#020202", "#ffffff", "#111111"],
-    ["#171717", "#00d084", "#0e1712"],
-    ["#111111", "#1f6f52", "#0d1712"],
-    ["#181818", "#0b3d2e", "#08120d"],
+    ["#233dff", "#ffd66b", "#070b2d"],
+    ["#9b2cff", "#6bd6ff", "#111548"],
+    ["#e33b72", "#ffe8a3", "#15103d"],
+    ["#16b6c8", "#ff8a4c", "#061735"],
+    ["#f4b83f", "#ff6f91", "#17113b"],
+    ["#475cff", "#9ee7c5", "#09143a"],
   ];
   const hash = [...item.text].reduce((sum, char) => sum + char.charCodeAt(0), 0);
   const [primary, accent, background] = palettes[hash % palettes.length];
-  const shape = ["star", "bolt", "record", "screen", "ticket", "sparkle"][hash % 6];
-  const category = escapeSvg(item.category || "Pop Culture");
+  const shape = ["star", "castle", "sparkle", "screen", "ticket", "badge"][hash % 6];
+  const category = escapeSvg(item.category || "Disney & Pixar");
   const initials = escapeSvg(item.text.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "!");
   const art = shapeSvg(shape, primary, accent);
   const svg = `
@@ -330,6 +330,12 @@ function momentImageUrl(moment) {
 }
 
 function shapeSvg(shape, primary, accent) {
+  if (shape === "castle") {
+    return `<path d="M290 610 h620 v-260 l-70 -38 v-92 h-86 v46 l-70 -38 v-92 h-96 v92 l-70 38 v-46 h-86 v92 l-70 38z" fill="${primary}"/><path d="M355 610 v-170 h100 v170 M550 610 v-210 h100 v210 M745 610 v-170 h100 v170" fill="${accent}" opacity="0.9"/><path d="M430 220 l45 -90 l45 90 M565 136 l70 -105 l70 105 M780 220 l45 -90 l45 90" fill="${accent}"/>`;
+  }
+  if (shape === "badge") {
+    return `<path d="M600 92 l105 118 l156 18 l-78 137 l31 153 l-151 -32 l-137 78 l-15 -156 l-116 -104 l142 -65z" fill="${primary}"/><circle cx="600" cy="330" r="150" fill="${accent}" opacity="0.9"/><circle cx="600" cy="330" r="78" fill="${primary}" opacity="0.92"/>`;
+  }
   if (shape === "bolt") {
     return `<polygon points="590,95 405,385 555,385 500,665 790,300 625,310 700,95" fill="${primary}"/><polygon points="625,145 505,340 640,335 600,520 725,285 590,295" fill="${accent}" opacity="0.88"/>`;
   }
