@@ -304,7 +304,7 @@ const disneyPixarApprovedImages = {
   EVE: "https://c01.castel.jp/400x400/0/wally-eve-j77672.jpg",
   Ratatouille: "https://www.cinehorizons.net/sites/default/files/affiches/Ratatouille-Cuistot.jpg",
   Remy: "https://static.tvtropes.org/pmwiki/pub/images/remy_webp.png",
-  Stitch: "https://papik.pro/grafic/uploads/posts/2023-03/1680170707_papik-pro-p-lilo-i-stich-poster-7.jpg",
+  Stitch: "https://vignette4.wikia.nocookie.net/disney/images/e/e9/Stitch_OfficialDisney.jpg/revision/latest?cb=20140508112158",
   Baymax: "https://www.aceshowbiz.com/images/still/big-hero-6-08.jpg",
   "Judy Hopps": "https://vignette.wikia.nocookie.net/miguel-riveras-book-of-friends/images/e/e6/Judy_Hopps_pose_render.png/revision/latest?cb=20181229084312",
   Luca: "https://image.tmdb.org/t/p/original/9jPa6SlUYxPFMVZlEuceiPPAA15.jpg",
