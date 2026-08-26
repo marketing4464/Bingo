@@ -6,6 +6,7 @@ let playerHeartbeatTimer = null;
 let attemptedSessionRestore = false;
 let lastBingoSoundClaimId = null;
 let bingoSoundUnlocked = false;
+let joinSoundUnlocked = false;
 let lastHypeUpdatedAt = null;
 
 const PLAYER_STORAGE_KEY = "onParBingoPlayerSession";
@@ -19,16 +20,19 @@ const playerMeta = $("#playerMeta");
 const playerRecentWords = $("#playerRecentWords");
 const toast = $("#toast");
 const addCardButton = $("#addCardButton");
+const joinSound = $("#joinSound");
 const bingoHorn = $("#bingoHorn");
 
 setBingoClientRole("player");
 
 installPullToRefreshGuard();
 installBingoSoundUnlock();
+installJoinSoundUnlock();
 
 joinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
+    await unlockJoinSound();
     const state = currentState || await getState();
     player = $("#playerName").value.trim() || "Player";
     const count = Math.max(1, Math.min(3, Number($("#cardCount").value || 1)));
@@ -41,6 +45,7 @@ joinForm.addEventListener("submit", async (event) => {
     gamePanel.classList.remove("hidden");
     renderPlayer(state);
     savePlayerSession();
+    playJoinSound();
   } catch (error) {
     showToast(error.message || "Could not deal your cards.");
   }
@@ -167,6 +172,47 @@ function playBingoHorn() {
   bingoHorn.play().catch(() => {
     showToast("BINGO! Sound will play after you tap the screen.");
   });
+}
+
+function installJoinSoundUnlock() {
+  if (!joinSound) return;
+  const events = ["pointerdown", "touchstart", "click"];
+  const removeUnlockListeners = () => {
+    events.forEach((eventName) => document.removeEventListener(eventName, unlock));
+  };
+  const unlock = () => {
+    unlockJoinSound().then(() => {
+      if (joinSoundUnlocked) removeUnlockListeners();
+    });
+  };
+
+  events.forEach((eventName) => {
+    document.addEventListener(eventName, unlock, { passive: true });
+  });
+}
+
+function unlockJoinSound() {
+  if (!joinSound || joinSoundUnlocked) return Promise.resolve();
+  const previousVolume = joinSound.volume;
+  joinSound.volume = 0;
+  return joinSound.play()
+    .then(() => {
+      joinSound.pause();
+      joinSound.currentTime = 0;
+      joinSound.volume = previousVolume;
+      joinSoundUnlocked = true;
+    })
+    .catch(() => {
+      joinSound.volume = previousVolume;
+    });
+}
+
+function playJoinSound() {
+  if (!joinSound) return;
+  joinSound.pause();
+  joinSound.currentTime = 0;
+  joinSound.volume = 1;
+  joinSound.play().catch(() => {});
 }
 
 async function addCard() {
