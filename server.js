@@ -145,6 +145,84 @@ const moments = [
   { text: "Girl Math", category: "Internet" },
 ];
 
+const disneyPixarMoments = [
+  { text: "Mickey Mouse", category: "Classic Disney" },
+  { text: "Minnie Mouse", category: "Classic Disney" },
+  { text: "Donald Duck", category: "Classic Disney" },
+  { text: "Goofy", category: "Classic Disney" },
+  { text: "Pluto", category: "Classic Disney" },
+  { text: "Cinderella", category: "Princesses" },
+  { text: "Snow White", category: "Princesses" },
+  { text: "Aurora", category: "Princesses" },
+  { text: "Ariel", category: "Princesses" },
+  { text: "Belle", category: "Princesses" },
+  { text: "Jasmine", category: "Princesses" },
+  { text: "Mulan", category: "Princesses" },
+  { text: "Tiana", category: "Princesses" },
+  { text: "Rapunzel", category: "Princesses" },
+  { text: "Moana", category: "Princesses" },
+  { text: "Elsa", category: "Frozen" },
+  { text: "Anna", category: "Frozen" },
+  { text: "Olaf", category: "Frozen" },
+  { text: "Let It Go", category: "Frozen" },
+  { text: "Arendelle", category: "Frozen" },
+  { text: "Simba", category: "The Lion King" },
+  { text: "Nala", category: "The Lion King" },
+  { text: "Timon and Pumbaa", category: "The Lion King" },
+  { text: "Hakuna Matata", category: "The Lion King" },
+  { text: "Pride Rock", category: "The Lion King" },
+  { text: "Aladdin", category: "Aladdin" },
+  { text: "Genie", category: "Aladdin" },
+  { text: "Magic Carpet", category: "Aladdin" },
+  { text: "A Whole New World", category: "Aladdin" },
+  { text: "Agrabah", category: "Aladdin" },
+  { text: "Toy Story", category: "Pixar" },
+  { text: "Woody", category: "Pixar" },
+  { text: "Buzz Lightyear", category: "Pixar" },
+  { text: "Jessie", category: "Pixar" },
+  { text: "Pizza Planet", category: "Pixar" },
+  { text: "Finding Nemo", category: "Pixar" },
+  { text: "Dory", category: "Pixar" },
+  { text: "Crush", category: "Pixar" },
+  { text: "P. Sherman 42 Wallaby Way", category: "Pixar" },
+  { text: "Just Keep Swimming", category: "Pixar" },
+  { text: "Monsters Inc.", category: "Pixar" },
+  { text: "Mike Wazowski", category: "Pixar" },
+  { text: "Sulley", category: "Pixar" },
+  { text: "Boo", category: "Pixar" },
+  { text: "The Door Vault", category: "Pixar" },
+  { text: "The Incredibles", category: "Pixar" },
+  { text: "Mr. Incredible", category: "Pixar" },
+  { text: "Elastigirl", category: "Pixar" },
+  { text: "Edna Mode", category: "Pixar" },
+  { text: "No Capes", category: "Pixar" },
+  { text: "Cars", category: "Pixar" },
+  { text: "Lightning McQueen", category: "Pixar" },
+  { text: "Mater", category: "Pixar" },
+  { text: "Radiator Springs", category: "Pixar" },
+  { text: "Ka-chow", category: "Pixar" },
+  { text: "Up", category: "Pixar" },
+  { text: "Carl and Ellie", category: "Pixar" },
+  { text: "Russell", category: "Pixar" },
+  { text: "Dug", category: "Pixar" },
+  { text: "Adventure Is Out There", category: "Pixar" },
+  { text: "Inside Out", category: "Pixar" },
+  { text: "Joy", category: "Pixar" },
+  { text: "Sadness", category: "Pixar" },
+  { text: "Bing Bong", category: "Pixar" },
+  { text: "Memory Orbs", category: "Pixar" },
+  { text: "Coco", category: "Pixar" },
+  { text: "Miguel", category: "Pixar" },
+  { text: "Remember Me", category: "Pixar" },
+  { text: "Encanto", category: "Disney Animation" },
+  { text: "Mirabel", category: "Disney Animation" },
+  { text: "Bruno", category: "Disney Animation" },
+  { text: "WALL-E", category: "Pixar" },
+  { text: "EVE", category: "Pixar" },
+  { text: "Ratatouille", category: "Pixar" },
+  { text: "Remy", category: "Pixar" },
+];
+
 const rounds = [
   { name: "Round 1", pattern: "Any Line", playMinutes: 20, points: 100 },
   { name: "Round 2", pattern: "Four Corners", playMinutes: 20, points: 100, bonusPoints: 50 },
@@ -175,7 +253,7 @@ function loadGameStore() {
   } catch {
     // First run uses the built-in pop culture deck.
   }
-  const defaultGame = createDefaultPopCultureGame();
+  const defaultGame = createDefaultDisneyPixarGame();
   return {
     updatedAt: Date.now(),
     activeGameId: defaultGame.id,
@@ -280,6 +358,39 @@ function createDefaultPopCultureGame() {
           thumbnailUrl: imageUrl,
           sourceUrl: manifestItem.sourceUrl || manifestItem.page || imageUrl,
           sourceName: manifestItem.source || "Approved image",
+          status: "approved",
+        }],
+      };
+    }),
+  };
+}
+
+function createDefaultDisneyPixarGame() {
+  const now = new Date().toISOString();
+  return {
+    id: "disney-pixar-bingo",
+    title: "Disney & Pixar Bingo",
+    theme: "Disney and Pixar",
+    status: "approved",
+    roundSettings: rounds,
+    createdAt: now,
+    updatedAt: now,
+    wordDeck: disneyPixarMoments.map((moment, index) => {
+      const imageUrl = generatedImageDataUrl(moment.text, "Disney + Pixar", index);
+      return {
+        id: slugId(moment.text),
+        word: moment.text,
+        description: moment.category,
+        approvedImageUrl: imageUrl,
+        imageSourceUrl: imageUrl,
+        imageStatus: "approved",
+        notes: "",
+        imageRecommendations: [{
+          id: `${slugId(moment.text)}-default`,
+          imageUrl,
+          thumbnailUrl: imageUrl,
+          sourceUrl: imageUrl,
+          sourceName: "Generated title card",
           status: "approved",
         }],
       };
