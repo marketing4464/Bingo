@@ -297,6 +297,7 @@ function assetRequest(request, url) {
     ["/murder-mystery/host", "/murder-mystery/host.html"],
     ["/murder-mystery/display", "/murder-mystery/display.html"],
     ["/murder-mystery/intro", "/murder-mystery/intro.html"],
+    ["/murder-mystery/promo", "/murder-mystery/promo.html"],
     ["/murder-mystery/module", "/murder-mystery/printable-module.html"],
     ["/murder-mystery/station-kit", "/murder-mystery/station-kit.html"],
     ["/favicon.ico", "/assets/on-par-logo.png"],

@@ -89,7 +89,7 @@ async function refreshDisplay() {
             </article>`;
         })
         .join("")
-    : '<p class="display-empty">Waiting for detective teams to join.</p>';
+    : '<p class="display-empty">Waiting for detective teams to accept the invitation.</p>';
 }
 
 refreshDisplay();

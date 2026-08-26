@@ -1,4 +1,5 @@
 const OPE_MYSTERY_BASE = "/murder-mystery";
+
 const stationGrid = document.querySelector("#stationPrintGrid");
 
 function escapeStationHtml(value) {
@@ -29,7 +30,7 @@ async function loadStationCards() {
       return `
         <article class="station-print-card">
           <div class="station-print-card-top">
-            <span>Stop ${Number(station.stop)} &bull; Act ${Number(station.act)}</span>
+            <span>Stop ${Number(station.stop)} &bull; Crime Chapter ${Number(station.act)}</span>
             <strong>${escapeStationHtml(station.routeLabel)}</strong>
           </div>
           <img class="station-print-logo" src="${OPE_MYSTERY_BASE}/assets/on-par/on-par-logo-white.png" alt="On Par Entertainment" />
@@ -37,7 +38,7 @@ async function loadStationCards() {
           <h2>${escapeStationHtml(station.title)}</h2>
           <p>${escapeStationHtml(station.guestLocation || station.location)}</p>
           <div class="station-print-qr">${qrMarkup}</div>
-          <p class="station-print-flow">Watch &bull; Inspect &bull; Deduce &bull; Unlock</p>
+          <p class="station-print-flow">Watch &bull; Inspect &bull; Deduce &bull; Secure</p>
           <p class="station-print-prompt">${escapeStationHtml(station.prompt)}</p>
           <p class="station-print-safety">${escapeStationHtml(station.safety)}</p>
           <small>${url}</small>

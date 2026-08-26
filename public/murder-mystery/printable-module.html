@@ -3,19 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Ope! Murder at the Puttery Printable Module</title>
+    <title>A Killer Halloween Printable Module</title>
     <link rel="icon" href="/murder-mystery/assets/case-board.svg" />
     <style>
       :root {
-        --ink: #231914;
-        --cream: #f7eddb;
-        --paper: #fff8ea;
-        --burgundy: #6f1f2f;
-        --emerald: #1f5a45;
-        --mustard: #c8952f;
-        --navy: #203f57;
-        --charcoal: #191613;
-        --line: #7c6147;
+        --ink: #202019;
+        --cream: #fff7df;
+        --paper: #fffaf0;
+        --burgundy: #7a2038;
+        --emerald: #155b48;
+        --mustard: #b88b31;
+        --navy: #315f68;
+        --charcoal: #10110f;
+        --line: #8c723d;
       }
 
       * {
@@ -27,7 +27,7 @@
         margin: 0;
         color: var(--ink);
         font-family: Arial, Helvetica, sans-serif;
-        background: #ddd2bf;
+        background: #d4d0c6;
       }
 
       body {
@@ -43,8 +43,9 @@
         margin: 0 auto;
         padding: 0.48in;
         background:
-          linear-gradient(90deg, rgba(111, 31, 47, 0.04) 0 1px, transparent 1px 0.5in),
-          linear-gradient(0deg, rgba(31, 90, 69, 0.04) 0 1px, transparent 1px 0.5in),
+          linear-gradient(135deg, rgba(122, 32, 56, 0.045), transparent 32%),
+          linear-gradient(315deg, rgba(21, 91, 72, 0.045), transparent 34%),
+          repeating-linear-gradient(45deg, rgba(184, 139, 49, 0.035) 0 1px, transparent 1px 0.36in),
           var(--paper);
         page-break-after: always;
         overflow: hidden;
@@ -54,20 +55,20 @@
         content: "";
         position: absolute;
         inset: 0.22in;
-        border: 3px double var(--line);
+        border: 4px double var(--line);
         pointer-events: none;
       }
 
       .page::after {
         counter-increment: page;
-        content: "Case 413 | Page " counter(page);
+        content: "A Killer Halloween | Case 413 | Page " counter(page);
         position: absolute;
         right: 0.48in;
         bottom: 0.25in;
         color: #6d5d4d;
         font-size: 9pt;
         font-weight: 700;
-        letter-spacing: 0.04em;
+        letter-spacing: 0;
         text-transform: uppercase;
       }
 
@@ -75,8 +76,9 @@
         justify-content: center;
         color: var(--cream);
         background:
-          linear-gradient(135deg, rgba(25, 22, 19, 0.84), rgba(111, 31, 47, 0.7)),
-          radial-gradient(circle at 16% 18%, rgba(200, 149, 47, 0.2), transparent 24%),
+          linear-gradient(135deg, rgba(122, 32, 56, 0.76), transparent 44%),
+          linear-gradient(315deg, rgba(21, 91, 72, 0.58), transparent 46%),
+          repeating-linear-gradient(45deg, rgba(184, 139, 49, 0.12) 0 1px, transparent 1px 0.28in),
           var(--charcoal);
       }
 
@@ -100,7 +102,7 @@
         border: 2px solid var(--mustard);
         font-size: 10pt;
         font-weight: 900;
-        letter-spacing: 0.12em;
+        letter-spacing: 0;
         text-transform: uppercase;
       }
 
@@ -114,7 +116,7 @@
       h1 {
         max-width: 7in;
         margin-bottom: 0.22in;
-        font-family: Georgia, "Times New Roman", serif;
+        font-family: "Bodoni 72", Didot, Georgia, "Times New Roman", serif;
         font-size: 49pt;
         line-height: 0.92;
         letter-spacing: 0;
@@ -125,7 +127,7 @@
         padding-bottom: 0.08in;
         border-bottom: 3px solid var(--mustard);
         color: var(--burgundy);
-        font-family: Georgia, "Times New Roman", serif;
+        font-family: "Bodoni 72", Didot, Georgia, "Times New Roman", serif;
         font-size: 24pt;
         line-height: 1;
       }
@@ -371,9 +373,9 @@
   <body>
     <section class="page cover">
       <img class="cover-logo" src="assets/on-par/on-par-logo-white.png" alt="On Par Entertainment" />
-      <div class="label">Printable Event Module</div>
-      <h1>Ope! Murder at the Puttery</h1>
-      <p class="subtitle">A two-hour, actor-free murder mystery built for On Par Entertainment. Guests investigate on their phones while physically moving through posted QR scenes, inspecting props, testing routes, and building a final case.</p>
+      <div class="label">Printable Halloween Event Module</div>
+      <h1>A Killer Halloween</h1>
+      <p class="subtitle">A two-hour, actor-free Halloween murder mystery built for On Par Entertainment. Guests enter a one-night costume fundraiser, investigate on their phones, move through posted QR scenes, inspect dramatic props, test routes, and build a final case.</p>
       <div class="cover-grid">
         <div class="cover-card"><h3>Players</h3><p>12-80 guests in teams of 2-6.</p></div>
         <div class="cover-card"><h3>Staff</h3><p>1 event captain. No actors or roaming clue staff.</p></div>
@@ -386,12 +388,12 @@
       <h2>How The Game Works</h2>
       <div class="box dark">
         <h3>Premise</h3>
-        <p>Rex Mulligan, the loudest sponsor at On Par's charity tournament, is found dead beside Wild Axe Hole 7. The three separate nine-hole courses are Wild Axe, Great Escape, and Level Up. Every team becomes a detective squad. The phone app is its case file and notebook; selected public areas of On Par become the investigation.</p>
+        <p>On Par has become A Killer Halloween, a one-night costume fundraiser. Rex Mulligan, its loudest sponsor, is found dead beside Wild Axe Hole 7 after the lights dip. Wild Axe, Great Escape, and Level Up remain three separate nine-hole courses. Every team becomes a detective squad; the phone app is its case file and notebook, and selected public areas become the investigation.</p>
       </div>
       <div class="steps">
-        <div class="step-num">1</div><div><h3>Join And Watch</h3><p>Players scan the join code, form teams of 2-6, and watch the opening film narrated by Harry. It establishes Rex, the missing Golden Putter, and the 7:39 badge event.</p></div>
-        <div class="step-num">2</div><div><h3>Wave One: Scene And Secrets</h3><p>Acts I and II release four stations. Teams reconstruct the route, inspect the staged trophy, and learn that several suspects are lying for reasons unrelated to murder.</p></div>
-        <div class="step-num">3</div><div><h3>Wave Two: Motive And Possession</h3><p>Acts III and IV release Rex's route, Voucher 413, and the restored final clip. Earlier details gain new meanings when paired together.</p></div>
+        <div class="step-num">1</div><div><h3>Enter At Your Own Risk</h3><p>Players scan the join code, form teams of 2-6, enter the virtual costume party, and watch Harry's opening film. It establishes Rex, the missing Golden Putter, and the 7:39 credential event.</p></div>
+        <div class="step-num">2</div><div><h3>Blackout And Costumes</h3><p>The first two acts release four stations. Teams reconstruct the route, inspect the staged trophy, and learn that several costumed suspects are lying for reasons unrelated to murder.</p></div>
+        <div class="step-num">3</div><div><h3>Haunted Ledger And Possession</h3><p>The final two acts release Rex's cocktail-napkin route, Voucher 413, and Nina's restored Halloween clip. Earlier details gain new meanings when paired together.</p></div>
         <div class="step-num">4</div><div><h3>Watch, Inspect, Deduce</h3><p>Every station contains a narrated On Par character dramatization, a virtual statement, one physical observation, a deduction question, and an optional three-step hint ladder.</p></div>
         <div class="step-num">5</div><div><h3>Accuse And Reveal</h3><p>Teams submit culprit, weapon, motive, best evidence, and a closing argument. The app scores the four selections; the event captain chooses any bonus awards.</p></div>
       </div>
@@ -413,7 +415,7 @@
             <li>Watch each station video with sound, then inspect and discuss.</li>
             <li>A suspicious lie may hide embarrassment rather than murder.</li>
             <li>Do not solve from initials, a bag, or one video alone.</li>
-            <li>Final answers may change until the captain closes Act IV.</li>
+            <li>Final answers may change until the captain closes The Final Fright.</li>
           </ul>
         </div>
         <div class="box">
@@ -448,11 +450,11 @@
       <h2>Two-Hour Run Of Show</h2>
       <table>
         <tr><th>Time</th><th>Segment</th><th>Captain Action</th><th>Guest Play</th></tr>
-        <tr><td>0:00-0:10</td><td>Arrival</td><td>Display join QR, assign Scarlet/Ivory routes, and explain boundaries.</td><td>Join, watch the phone briefing, then open case files.</td></tr>
-        <tr><td>0:10-0:35</td><td>Act I</td><td>Open Wild Axe Hole 7 and Service Door stations.</td><td>Test the scene time and seven-minute route.</td></tr>
-        <tr><td>0:35-1:00</td><td>Act II</td><td>Open Scorecard and Golden Putter stations.</td><td>Separate unrelated secrets from useful evidence.</td></tr>
-        <tr><td>1:00-1:25</td><td>Act III</td><td>Open Napkin Map and Voucher 413 stations.</td><td>Reverse the map's meaning and uncover the money trail.</td></tr>
-        <tr><td>1:25-1:45</td><td>Act IV</td><td>Open GREENBAG and final accusation forms.</td><td>Build means, motive, opportunity, and possession.</td></tr>
+        <tr><td>0:00-0:10</td><td>The Invitation</td><td>Display join QR, assign Scarlet/Ivory routes, and explain boundaries.</td><td>Accept the invitation, watch the briefing, then open case files.</td></tr>
+        <tr><td>0:10-0:35</td><td>Blackout</td><td>Open Wild Axe Hole 7 and Back-Corridor Ledger stations.</td><td>Test the staged time and seven-minute route.</td></tr>
+        <tr><td>0:35-1:00</td><td>Costume Stories</td><td>Open Altered Guest Ledger and Golden Putter stations.</td><td>Separate costume-party secrets from useful evidence.</td></tr>
+        <tr><td>1:00-1:25</td><td>Haunted Ledger</td><td>Open Cocktail-Napkin Map and Voucher 413 stations.</td><td>Reverse the map's meaning and uncover the fundraiser money trail.</td></tr>
+        <tr><td>1:25-1:45</td><td>Final Fright</td><td>Open GREENBAG and final accusation forms.</td><td>Build means, motive, opportunity, and possession.</td></tr>
         <tr><td>1:45-2:00</td><td>Reveal</td><td>Close answers, reveal solution, announce winners.</td><td>Hear the solution, compare theories, take team photos.</td></tr>
       </table>
       <div class="box">
@@ -470,8 +472,8 @@
       <p>This guest-safe schematic follows recognizable sightlines in the December 2025 virtual tour. It is not an architectural floor plan; confirm the final freestanding-sign positions during event setup.</p>
       <img class="venue-plan" src="assets/location-map.svg" alt="On Par guest clue route with seven numbered QR stations" />
       <div class="grid-2">
-        <div class="box route-sequence"><h3>Scarlet Teams</h3><p>Act I: 1 then 2. Act II: 4 then 3. Act III: 5 then 6. Act IV: 7.</p></div>
-        <div class="box route-sequence"><h3>Ivory Teams</h3><p>Act I: 2 then 1. Act II: 3 then 4. Act III: 6 then 5. Act IV: 7.</p></div>
+        <div class="box route-sequence"><h3>Scarlet Teams</h3><p>Blackout: 1 then 2. Costume Stories: 4 then 3. Haunted Ledger: 5 then 6. Final Fright: 7.</p></div>
+        <div class="box route-sequence"><h3>Ivory Teams</h3><p>Blackout: 2 then 1. Costume Stories: 3 then 4. Haunted Ledger: 6 then 5. Final Fright: 7.</p></div>
       </div>
       <div class="box green"><h3>Traffic Logic</h3><p>Alternate teams between Scarlet and Ivory as they join. Each act still gives every team the same two clues, but half the room approaches each station from the opposite direction. Stop 7 becomes the shared finish and reveal point.</p></div>
       <div class="box dark"><h3>Course Accuracy</h3><p>Wild Axe, Great Escape, and Level Up are three separate nine-hole courses. QR cards remain outside active putting and axe-throwing lanes.</p></div>
@@ -514,18 +516,18 @@
         <tr><td>7 - Wave lounge</td><td>"Match the bag checkout, office claim, voucher control, and display access to one suspect."</td></tr>
       </table>
       <div class="box dark"><h3>Pacing Rule</h3><p>Let teams struggle productively for 5-7 minutes before suggesting Hint 1. The station app reveals hints one at a time. Never announce Hint 3 room-wide unless more than half the teams are stalled on the same deduction.</p></div>
-      <div class="box green"><h3>Fair-Solve Check</h3><p>By the end of Act III, a healthy room should understand that the Golden Putter is likely the weapon and Voucher 413 supplies the motive, while still debating the culprit. Stop 7 should confirm a chain, not introduce a surprise answer.</p></div>
+      <div class="box green"><h3>Fair-Solve Check</h3><p>By the end of The Haunted Ledger, a healthy room should understand that the Golden Putter is likely the weapon and Voucher 413 supplies the motive, while still debating the culprit. Stop 7 should confirm a chain, not introduce a surprise answer.</p></div>
     </section>
 
     <section class="page">
       <h2>Suspect Secrets</h2>
       <div class="grid-2">
-        <div class="card"><h3>Bev Banner</h3><p>Event planner. Changed 7:30 to 7:40 to hide an unauthorized raffle entry. Her lie is real, but it does not place her at Wild Axe.</p></div>
-        <div class="card"><h3>Marty Marsh</h3><p>Pro shop manager. Lent Lou the display key off-record and blurred the checkout mark to protect his job.</p></div>
-        <div class="card"><h3>Nina Niblick</h3><p>Influencer. Deleted a staff-angle clip because she filmed where she should not. The restored image shows objects, not a face.</p></div>
-        <div class="card"><h3>Cal Cartwright</h3><p>Maintenance lead. Postponed a repair and fears blame for the light dip. The OFFICE-2 scan is not his personal badge.</p></div>
-        <div class="card"><h3>Tessa Tee</h3><p>Bartender and emcee. Hid an argument with Rex over a sponsor complaint and noticed an office-dressed figure returning.</p></div>
-        <div class="card"><h3>Lou Ledger</h3><p>Tournament accountant. Forged charity payouts and killed Rex after Rex traced Voucher 413 to the missing money.</p></div>
+        <div class="card"><h3>Bev Banner</h3><p>Costume party producer dressed as a tarot reader. Changed 7:30 to 7:40 to hide an unauthorized raffle entry. Her lie is real, but it does not place her at Wild Axe.</p></div>
+        <div class="card"><h3>Marty Marsh</h3><p>Mini-golf operations manager dressed as a carnival barker. Lent Lou the brass display key off-record and blurred the checkout mark to protect his job.</p></div>
+        <div class="card"><h3>Nina Niblick</h3><p>Event photographer dressed as an emerald witch. Deleted a staff-angle clip because she filmed where she should not. The restored image shows objects, not a face.</p></div>
+        <div class="card"><h3>Cal Cartwright</h3><p>Facilities lead dressed as a gravekeeper. Postponed a repair and fears blame for the light dip. The OFFICE-2 scan is not his personal credential.</p></div>
+        <div class="card"><h3>Tessa Tee</h3><p>Vocalist and emcee dressed as a black widow. Hid an argument with Rex over a sponsor complaint and noticed a black-costumed figure returning.</p></div>
+        <div class="card"><h3>Lou Ledger</h3><p>Fundraiser accountant dressed as the phantom. Forged charity payouts and killed Rex after Rex traced Voucher 413 to the missing money.</p></div>
       </div>
       <div class="box red">
         <h3>Solution - Host Eyes Only</h3>
@@ -557,7 +559,7 @@
       <h2>Player Handout</h2>
       <div class="box cut">
         <h3>Your Detective Brief</h3>
-        <p>Rex Mulligan was found dead beside Wild Axe Hole 7 during the charity tournament. Your team must scan QR stations, unlock clues, complete missions, and submit a final accusation before the reveal.</p>
+        <p>Rex Mulligan was found dead beside Wild Axe Hole 7 during On Par's A Killer Halloween. Your team must scan QR chapters, unlock clues, complete missions, and submit a final accusation before the killer reveal.</p>
         <p><strong>Assigned route:</strong> Scarlet / Ivory (circle one)</p>
         <ul>
           <li>Scan the QR code and join your team.</li>

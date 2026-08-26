@@ -3,43 +3,43 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Ope! Murder at the Puttery</title>
+    <title>OPE! Murder Mystery: A Killer Halloween</title>
     <link rel="icon" href="/murder-mystery/assets/case-board.svg" />
     <link rel="stylesheet" href="/murder-mystery/styles.css" />
   </head>
   <body>
     <main class="mobile-shell">
       <section class="hero">
-        <img src="/murder-mystery/assets/case-board.svg" alt="" />
+        <img src="/murder-mystery/assets/halloween/on-par-killer-halloween-entrance.png" alt="On Par Entertainment entrance dressed for A Killer Halloween" />
         <div>
           <img class="ope-wordmark" src="/murder-mystery/assets/on-par/on-par-logo-white.png" alt="On Par Entertainment" />
-          <p class="eyebrow">On Par live mystery</p>
-          <h1>Ope! Murder at the Puttery</h1>
-          <p class="lede">Join your team, scan QR clue stations around the venue, gather suspect statements, and submit your final accusation.</p>
+          <p class="eyebrow">On Par's interactive Halloween mystery</p>
+          <h1>A Killer Halloween</h1>
+          <p class="lede">Enter the costume party, join your detective team, and scan seven crime chapters hidden throughout On Par.</p>
         </div>
       </section>
 
       <section class="panel" id="joinPanel">
-        <h2>Join the case</h2>
-        <p class="lede join-lede">Enter your team details first. Your narrated opening briefing will begin after you join.</p>
+        <h2>Accept the Invitation</h2>
+        <p class="lede join-lede">Enter your detective details. A Killer Halloween's narrated case briefing begins after your team joins.</p>
         <form id="joinForm" class="stack">
           <label>Detective name <input id="playerName" autocomplete="name" maxlength="40" required /></label>
           <label>Team name <input id="teamName" maxlength="40" placeholder="Table 4, The Snack Pack, etc." required /></label>
-          <button type="submit">Join the Investigation</button>
+          <button type="submit">Enter at Your Own Risk</button>
         </form>
       </section>
 
       <section class="panel intro-gate hidden" id="introPanel">
         <div class="section-title">
-          <h2>Opening Case Briefing</h2>
-          <span>Team joined</span>
+          <h2>A Killer Halloween Briefing</h2>
+          <span>Invitation accepted</span>
         </div>
         <p class="lede intro-team-line" id="introTeamLine">Your team is in. Watch the briefing before opening your case file.</p>
         <video
           class="intro-video"
           id="playerIntroVideo"
           src="/murder-mystery/assets/videos/opening-live-action-plot.webm"
-          poster="/murder-mystery/assets/on-par/on-par-venue-establishing.png"
+          poster="/murder-mystery/assets/halloween/on-par-killer-halloween-entrance.png"
           controls
           playsinline
           preload="metadata"
@@ -52,7 +52,7 @@
 
       <section class="hidden" id="gamePanel">
         <div class="status-strip">
-          <div><span>Act</span><strong id="currentAct">Arrival</strong></div>
+          <div><span>Chapter</span><strong id="currentAct">The Invitation</strong></div>
           <div><span>Team</span><strong id="teamStatus">Not joined</strong></div>
           <div><span>Score</span><strong id="teamScore">0</strong></div>
         </div>
@@ -61,7 +61,7 @@
           <details>
             <summary>
               <span class="case-record-number">MAP</span>
-              <span class="case-record-title"><small>On Par field route</small><strong>Find the QR Stations</strong></span>
+              <span class="case-record-title"><small>Halloween floor route</small><strong>Find the QR Crime Chapters</strong></span>
               <span class="case-record-status">Open</span>
             </summary>
             <div class="venue-route-body">
@@ -81,7 +81,7 @@
         <section class="panel case-file-panel" id="caseFilePanel">
           <div class="section-title case-file-heading">
             <div>
-              <p class="eyebrow">Detective archive</p>
+              <p class="eyebrow">Confidential evidence archive</p>
               <h2>Team Case File</h2>
             </div>
             <span id="caseFileCount">0 / 7 secured</span>
@@ -97,12 +97,12 @@
               <figure class="case-video-frame">
                 <video
                   src="/murder-mystery/assets/videos/opening-live-action-plot.webm"
-                  poster="/murder-mystery/assets/on-par/on-par-venue-establishing.png"
+                  poster="/murder-mystery/assets/halloween/on-par-killer-halloween-entrance.png"
                   controls
                   playsinline
                   preload="metadata"
                 ></video>
-                <figcaption>The original narrated briefing from the night Rex Mulligan was found at On Par.</figcaption>
+                <figcaption>The narrated briefing from the night Rex Mulligan was found during On Par's A Killer Halloween.</figcaption>
               </figure>
             </div>
           </details>
@@ -124,7 +124,7 @@
             <textarea
               id="caseNotes"
               maxlength="4000"
-              placeholder="Track alibis, suspicious times, clue connections, and your leading theory..."
+              placeholder="Track alibis, haunted ledger entries, suspicious times, clue connections, and your leading theory..."
             ></textarea>
             <div class="notebook-actions">
               <span id="notesCount">0 / 4000</span>
@@ -147,7 +147,7 @@
 
         <section class="panel">
           <div class="section-title">
-            <h2>Live Missions</h2>
+            <h2>Team Missions</h2>
             <span>Host scored</span>
           </div>
           <div id="missionList" class="mission-list"></div>
@@ -155,8 +155,8 @@
 
         <section class="panel">
           <div class="section-title">
-            <h2>Suspects</h2>
-            <span>Posted dossiers</span>
+            <h2>Costumed Suspects</h2>
+            <span>Confidential dossiers</span>
           </div>
           <div class="suspect-list" id="suspectList"></div>
         </section>

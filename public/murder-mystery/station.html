@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>QR Investigation Station | Ope! Murder at the Puttery</title>
+    <title>QR Crime Chapter | A Killer Halloween</title>
     <link rel="icon" href="/murder-mystery/assets/case-board.svg" />
     <link rel="stylesheet" href="/murder-mystery/styles.css" />
   </head>
@@ -13,19 +13,19 @@
         <img src="/murder-mystery/assets/case-board.svg" alt="" />
         <div>
           <img class="ope-wordmark" src="/murder-mystery/assets/on-par/on-par-logo-white.png" alt="On Par Entertainment" />
-          <p class="eyebrow">QR investigation station</p>
+          <p class="eyebrow">A Killer Halloween QR crime chapter</p>
           <h1 id="stationTitle">Loading Station</h1>
           <p class="lede" id="stationLocation">Checking the case board...</p>
         </div>
       </section>
 
       <section class="panel hidden" id="stationJoinPanel">
-        <h2>Join Before Unlocking</h2>
-        <p class="lede">Enter your team details once. After that, every station you scan can unlock directly into your case file.</p>
+        <h2>Accept the Invitation First</h2>
+        <p class="lede">Enter your team details once. After that, every Halloween chapter you scan can unlock directly into your case file.</p>
         <form id="stationJoinForm" class="stack">
           <label>Detective name <input id="stationPlayerName" autocomplete="name" maxlength="40" required /></label>
           <label>Team name <input id="stationTeamName" maxlength="40" required /></label>
-          <button type="submit">Join and Unlock Station</button>
+          <button type="submit">Enter and Unlock Chapter</button>
         </form>
       </section>
 
@@ -39,7 +39,7 @@
           <figcaption id="stationVideoCaption"></figcaption>
         </figure>
         <div class="station-case-card">
-          <strong>Scene Brief</strong>
+          <strong>Crime Scene Brief</strong>
           <p id="stationScene"></p>
         </div>
         <div class="station-case-card statement">
@@ -47,7 +47,7 @@
           <p id="stationInterview"></p>
         </div>
         <div class="station-case-card">
-          <strong>Inspect At On Par</strong>
+          <strong>Inspect A Killer Halloween</strong>
           <p id="stationTask"></p>
         </div>
         <div class="station-case-card connect">
@@ -60,7 +60,7 @@
           <ol id="stationHintList"></ol>
           <button id="stationHintButton" class="secondary" type="button">Reveal Hint 1</button>
         </details>
-        <button id="unlockStationButton" type="button">Unlock This Clue</button>
+        <button id="unlockStationButton" type="button">Secure This Evidence</button>
         <p class="message" id="stationMessage"></p>
       </section>
 
