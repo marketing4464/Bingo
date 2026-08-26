@@ -127,7 +127,7 @@ const approvedImages = {
   Ratatouille: "https://www.cinehorizons.net/sites/default/files/affiches/Ratatouille-Cuistot.jpg",
   Remy: "https://static.tvtropes.org/pmwiki/pub/images/remy_webp.png",
   Stitch: "https://vignette4.wikia.nocookie.net/disney/images/e/e9/Stitch_OfficialDisney.jpg/revision/latest?cb=20140508112158",
-  Baymax: "https://www.aceshowbiz.com/images/still/big-hero-6-08.jpg",
+  Baymax: "https://artfiles.alphacoders.com/114/thumb-1920-114897.png",
   "Judy Hopps": "https://vignette.wikia.nocookie.net/miguel-riveras-book-of-friends/images/e/e6/Judy_Hopps_pose_render.png/revision/latest?cb=20181229084312",
   Luca: "https://image.tmdb.org/t/p/original/9jPa6SlUYxPFMVZlEuceiPPAA15.jpg",
   Merida: "https://miro.medium.com/v2/resize%3Afit%3A1400/0%2ABZhOreOqhbk1TcSl",
