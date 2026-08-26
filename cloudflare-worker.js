@@ -1,3 +1,7 @@
+import { handleMurderMysteryApi, MurderMysteryState } from "./murder-mystery-worker.js";
+
+export { MurderMysteryState };
+
 const GAME_STATE_ROW_ID = "current";
 const SUPABASE_STATE_TABLE = "on_par_bingo_state";
 const SUPABASE_PUBLIC_STATE_TABLE = "on_par_bingo_public_state";
@@ -16,12 +20,6 @@ let cachedImageManifest = null;
 const HYPE_MESSAGES = [
   "make some noise - prizes for the loudest table",
 ];
-
-export class MurderMysteryState {
-  async fetch() {
-    return new Response("Murder Mystery is not available in this deployment.", { status: 404 });
-  }
-}
 
 const ACTIVE_GAME_ID = "disney-pixar-bingo";
 const ACTIVE_GAME_TITLE = "Disney & Pixar Bingo";
@@ -147,6 +145,9 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === "/trivia" || url.pathname === "/trivia/") {
       return Response.redirect(TRIVIA_CONTROL_ROOM_URL, 302);
+    }
+    if (url.pathname.startsWith("/murder-mystery/api/")) {
+      return handleMurderMysteryApi(request, env);
     }
     if (url.pathname.startsWith("/api/")) return handleApi(request, env, url);
     return env.ASSETS.fetch(assetRequest(request, url));
@@ -290,9 +291,19 @@ function assetRequest(request, url) {
     ["/display", "/display.html"],
     ["/host-guide", "/host-guide.html"],
     ["/play", "/play.html"],
+    ["/murder-mystery", "/murder-mystery/index.html"],
+    ["/murder-mystery/", "/murder-mystery/index.html"],
+    ["/murder-mystery/play", "/murder-mystery/index.html"],
+    ["/murder-mystery/host", "/murder-mystery/host.html"],
+    ["/murder-mystery/display", "/murder-mystery/display.html"],
+    ["/murder-mystery/intro", "/murder-mystery/intro.html"],
+    ["/murder-mystery/module", "/murder-mystery/printable-module.html"],
+    ["/murder-mystery/station-kit", "/murder-mystery/station-kit.html"],
     ["/favicon.ico", "/assets/on-par-logo.png"],
   ]);
-  const pathname = rewrites.get(url.pathname) || url.pathname;
+  const pathname = url.pathname.startsWith("/murder-mystery/station/")
+    ? "/murder-mystery/station.html"
+    : rewrites.get(url.pathname) || url.pathname;
   const nextUrl = new URL(request.url);
   nextUrl.pathname = pathname;
   return new Request(nextUrl, request);

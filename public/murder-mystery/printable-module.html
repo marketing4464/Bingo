@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ope! Murder at the Puttery Printable Module</title>
+    <link rel="icon" href="/murder-mystery/assets/case-board.svg" />
+    <style>
+      :root {
+        --ink: #231914;
+        --cream: #f7eddb;
+        --paper: #fff8ea;
+        --burgundy: #6f1f2f;
+        --emerald: #1f5a45;
+        --mustard: #c8952f;
+        --navy: #203f57;
+        --charcoal: #191613;
+        --line: #7c6147;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        background: #ddd2bf;
+      }
+
+      body {
+        counter-reset: page;
+      }
+
+      .page {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 8.5in;
+        min-height: 11in;
+        margin: 0 auto;
+        padding: 0.48in;
+        background:
+          linear-gradient(90deg, rgba(111, 31, 47, 0.04) 0 1px, transparent 1px 0.5in),
+          linear-gradient(0deg, rgba(31, 90, 69, 0.04) 0 1px, transparent 1px 0.5in),
+          var(--paper);
+        page-break-after: always;
+        overflow: hidden;
+      }
+
+      .page::before {
+        content: "";
+        position: absolute;
+        inset: 0.22in;
+        border: 3px double var(--line);
+        pointer-events: none;
+      }
+
+      .page::after {
+        counter-increment: page;
+        content: "Case 413 | Page " counter(page);
+        position: absolute;
+        right: 0.48in;
+        bottom: 0.25in;
+        color: #6d5d4d;
+        font-size: 9pt;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .cover {
+        justify-content: center;
+        color: var(--cream);
+        background:
+          linear-gradient(135deg, rgba(25, 22, 19, 0.84), rgba(111, 31, 47, 0.7)),
+          radial-gradient(circle at 16% 18%, rgba(200, 149, 47, 0.2), transparent 24%),
+          var(--charcoal);
+      }
+
+      .cover::before {
+        border-color: var(--mustard);
+      }
+
+      .cover-logo {
+        display: block;
+        width: 2.55in;
+        margin-bottom: 0.24in;
+      }
+
+      .label {
+        display: inline-block;
+        width: fit-content;
+        margin-bottom: 0.16in;
+        padding: 0.08in 0.14in;
+        color: var(--cream);
+        background: var(--burgundy);
+        border: 2px solid var(--mustard);
+        font-size: 10pt;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 7in;
+        margin-bottom: 0.22in;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 49pt;
+        line-height: 0.92;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-bottom: 0.15in;
+        padding-bottom: 0.08in;
+        border-bottom: 3px solid var(--mustard);
+        color: var(--burgundy);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 24pt;
+        line-height: 1;
+      }
+
+      h3 {
+        margin-bottom: 0.06in;
+        color: var(--navy);
+        font-size: 12.5pt;
+        line-height: 1.18;
+        text-transform: uppercase;
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-size: 10.4pt;
+        line-height: 1.34;
+      }
+
+      p {
+        margin-bottom: 0.1in;
+      }
+
+      ul,
+      ol {
+        margin: 0.04in 0 0.13in 0.2in;
+        padding: 0;
+      }
+
+      li {
+        margin-bottom: 0.04in;
+      }
+
+      .subtitle {
+        max-width: 6.5in;
+        color: inherit;
+        font-size: 15pt;
+        line-height: 1.35;
+      }
+
+      .cover-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.18in;
+        margin-top: 0.34in;
+      }
+
+      .cover-card,
+      .box,
+      .card {
+        border: 2px solid var(--line);
+        background: rgba(255, 248, 234, 0.86);
+      }
+
+      .cover-card {
+        padding: 0.14in;
+        color: var(--ink);
+      }
+
+      .box {
+        margin-bottom: 0.14in;
+        padding: 0.14in;
+      }
+
+      .box.dark {
+        color: var(--cream);
+        background: var(--charcoal);
+        border-color: var(--mustard);
+      }
+
+      .box.dark h3,
+      .box.green h3,
+      .box.red h3 {
+        color: var(--cream);
+      }
+
+      .box.green {
+        color: var(--cream);
+        background: var(--emerald);
+      }
+
+      .box.red {
+        color: var(--cream);
+        background: var(--burgundy);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.14in;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.12in;
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: 0.34in 1fr;
+        column-gap: 0.1in;
+        row-gap: 0.1in;
+        margin-top: 0.08in;
+      }
+
+      .step-num {
+        display: grid;
+        width: 0.34in;
+        height: 0.34in;
+        place-items: center;
+        color: var(--cream);
+        background: var(--burgundy);
+        border-radius: 50%;
+        font-weight: 900;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 0.14in;
+      }
+
+      th {
+        color: var(--cream);
+        background: var(--burgundy);
+        text-align: left;
+      }
+
+      th,
+      td {
+        padding: 0.06in;
+        border: 1px solid var(--line);
+        vertical-align: top;
+      }
+
+      tr:nth-child(even) td {
+        background: rgba(200, 149, 47, 0.1);
+      }
+
+      .card {
+        min-height: 1.38in;
+        padding: 0.1in;
+        border-top: 0.12in solid var(--navy);
+      }
+
+      .card.weapon {
+        border-top-color: var(--burgundy);
+      }
+
+      .card.room {
+        border-top-color: var(--emerald);
+      }
+
+      .card.evidence {
+        border-top-color: var(--mustard);
+      }
+
+      .card p {
+        margin-bottom: 0;
+      }
+
+      .code {
+        display: inline-block;
+        padding: 0.03in 0.07in;
+        color: var(--cream);
+        background: var(--charcoal);
+        font-family: "Courier New", monospace;
+        font-weight: 900;
+      }
+
+      .note-lines {
+        min-height: 1.2in;
+        background: repeating-linear-gradient(var(--paper), var(--paper) 0.28in, rgba(124, 97, 71, 0.45) 0.29in);
+        border: 1px solid var(--line);
+      }
+
+      .venue-plan {
+        display: block;
+        width: 100%;
+        margin: 0.06in 0 0.16in;
+        border: 2px solid var(--line);
+        background: var(--charcoal);
+      }
+
+      .route-sequence {
+        color: var(--cream);
+        background: var(--charcoal);
+        border-color: var(--mustard);
+      }
+
+      .route-sequence h3 {
+        color: var(--mustard);
+      }
+
+      .placement-table th,
+      .placement-table td,
+      .hint-table th,
+      .hint-table td {
+        padding: 0.045in;
+        font-size: 8.55pt;
+        line-height: 1.24;
+      }
+
+      .stop-badge {
+        display: inline-grid;
+        width: 0.26in;
+        height: 0.26in;
+        place-items: center;
+        color: var(--cream);
+        background: var(--burgundy);
+        border-radius: 50%;
+        font-size: 9pt;
+        font-weight: 900;
+      }
+
+      .small {
+        color: #5b4b3d;
+        font-size: 8.8pt;
+      }
+
+      .cut {
+        border-style: dashed;
+      }
+
+      @page {
+        size: Letter;
+        margin: 0;
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+
+        .page {
+          margin: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="page cover">
+      <img class="cover-logo" src="assets/on-par/on-par-logo-white.png" alt="On Par Entertainment" />
+      <div class="label">Printable Event Module</div>
+      <h1>Ope! Murder at the Puttery</h1>
+      <p class="subtitle">A two-hour, actor-free murder mystery built for On Par Entertainment. Guests investigate on their phones while physically moving through posted QR scenes, inspecting props, testing routes, and building a final case.</p>
+      <div class="cover-grid">
+        <div class="cover-card"><h3>Players</h3><p>12-80 guests in teams of 2-6.</p></div>
+        <div class="cover-card"><h3>Staff</h3><p>1 event captain. No actors or roaming clue staff.</p></div>
+        <div class="cover-card"><h3>Tech</h3><p>Host laptop, display screen, venue Wi-Fi, player phones.</p></div>
+        <div class="cover-card"><h3>Win Condition</h3><p>Score points through clues, missions, and a correct final accusation.</p></div>
+      </div>
+    </section>
+
+    <section class="page">
+      <h2>How The Game Works</h2>
+      <div class="box dark">
+        <h3>Premise</h3>
+        <p>Rex Mulligan, the loudest sponsor at On Par's charity tournament, is found dead beside Wild Axe Hole 7. The three separate nine-hole courses are Wild Axe, Great Escape, and Level Up. Every team becomes a detective squad. The phone app is its case file and notebook; selected public areas of On Par become the investigation.</p>
+      </div>
+      <div class="steps">
+        <div class="step-num">1</div><div><h3>Join And Watch</h3><p>Players scan the join code, form teams of 2-6, and watch the opening film narrated by Harry. It establishes Rex, the missing Golden Putter, and the 7:39 badge event.</p></div>
+        <div class="step-num">2</div><div><h3>Wave One: Scene And Secrets</h3><p>Acts I and II release four stations. Teams reconstruct the route, inspect the staged trophy, and learn that several suspects are lying for reasons unrelated to murder.</p></div>
+        <div class="step-num">3</div><div><h3>Wave Two: Motive And Possession</h3><p>Acts III and IV release Rex's route, Voucher 413, and the restored final clip. Earlier details gain new meanings when paired together.</p></div>
+        <div class="step-num">4</div><div><h3>Watch, Inspect, Deduce</h3><p>Every station contains a narrated On Par character dramatization, a virtual statement, one physical observation, a deduction question, and an optional three-step hint ladder.</p></div>
+        <div class="step-num">5</div><div><h3>Accuse And Reveal</h3><p>Teams submit culprit, weapon, motive, best evidence, and a closing argument. The app scores the four selections; the event captain chooses any bonus awards.</p></div>
+      </div>
+      <div class="grid-2">
+        <div class="box green"><h3>Why It Feels Live</h3><p>Players walk the building, compare what they can physically observe, gather around props, and debate evidence face to face.</p></div>
+        <div class="box red"><h3>Why It Needs No Actors</h3><p>Recorded scenes and character statements provide every required story beat. The captain only controls timing, scoring, and the reveal.</p></div>
+      </div>
+    </section>
+
+    <section class="page">
+      <h2>How To Play</h2>
+      <div class="grid-2">
+        <div class="box">
+          <h3>Player Rules</h3>
+          <ul>
+            <li>Stay with your team and remain in guest-accessible areas.</li>
+            <li>Never enter staff-only rooms, open real doors, or handle business records.</li>
+            <li>Observe staged props without touching them.</li>
+            <li>Watch each station video with sound, then inspect and discuss.</li>
+            <li>A suspicious lie may hide embarrassment rather than murder.</li>
+            <li>Do not solve from initials, a bag, or one video alone.</li>
+            <li>Final answers may change until the captain closes Act IV.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Winning</h3>
+          <ul>
+            <li>Clue unlocks: 5-20 points each.</li>
+            <li>Live missions: 10-20 host-approved points.</li>
+            <li>Final accusation: up to 200 points.</li>
+            <li>Tiebreaker: best closing argument, then fastest final submission.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="box">
+        <h3>Phone App Screens</h3>
+        <table>
+          <tr><th>Screen</th><th>What Players Do</th><th>Event Purpose</th></tr>
+          <tr><td>Join the Case</td><td>Enter detective name and team name.</td><td>Creates the team's live score, case file, and shared notes.</td></tr>
+          <tr><td>QR Station</td><td>Watch the scene, read the statement, inspect On Par, and deduce.</td><td>Replaces an actor while preserving physical investigation.</td></tr>
+          <tr><td>Clue Unlock</td><td>Tap the station button or enter codes such as <span class="code">TEEBOX</span>.</td><td>Adds scored evidence to the team's case file.</td></tr>
+          <tr><td>Live Missions</td><td>Submit a route test, classification, reconstruction, or closing argument.</td><td>Rewards discussion and in-venue play.</td></tr>
+          <tr><td>Suspects</td><td>Compare public alibis with virtual recorded statements.</td><td>Separates a real secret from the murder itself.</td></tr>
+          <tr><td>Final Accusation</td><td>Pick culprit, weapon, motive, evidence, and closing argument.</td><td>Converts investigation into a scored solve.</td></tr>
+        </table>
+      </div>
+      <div class="box dark">
+        <h3>Host Tech Steps</h3>
+        <p>Start the server, print <span class="code">/station-kit</span>, open <span class="code">/host</span>, and keep <span class="code">/display</span> on the TV for live team progress. Private notes never appear there. Let guests scan the join QR code, then advance acts from the host console.</p>
+      </div>
+    </section>
+
+    <section class="page">
+      <h2>Two-Hour Run Of Show</h2>
+      <table>
+        <tr><th>Time</th><th>Segment</th><th>Captain Action</th><th>Guest Play</th></tr>
+        <tr><td>0:00-0:10</td><td>Arrival</td><td>Display join QR, assign Scarlet/Ivory routes, and explain boundaries.</td><td>Join, watch the phone briefing, then open case files.</td></tr>
+        <tr><td>0:10-0:35</td><td>Act I</td><td>Open Wild Axe Hole 7 and Service Door stations.</td><td>Test the scene time and seven-minute route.</td></tr>
+        <tr><td>0:35-1:00</td><td>Act II</td><td>Open Scorecard and Golden Putter stations.</td><td>Separate unrelated secrets from useful evidence.</td></tr>
+        <tr><td>1:00-1:25</td><td>Act III</td><td>Open Napkin Map and Voucher 413 stations.</td><td>Reverse the map's meaning and uncover the money trail.</td></tr>
+        <tr><td>1:25-1:45</td><td>Act IV</td><td>Open GREENBAG and final accusation forms.</td><td>Build means, motive, opportunity, and possession.</td></tr>
+        <tr><td>1:45-2:00</td><td>Reveal</td><td>Close answers, reveal solution, announce winners.</td><td>Hear the solution, compare theories, take team photos.</td></tr>
+      </table>
+      <div class="box">
+        <h3>Captain's Opening</h3>
+        <p>"Detectives, your phones are your case files and On Par is your investigation. Each QR chapter gives you only part of the truth. Watch, inspect, and deduce before you unlock. Every suspect is hiding something, but not every secret is murder. Follow your Scarlet or Ivory starting order, stay in public areas, and be ready to accuse before the final reveal."</p>
+      </div>
+      <div class="box dark">
+        <h3>Pacing Rule</h3>
+        <p>Advance on schedule even if a team misses a station. Previously opened chapters remain available, and the final 20 minutes should never be compressed below 15 minutes.</p>
+      </div>
+    </section>
+
+    <section class="page">
+      <h2>On Par Venue Route</h2>
+      <p>This guest-safe schematic follows recognizable sightlines in the December 2025 virtual tour. It is not an architectural floor plan; confirm the final freestanding-sign positions during event setup.</p>
+      <img class="venue-plan" src="assets/location-map.svg" alt="On Par guest clue route with seven numbered QR stations" />
+      <div class="grid-2">
+        <div class="box route-sequence"><h3>Scarlet Teams</h3><p>Act I: 1 then 2. Act II: 4 then 3. Act III: 5 then 6. Act IV: 7.</p></div>
+        <div class="box route-sequence"><h3>Ivory Teams</h3><p>Act I: 2 then 1. Act II: 3 then 4. Act III: 6 then 5. Act IV: 7.</p></div>
+      </div>
+      <div class="box green"><h3>Traffic Logic</h3><p>Alternate teams between Scarlet and Ivory as they join. Each act still gives every team the same two clues, but half the room approaches each station from the opposite direction. Stop 7 becomes the shared finish and reveal point.</p></div>
+      <div class="box dark"><h3>Course Accuracy</h3><p>Wild Axe, Great Escape, and Level Up are three separate nine-hole courses. QR cards remain outside active putting and axe-throwing lanes.</p></div>
+    </section>
+
+    <section class="page">
+      <h2>QR Station Installation</h2>
+      <table class="placement-table">
+        <tr><th>Stop</th><th>Virtual-Tour Anchor</th><th>Exact Placement</th><th>Boundary</th></tr>
+        <tr><td><span class="stop-badge">1</span></td><td>Wild Axe public rail</td><td>Freestanding sign under Wild Axe signage, beside the staged Hole 7 marker.</td><td>Outside every axe lane and putting surface.</td></tr>
+        <tr><td><span class="stop-badge">2</span></td><td>Shuffleboard end cap</td><td>Public table end facing the green-wall corridor near the restrooms; use floor tape for the fictional route.</td><td>At least 6 ft from every real door.</td></tr>
+        <tr><td><span class="stop-badge">3</span></td><td>Mini-golf pencil return</td><td>Separate tabletop easel beside the RETURN MINI-GOLF PENCILS HERE sign and putter rack.</td><td>Do not cover signage or equipment access.</td></tr>
+        <tr><td><span class="stop-badge">4</span></td><td>Great Escape Egyptian entry</td><td>Locked trophy case on a narrow event table at the guest side of the Egyptian-column rail.</td><td>Outside all nine holes and clear of the entry opening.</td></tr>
+        <tr><td><span class="stop-badge">5</span></td><td>Level Up overlook</td><td>Freestanding rail sign beside the LEVEL UP sign and red game-machine landmark.</td><td>Never attach to scenery or enter the course.</td></tr>
+        <tr><td><span class="stop-badge">6</span></td><td>Darts lounge booth end</td><td>Replica voucher table beside the knight and numbered digital dart lanes.</td><td>Outside throwing lines; no real business records.</td></tr>
+        <tr><td><span class="stop-badge">7</span></td><td>Central wave-mural lounge</td><td>Green-bag prop and final QR beside the TV/couch lounge, facing the open floor.</td><td>Keep the central aisle and couch access open.</td></tr>
+      </table>
+      <div class="grid-2">
+        <div class="box green"><h3>Before Posting</h3><p>Open every QR code on a phone. Confirm the stop number, correct video, statement, task, act, and hint ladder.</p></div>
+        <div class="box red"><h3>Boundary Rule</h3><p>A QR card never authorizes entry to an office, service hall, storage area, restroom doorway, axe lane, or putting lane.</p></div>
+      </div>
+      <div class="box"><h3>Mounting Standard</h3><p>Use weighted 8.5 x 11 inch tabletop frames or floor sign holders at chest-to-waist height. Keep at least 36 inches of clear passage beside every station and never tape directly to On Par finishes or operational signs.</p></div>
+    </section>
+
+    <section class="page">
+      <h2>Difficult, Not Impossible</h2>
+      <div class="grid-3">
+        <div class="card"><h3>Hint 1</h3><p>Points to an observation the team may have skipped. It does not name a conclusion.</p></div>
+        <div class="card room"><h3>Hint 2</h3><p>Names the comparison that matters, such as two times, two records, or two physical transfers.</p></div>
+        <div class="card evidence"><h3>Hint 3</h3><p>Provides a fair-solve rescue by naming the clue pairing, while still requiring a final accusation.</p></div>
+      </div>
+      <table class="hint-table">
+        <tr><th>Stop</th><th>Use This Host Rescue Only If Needed</th></tr>
+        <tr><td>1 - Wild Axe</td><td>"Is 7:42 the time of the crime, or only the time someone wanted detectives to read?"</td></tr>
+        <tr><td>2 - Shuffleboard</td><td>"The shared badge proves a route. What later record could identify who used that opportunity?"</td></tr>
+        <tr><td>3 - Check-in</td><td>"What does Bev gain by changing the raffle time, and does that place her near Wild Axe?"</td></tr>
+        <tr><td>4 - Great Escape</td><td>"Who had access is not the same as who carried the trophy. What object can collect both dye and gold?"</td></tr>
+        <tr><td>5 - Level Up</td><td>"Decide who drew the map before deciding whether it shows escape or investigation."</td></tr>
+        <tr><td>6 - Darts</td><td>"Ignore the initials. What exact defect should never repeat in two genuine signatures?"</td></tr>
+        <tr><td>7 - Wave lounge</td><td>"Match the bag checkout, office claim, voucher control, and display access to one suspect."</td></tr>
+      </table>
+      <div class="box dark"><h3>Pacing Rule</h3><p>Let teams struggle productively for 5-7 minutes before suggesting Hint 1. The station app reveals hints one at a time. Never announce Hint 3 room-wide unless more than half the teams are stalled on the same deduction.</p></div>
+      <div class="box green"><h3>Fair-Solve Check</h3><p>By the end of Act III, a healthy room should understand that the Golden Putter is likely the weapon and Voucher 413 supplies the motive, while still debating the culprit. Stop 7 should confirm a chain, not introduce a surprise answer.</p></div>
+    </section>
+
+    <section class="page">
+      <h2>Suspect Secrets</h2>
+      <div class="grid-2">
+        <div class="card"><h3>Bev Banner</h3><p>Event planner. Changed 7:30 to 7:40 to hide an unauthorized raffle entry. Her lie is real, but it does not place her at Wild Axe.</p></div>
+        <div class="card"><h3>Marty Marsh</h3><p>Pro shop manager. Lent Lou the display key off-record and blurred the checkout mark to protect his job.</p></div>
+        <div class="card"><h3>Nina Niblick</h3><p>Influencer. Deleted a staff-angle clip because she filmed where she should not. The restored image shows objects, not a face.</p></div>
+        <div class="card"><h3>Cal Cartwright</h3><p>Maintenance lead. Postponed a repair and fears blame for the light dip. The OFFICE-2 scan is not his personal badge.</p></div>
+        <div class="card"><h3>Tessa Tee</h3><p>Bartender and emcee. Hid an argument with Rex over a sponsor complaint and noticed an office-dressed figure returning.</p></div>
+        <div class="card"><h3>Lou Ledger</h3><p>Tournament accountant. Forged charity payouts and killed Rex after Rex traced Voucher 413 to the missing money.</p></div>
+      </div>
+      <div class="box red">
+        <h3>Solution - Host Eyes Only</h3>
+        <p>Culprit: Lou Ledger. Weapon: the weighted Golden Putter trophy. Motive: hiding copied charity-voucher payouts. Best evidence: Voucher 413 with its duplicated approval mark and fresh gold flecks.</p>
+      </div>
+    </section>
+
+    <section class="page">
+      <h2>Evidence And Solution Chain</h2>
+      <table>
+        <tr><th>Code</th><th>Evidence</th><th>What It Proves</th></tr>
+        <tr><td><span class="code">TEEBOX</span></td><td>Darker 7:42; distant pencil; low gold smear.</td><td>The scene time may be staged and the weighted gold object crossed the rail.</td></tr>
+        <tr><td><span class="code">CART7</span></td><td>OFFICE-2 opens at 7:39 and 7:46; driver blank.</td><td>A seven-minute opportunity breaks an office-only alibi, but a shared badge is not identity.</td></tr>
+        <tr><td><span class="code">SCORECARD</span></td><td>Bev changed 7:30 to 7:40.</td><td>A genuine red herring: a lie can protect a separate secret.</td></tr>
+        <tr><td><span class="code">LOCKER</span></td><td>Borrowed key; green dye on hinge; weighted base.</td><td>Access and likely weapon, awaiting possession proof.</td></tr>
+        <tr><td><span class="code">NAPKIN</span></td><td>Rex's handwriting maps office, display, and route.</td><td>The victim was tracing the money and trophy, not drawing an escape.</td></tr>
+        <tr><td><span class="code">RECEIPT</span></td><td>Copied approval; fake payee; green-bag paper; gold flecks.</td><td>Lou's money motive and contact between the voucher, bag, and trophy.</td></tr>
+        <tr><td><span class="code">GREENBAG</span></td><td>7:45 bag, hidden badge, gold handle; bag checked out to Lou.</td><td>Possession joins the route, weapon, and forged payouts.</td></tr>
+      </table>
+      <div class="grid-3">
+        <div class="card weapon"><h3>Means</h3><p>The borrowed key, trophy weight, green hinge dye, and gold transfer identify the Golden Putter.</p></div>
+        <div class="card room"><h3>Opportunity</h3><p>The OFFICE-2 gap and 7:45 clip contradict Lou's claim that he never left the office.</p></div>
+        <div class="card evidence"><h3>Motive</h3><p>Voucher 413 proves a copied payout; Rex's map shows he had connected it to the route and display.</p></div>
+      </div>
+      <p class="small">Fair-solve standard: Lou is the only suspect linked to all four categories. No single clue should be presented as a confession.</p>
+    </section>
+
+    <section class="page">
+      <h2>Player Handout</h2>
+      <div class="box cut">
+        <h3>Your Detective Brief</h3>
+        <p>Rex Mulligan was found dead beside Wild Axe Hole 7 during the charity tournament. Your team must scan QR stations, unlock clues, complete missions, and submit a final accusation before the reveal.</p>
+        <p><strong>Assigned route:</strong> Scarlet / Ivory (circle one)</p>
+        <ul>
+          <li>Scan the QR code and join your team.</li>
+          <li>At every station: watch, inspect, deduce, then unlock.</li>
+          <li>Remain in public areas and do not touch staged props.</li>
+          <li>Track times, objects, routes, ownership, and motive.</li>
+          <li>Ask whether each lie concerns the murder or a different secret.</li>
+          <li>Final accusation needs four parts: culprit, weapon, motive, and evidence.</li>
+        </ul>
+      </div>
+      <div class="grid-2">
+        <div class="box cut">
+          <h3>Team Notes</h3>
+          <div class="note-lines"></div>
+        </div>
+        <div class="box cut">
+          <h3>Final Theory</h3>
+          <p>Culprit:</p>
+          <p>Weapon:</p>
+          <p>Motive:</p>
+          <p>Evidence:</p>
+        </div>
+      </div>
+      <p class="small">Print one player handout per team if you want a physical fallback. The phone app remains the official scorekeeper.</p>
+    </section>
+
+    <section class="page">
+      <h2>Setup And Troubleshooting</h2>
+      <div class="grid-2">
+        <div class="box">
+          <h3>Materials Checklist</h3>
+          <ul>
+            <li>Host laptop and charger.</li>
+            <li>TV or projector for the display screen.</li>
+            <li>Venue Wi-Fi or hotspot.</li>
+            <li>Printed QR station cards from <span class="code">/station-kit</span>.</li>
+            <li>Scarlet and Ivory route cards or wristbands.</li>
+            <li>Seven weighted sign holders and a 25 ft measuring tape.</li>
+            <li>Wild Axe Hole 7 sign or scene marker.</li>
+            <li>Staged gold trophy/putter and display prop.</li>
+            <li>Replica Vouchers 347 and 413, magnifier, green ledger bag, and napkin map.</li>
+            <li>Boundary signs or floor markers for the service route.</li>
+            <li>Optional printed player handouts.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Common Fixes</h3>
+          <ul>
+            <li>If phones cannot join, use the computer's local network URL instead of localhost.</li>
+            <li>If a team scans too early, tell them to return when the host opens that act.</li>
+            <li>Videos require a tap to begin audio on mobile browsers.</li>
+            <li>If Wi-Fi is weak, keep the host and display on the hotspot and let phones use cellular if deployed.</li>
+            <li>If teams are stuck, ask: "Which clue proves motive, and which separately proves possession?"</li>
+          </ul>
+        </div>
+      </div>
+      <div class="box green">
+        <h3>Narration And Videos</h3>
+        <p>The opening film appears immediately after each player joins; some phones may require one tap to start audio. All films use the supplied Harry - Articulate British Storyteller voice selection. Station films are about 25-29 seconds; the opener is about 81 seconds.</p>
+      </div>
+      <div class="box dark">
+        <h3>Event-Night Reminder</h3>
+        <p>Test every QR code and video on the same network guests will use. Move the game forward every 20-25 minutes, approve missions promptly, and gather everyone at the final screen before revealing Lou.</p>
+      </div>
+    </section>
+  </body>
+</html>

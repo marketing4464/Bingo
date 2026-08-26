@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Display | Ope! Murder at the Puttery</title>
+    <link rel="icon" href="/murder-mystery/assets/case-board.svg" />
+    <link rel="stylesheet" href="/murder-mystery/styles.css" />
+  </head>
+  <body class="display-body">
+    <main class="display-shell">
+      <section class="display-hero">
+        <img src="/murder-mystery/assets/location-map.svg" alt="On Par guest route with seven numbered QR clue stations" />
+        <div>
+          <p class="eyebrow">Live case board</p>
+          <h1 id="displayTitle">Ope! Murder at the Puttery</h1>
+          <p id="displayAct" class="lede">Arrival</p>
+        </div>
+      </section>
+      <section class="display-grid">
+        <article class="panel wide progress-board-panel">
+          <div class="section-title">
+            <h2>Team Investigation Progress</h2>
+            <span id="displayProgressPage">Updates live</span>
+          </div>
+          <div class="display-team-progress" id="displayTeamProgress">
+            <p class="display-empty">Waiting for detective teams to join.</p>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="section-title">
+            <h2>Current Objective</h2>
+            <span>Scan the room</span>
+          </div>
+          <p id="displayObjective"></p>
+        </article>
+        <article class="panel">
+          <div class="section-title">
+            <h2>Event Progress</h2>
+            <span>Live totals</span>
+          </div>
+          <div class="display-totals" id="displayTotals"></div>
+        </article>
+        <article class="panel wide intro-video-panel">
+          <div class="section-title">
+            <h2>Opening Story Video</h2>
+            <span>Narrated opener</span>
+          </div>
+          <video class="intro-video" src="/murder-mystery/assets/videos/opening-live-action-plot.webm" controls playsinline preload="metadata"></video>
+        </article>
+        <article class="panel wide">
+          <div class="section-title">
+            <h2>Join</h2>
+            <span>Use your phone</span>
+          </div>
+          <code id="displayJoin"></code>
+        </article>
+      </section>
+    </main>
+    <script src="/murder-mystery/display.js"></script>
+  </body>
+</html>
