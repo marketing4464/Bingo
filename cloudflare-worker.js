@@ -17,6 +17,12 @@ const HYPE_MESSAGES = [
   "make some noise - prizes for the loudest table",
 ];
 
+export class MurderMysteryState {
+  async fetch() {
+    return new Response("Murder Mystery is not available in this deployment.", { status: 404 });
+  }
+}
+
 const ACTIVE_GAME_ID = "disney-pixar-bingo";
 const ACTIVE_GAME_TITLE = "Disney & Pixar Bingo";
 const ACTIVE_GAME_THEME = "Disney and Pixar";
