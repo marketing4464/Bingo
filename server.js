@@ -176,7 +176,7 @@ function loadGameStore() {
   };
 }
 
-function saveGameStore() {
+async function saveGameStore() {
   gameStore.updatedAt = Date.now();
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -184,9 +184,11 @@ function saveGameStore() {
   } catch (error) {
     console.warn("Could not save themed bingo games:", error.message);
   }
-  saveGameStoreToStorage().catch((error) => {
+  try {
+    await saveGameStoreToStorage();
+  } catch (error) {
     console.warn("Could not save themed bingo games to Supabase:", error.message);
-  });
+  }
 }
 
 function normalizeGameStoreSnapshot(snapshot) {
@@ -1351,7 +1353,7 @@ async function handleAdminApi(pathname, body = {}) {
   if (pathname === "/api/admin/games/create") {
     const game = createGameFromTheme(body);
     gameStore.games.unshift(game);
-    saveGameStore();
+    await saveGameStore();
     return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
   }
 
@@ -1362,7 +1364,7 @@ async function handleAdminApi(pathname, body = {}) {
     incoming.updatedAt = new Date().toISOString();
     if (index >= 0) gameStore.games[index] = incoming;
     else gameStore.games.unshift(incoming);
-    saveGameStore();
+    await saveGameStore();
     return { ok: true, game: publicGameDetail(incoming), ...adminGamesPayload() };
   }
 
@@ -1371,7 +1373,7 @@ async function handleAdminApi(pathname, body = {}) {
     if (gameStore.games.length <= 1) return { error: "Keep at least one saved game.", status: 409 };
     gameStore.games = gameStore.games.filter((game) => game.id !== id);
     if (gameStore.activeGameId === id) gameStore.activeGameId = gameStore.games[0]?.id || "";
-    saveGameStore();
+    await saveGameStore();
     return adminGamesPayload();
   }
 
@@ -1387,7 +1389,7 @@ async function handleAdminApi(pathname, body = {}) {
       updatedAt: now,
     });
     gameStore.games.unshift(copy);
-    saveGameStore();
+    await saveGameStore();
     return { ok: true, game: publicGameDetail(copy), ...adminGamesPayload() };
   }
 
@@ -1398,7 +1400,7 @@ async function handleAdminApi(pathname, body = {}) {
     game.wordDeck = generateThemeDeck(game.theme, body.count || game.wordDeck.length || 75);
     game.status = "draft";
     touchGame(game);
-    saveGameStore();
+    await saveGameStore();
     return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
   }
 
@@ -1415,7 +1417,7 @@ async function handleAdminApi(pathname, body = {}) {
     }
     game.status = "image review";
     touchGame(game);
-    saveGameStore();
+    await saveGameStore();
     return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
   }
 
@@ -1444,7 +1446,7 @@ async function handleAdminApi(pathname, body = {}) {
     item.imageStatus = "approved";
     game.status = gameReadyFromDeck(game.wordDeck).ready ? "approved" : "image review";
     touchGame(game);
-    saveGameStore();
+    await saveGameStore();
     imageCache.clear();
     return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
   }
@@ -1462,7 +1464,7 @@ async function handleAdminApi(pathname, body = {}) {
     }
     game.status = "image review";
     touchGame(game);
-    saveGameStore();
+    await saveGameStore();
     imageCache.clear();
     return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
   }
@@ -1486,7 +1488,7 @@ async function handleAdminApi(pathname, body = {}) {
     item.imageStatus = "approved";
     game.status = gameReadyFromDeck(game.wordDeck).ready ? "approved" : "image review";
     touchGame(game);
-    saveGameStore();
+    await saveGameStore();
     imageCache.clear();
     return { ok: true, game: publicGameDetail(game), ...adminGamesPayload() };
   }
@@ -1507,7 +1509,7 @@ async function handleAdminApi(pathname, body = {}) {
     touchGame(game);
     gameStore.activeGameId = game.id;
     state = freshState();
-    saveGameStore();
+    await saveGameStore();
     await commitState();
     imageCache.clear();
     return { ok: true, liveState: publicStateForOrigin(""), game: publicGameDetail(game), ...adminGamesPayload() };
