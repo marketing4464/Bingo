@@ -6,8 +6,15 @@ const crypto = require("node:crypto");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 4173);
-const PUBLIC_DIR = path.join(__dirname, "public");
-const DATA_DIR = path.join(__dirname, "data");
+
+function projectPath(...segments) {
+  const cwdPath = path.join(process.cwd(), ...segments);
+  if (fs.existsSync(cwdPath)) return cwdPath;
+  return path.join(__dirname, ...segments);
+}
+
+const PUBLIC_DIR = projectPath("public");
+const DATA_DIR = projectPath("data");
 const THEMED_GAMES_PATH = process.env.BINGO_GAMES_DATA_PATH || path.join(DATA_DIR, "themed-bingo-games.json");
 const GOOGLE_IMAGE_MANIFEST_PATH = path.join(PUBLIC_DIR, "assets", "google-image-manifest.json");
 const PULL_INTERVAL_MS = 20 * 1000;
