@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  outputFileTracingIncludes: {
-    "/api/[...path]": ["./data/themed-bingo-games.json"],
-  },
   async rewrites() {
     return [
       { source: "/", destination: "/host.html" },
