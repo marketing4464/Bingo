@@ -298,6 +298,10 @@ function renderClaimAlert(state) {
 
 function renderHypeAlert(state) {
   if (!state.hypeMessage || !state.hypeUpdatedAt || state.hypeUpdatedAt === visibleHypeUpdatedAt) return;
+  if (visibleHypeUpdatedAt === null) {
+    visibleHypeUpdatedAt = state.hypeUpdatedAt;
+    return;
+  }
   visibleHypeUpdatedAt = state.hypeUpdatedAt;
   displayEls.bingoAlert.innerHTML = `
     <div class="bingo-alert-title">make some noise</div>
