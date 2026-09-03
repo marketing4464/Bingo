@@ -9,5 +9,6 @@ outputs/
 dist-worker/
 dist-worker-route/
 .tools/
+.playwright-cli/
 .vercel
 .env*
