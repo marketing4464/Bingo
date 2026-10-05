@@ -1,0 +1,73 @@
+:root {
+  --ink:#fff1df; --muted:#c9b4a1; --paper:#171318; --cream:#241b24;
+  --teal:#bea3e5; --green:#a7bc91; --coral:#de8b60; --gold:#f4b566;
+  --forest:#463143; --forest-bright:#9b6850; --blue:#b898cc;
+  --charcoal:#100d11; --steel:#40303c; --neon-glow:none;
+  --shadow:0 18px 48px #0004; --radius:12px;
+}
+body, body.display-body, body.player-body {
+  color:var(--ink); background:#161217;
+  background-image:radial-gradient(ellipse at 85% 0%, #57313977, transparent 55%),radial-gradient(ellipse at 0 100%, #65432144,transparent 55%);
+}
+body::before, body::after, .panel::before, .bingo-card::before, .host-command-center::after {display:none}
+h1,h2,h3 {text-shadow:none; color:#fff1df}
+h1 {font-family:Georgia,'Times New Roman',serif; font-weight:600; letter-spacing:-.04em}
+.brand-kicker {color:#f4b566; letter-spacing:.19em}
+.subtitle,.small {color:#c9b4a1}
+button,button.gold {background:#eea45a; color:#24170d; border:1px solid #f4b566; box-shadow:none; font-weight:750}
+button.secondary {background:#342734; border-color:#665263; color:#fff1df; box-shadow:none}
+button.warning {background:#70382f; color:#ffebd5; border-color:#a5614b; box-shadow:none}
+a {color:#f3bc7e}
+.panel,.card,.host-command-center,.player-status,.player-game-rules,.recent-pulls {background:#241d26; border:1px solid #5d414b; box-shadow:var(--shadow)}
+.brand-logo {background:#241d26; border:1px solid #70514e; box-shadow:none}
+.app-switcher {background:#201920; border:1px solid #695052}
+.app-switcher a {color:#d3b7a7}
+.app-switcher a.active {background:#eea45a; color:#24170d}
+.draw-box,.display-moment-box,.moment-host-box {background:#1b151d; border-color:#77524a; box-shadow:none}
+.draw-word {color:#ffe0b7; text-shadow:none}
+.draw-category {color:#c4a6c8}
+.word-chip {background:#3b2937; border-color:#77534a; color:#fff0dd}
+.bingo-square,.bingo-cell,.card-cell {background:#352837; color:#fff1df; border-color:#67505b}
+.bingo-square.called,.bingo-square.selected,.bingo-cell.called,.card-cell.selected {background:#d88848; color:#25190e}
+.stat {background:#1b161e; border-color:#56404b}
+.stat b {color:#f3bc7e}
+.status-pill.setup {background:#3d303f; color:#eed8ec; border-color:#6e536e}
+.status-pill.playing {background:#344030; color:#d2e8b4}
+.timer,.stat b,.pregame-countdown {color:#f3bc7e; text-shadow:none}
+.display-body[data-display-status='countdown'],.display-body[data-display-status='break'],.display-body[data-display-status='ended'],.event-art-panel,.pregame-panel,.break-header {
+  background-image:none; background-color:#241d26;
+}
+[hidden],.moment-art[hidden] {display:none!important}
+.artwork-pending {display:grid; place-items:center; min-height:220px; flex:1; border:1px dashed #765549; border-radius:12px; padding:32px; color:#c7a889; font-size:1rem; letter-spacing:.06em; background:#211923}
+.display-art + .artwork-pending,.display-moment-box .artwork-pending {min-height:300px}
+.artwork-credit{font-size:10px;line-height:1.5;color:#ac8b8c;margin-top:9px;text-transform:none;letter-spacing:0}.artwork-credit a{color:inherit;text-decoration:none}.artwork-credit a:hover{text-decoration:underline}
+.bingo-head{background:#513547;color:#f3be81;border-color:#876357}.bingo-cell.selected,.bingo-cell.free{background:#d39557;color:#281e13;border-color:#eed0a4}.bingo-card{background:#251c26;border-color:#66505a}.card-title{background:#362537;color:#f6d9b7}
+
+/* Keep all TV states and long horror titles within the existing responsive layout. */
+.display-shell,
+.display-body[data-display-status="countdown"] .display-shell,
+.display-body[data-display-status="break"] .display-shell,
+.display-body[data-display-status="ended"] .display-shell {
+  background-color:#161217;
+  background-image:radial-gradient(ellipse at 85% 0%, #57313977, transparent 55%),radial-gradient(ellipse at 0 100%, #65432144,transparent 55%);
+}
+.display-shell::before {display:none}
+.display-word .draw-box {background:#1b151d;border-color:#77524a;box-shadow:none}
+.display-word .draw-word {text-shadow:none}
+.bingo-cell:nth-child(n) {background:#352837;color:#fff1df;border-color:#67505b}
+.bingo-cell.selected,.bingo-cell.free {background:#d39557;color:#281e13;border-color:#eed0a4}
+.bingo-cell.win {background:#f4c991;color:#281e13;border-color:#fff1df;box-shadow:0 0 18px #eea45a66}
+.countdown-instructions,.pregame-panel,.pregame-qr-card,.break-countdown,.final-winner-card,.winner-banner,.prize-claim,.bingo-alert,.toast {background:#241d26;border-color:#77524a;box-shadow:var(--shadow)}
+.countdown-instructions strong,.pregame-qr-card strong,.pregame-rules strong,.final-winner-card strong,.bingo-alert-title {text-shadow:none}
+.host-health-tile,.host-steps,.host-notes,.player-rules {background:#1b151d;border-color:#665263}
+input,select,.schedule-row,.claim {background:#1b151d;border-color:#665263;color:#fff1df}
+.display-recent-pulls .word-chip {background:#3b2937;border-color:#77534a;color:#fff0dd}
+.display-recent-pulls .word-chip.current-pull {background:#eea45a;color:#24170d}
+@media(max-width:600px) {.artwork-pending{min-height:150px}.display-moment-box .artwork-pending{min-height:160px}}
+
+/* Give the host identity and controls separate rows so neither can overlap. */
+.topbar {grid-template-columns:minmax(0,1fr);align-items:start;gap:16px}
+.topbar .brand-lockup > div {min-width:0}
+.topbar h1 {font-size:clamp(34px,4.5vw,60px);line-height:1.05;overflow-wrap:break-word}
+.topbar .nav-actions {justify-content:flex-start;align-items:center}
+.topbar .app-switcher {grid-template-columns:repeat(3,minmax(0,1fr));max-width:100%}

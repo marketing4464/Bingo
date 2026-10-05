@@ -33,7 +33,7 @@ body {
     linear-gradient(180deg, rgba(8, 12, 48, 0.58), rgba(12, 8, 48, 0.88)),
     linear-gradient(120deg, rgba(74, 121, 255, 0.38), transparent 48%),
     linear-gradient(300deg, rgba(255, 111, 145, 0.28), transparent 54%),
-    url("/assets/event-art/disney-castle-background.jpg");
+    linear-gradient(140deg, #251b29, #120f15);
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
@@ -667,7 +667,7 @@ h1 {
   background-color: #0b2f12;
   background-image:
     linear-gradient(180deg, rgba(6, 30, 8, 0.34), rgba(6, 30, 8, 0.58)),
-    url("/assets/event-art/disney-castle-background.jpg");
+    linear-gradient(140deg, #251b29, #120f15);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -696,12 +696,12 @@ h1 {
 }
 
 .display-body[data-display-status="countdown"] .display-shell {
-  background-image: url("/assets/event-art/disney-castle-background.jpg");
+  background-image: linear-gradient(140deg, #251b29, #120f15);
 }
 
 .display-body[data-display-status="break"] .display-shell,
 .display-body[data-display-status="ended"] .display-shell {
-  background-image: url("/assets/event-art/disney-castle-background.jpg");
+  background-image: linear-gradient(140deg, #251b29, #120f15);
 }
 
 .display-body[data-display-status="countdown"] .display-shell::before,
@@ -2082,7 +2082,7 @@ select {
   cursor: wait;
 }
 
-/* Disney and Pixar theme layer */
+/* Bingo theme layer */
 button {
   color: #10143e;
   background:
@@ -2322,7 +2322,7 @@ select {
     linear-gradient(180deg, rgba(8, 12, 48, 0.34), rgba(7, 8, 35, 0.78)),
     linear-gradient(120deg, rgba(74, 121, 255, 0.24), transparent 48%),
     linear-gradient(300deg, rgba(255, 111, 145, 0.18), transparent 56%),
-    url("/assets/event-art/disney-castle-background.jpg");
+    linear-gradient(140deg, #251b29, #120f15);
   background-position: center;
   background-size: cover;
 }
@@ -2346,7 +2346,7 @@ select {
 .display-body[data-display-status="countdown"] .display-shell {
   background-image:
     linear-gradient(180deg, rgba(8, 12, 48, 0.18), rgba(8, 12, 48, 0.48)),
-    url("/assets/event-art/disney-castle-background.jpg");
+    linear-gradient(140deg, #251b29, #120f15);
   background-position: center;
   background-size: cover;
 }
@@ -2355,7 +2355,7 @@ select {
 .display-body[data-display-status="ended"] .display-shell {
   background-image:
     linear-gradient(180deg, rgba(8, 12, 48, 0.22), rgba(8, 12, 48, 0.62)),
-    url("/assets/event-art/disney-castle-background.jpg");
+    linear-gradient(140deg, #251b29, #120f15);
   background-position: center;
   background-size: cover;
 }

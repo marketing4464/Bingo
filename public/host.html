@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>On Par Disney & Pixar Bingo Host</title>
+    <title>On Par Spooky Season Bingo Host</title>
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/spooky-theme.css" />
   </head>
   <body>
     <main class="app-shell">
@@ -13,8 +14,8 @@
           <img class="brand-logo" src="/assets/on-par-logo-white.png" alt="On Par Entertainment logo" />
           <div>
           <p class="brand-kicker">On Par Entertainment</p>
-          <h1>Disney & Pixar Bingo</h1>
-          <p class="subtitle">A storybook-style host console for tonight's animated adventure.</p>
+          <h1>Spooky Season Bingo</h1>
+          <p class="subtitle">Halloween chills, horror classics, autumn thrills, and BINGO.</p>
           </div>
         </div>
         <nav class="nav-actions">
@@ -43,7 +44,7 @@
           </div>
 
           <div class="draw-box moment-host-box">
-            <img class="moment-art host-art" id="hostMomentImage" alt="Current Disney and Pixar moment image" />
+            <img class="moment-art host-art" id="hostMomentImage" alt="Current approved Spooky Season image" />
             <div class="moment-copy">
               <div class="draw-word" id="currentWord">Scan In</div>
               <div class="draw-category" id="currentCategory">Start the round when players are ready</div>
@@ -54,7 +55,7 @@
             <button id="startCountdown">Start 15-Min Countdown</button>
             <button class="secondary" id="skipCountdown">Skip Countdown</button>
             <button id="startRound">Start Round Now</button>
-            <button class="gold" id="pullWord">Pull Next Moment</button>
+            <button class="gold" id="pullWord">Pull Next Word</button>
             <button class="secondary" id="pauseRound">Pause</button>
             <button class="secondary" id="resumeRound">Resume</button>
             <button class="secondary" id="undoCall">Undo Last Call</button>
@@ -68,7 +69,7 @@
 
           <div class="stats-grid">
             <div class="stat"><b id="timer">00:00</b><span>Timer</span></div>
-            <div class="stat"><b id="calledCount">0</b><span>Moments Pulled</span></div>
+            <div class="stat"><b id="calledCount">0</b><span>Words Pulled</span></div>
             <div class="stat"><b id="remainingCount">0</b><span>Remaining</span></div>
             <div class="stat"><b id="claimCount">0</b><span>Bingo Claims</span></div>
           </div>
@@ -85,7 +86,7 @@
       <section class="layout" style="margin-top: 18px;">
         <div class="panel">
           <div class="panel-header">
-            <h2>Called Moments</h2>
+            <h2>Called Words</h2>
             <span class="small">Newest first</span>
           </div>
           <div class="word-list" id="calledWords"></div>

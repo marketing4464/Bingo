@@ -1,6 +1,5 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-const momentImageCache = new Map();
 let heartbeatId = localStorage.getItem("bingoHeartbeatId") || "";
 let bingoClientRole = inferBingoClientRole();
 let supabaseClientConfigPromise = null;
@@ -72,6 +71,9 @@ async function getPlayerStateFromSupabase() {
   if (!response.ok) throw new Error(rows?.message || "Could not refresh bingo state from Supabase");
   const state = Array.isArray(rows) ? rows[0]?.state : null;
   if (!state) throw new Error("Supabase bingo state is not ready yet");
+  if (!state.deckVersion || (config.deckVersion && state.deckVersion !== config.deckVersion)) {
+    throw new Error("Supabase bingo state is waiting for the current deck");
+  }
   return normalizeRemotePlayerState(state);
 }
 
@@ -114,7 +116,7 @@ function subscribe(onState) {
     try {
       const state = await getState();
       const stableState = stabilizeLiveState(state, lastStableState);
-      if (stableState && stableState.updatedAt !== lastUpdatedAt) {
+      if (stableState && (stableState.updatedAt !== lastUpdatedAt || stableState.deckVersion !== lastStableState?.deckVersion || stableState.roundPlanVersion !== lastStableState?.roundPlanVersion)) {
         lastUpdatedAt = stableState.updatedAt;
         lastStableState = stableState;
         onState(stableState);
@@ -159,6 +161,10 @@ function startHeartbeat(role, detailProvider = () => ({})) {
 
 function stabilizeLiveState(state, previous) {
   if (!previous) return state;
+  if ((state.deckVersion && state.deckVersion !== previous.deckVersion)
+    || (state.roundPlanVersion && state.roundPlanVersion !== previous.roundPlanVersion)) {
+    return state;
+  }
   const incomingUpdatedAt = Number(state.updatedAt) || 0;
   const previousUpdatedAt = Number(previous.updatedAt) || 0;
   if (incomingUpdatedAt < previousUpdatedAt) return null;
@@ -223,59 +229,41 @@ function renderQrImage(image, value) {
 
 async function setMomentImage(image, moment) {
   if (!image) return;
-  const key = moment ? `${moment.text}|${moment.category || ""}` : "fallback";
-  if (image.dataset.momentKey === key || image.dataset.pendingMomentKey === key) return;
-  image.dataset.pendingMomentKey = key;
-  image.decoding = "async";
-  image.onerror = () => {
-    const fallbackUrl = momentImageUrl(null);
-    if (image.src !== fallbackUrl) {
-      image.src = fallbackUrl;
-      image.dataset.source = "fallback";
-    }
-  };
-
-  if (!moment) {
-    await applyMomentImage(image, key, momentImageUrl(null), "fallback", "Disney and Pixar Bingo image");
-    return;
+  const key = moment ? `${moment.text}|${moment.category || ""}` : "idle";
+  const panel = image.parentElement;
+  let note = panel.querySelector(".artwork-pending");
+  if (!note) { note = document.createElement("div"); note.className = "artwork-pending"; panel.prepend(note); }
+  let credit = panel.querySelector(".artwork-credit");
+  if (!credit) { credit = document.createElement("div"); credit.className = "artwork-credit"; (panel.querySelector(".moment-copy") || panel).append(credit); }
+  function holdArtwork() {
+    image.hidden = true; image.removeAttribute("src"); credit.hidden = true;
+    image.dataset.source = "unavailable"; note.hidden = false;
+    note.textContent = moment ? "Artwork unavailable" : "Spooky Season Bingo";
   }
-
-  if (!image.getAttribute("src")) image.src = momentImageUrl(moment);
-
-  let nextImage = momentImageCache.get(key);
+  if (image.dataset.momentKey !== key) { image.dataset.momentKey = key; holdArtwork(); }
+  if (!moment || image.dataset.loadingKey === key) return;
+  image.dataset.loadingKey = key;
   try {
-    if (!nextImage) {
-      const params = new URLSearchParams({
-        text: moment.text,
-        category: moment.category || "",
-      });
-      const response = await fetch(`/api/moment-image?${params}`, { cache: "force-cache" });
-      const data = await response.json();
-      nextImage = data.ok && data.url
-        ? { url: data.url, source: data.source || "internet" }
-        : { url: momentImageUrl(moment), source: "fallback" };
-      momentImageCache.set(key, nextImage);
+    const params = new URLSearchParams({text: moment.text, category: moment.category || ""});
+    const response = await fetch(`/api/moment-image?${params}`, {cache:"no-store"});
+    const data = await response.json();
+    if (image.dataset.momentKey !== key) return;
+    if (!data.ok || !data.url || data.approved !== true) { holdArtwork(); return; }
+    if (image.getAttribute("src") !== data.url) {
+      const loaded = await preloadImage(data.url);
+      if (image.dataset.momentKey !== key) return;
+      image.src = loaded;
     }
-  } catch (error) {
-    nextImage = { url: momentImageUrl(moment), source: "fallback" };
-    momentImageCache.set(key, nextImage);
-  }
-
-  await applyMomentImage(image, key, nextImage.url, nextImage.source, `${moment.text} image`);
-}
-
-function applyMomentImage(image, key, url, source, alt) {
-  return preloadImage(url)
-    .catch(() => source === "fallback" ? null : preloadImage(momentImageUrl(null)))
-    .then((fallbackUrl) => {
-      if (image.dataset.pendingMomentKey !== key) return;
-      const nextUrl = fallbackUrl || url;
-      if (image.src !== nextUrl) image.src = nextUrl;
-      image.dataset.momentKey = key;
-      image.dataset.source = fallbackUrl ? "fallback" : source;
-      image.alt = alt;
-      image.removeAttribute("data-pending-moment-key");
-    });
+    image.hidden = false; image.alt = `${moment.text} approved image`; image.dataset.source = "approved"; note.hidden = true;
+    const label = [data.artist, data.license].filter(Boolean).join(" · ") || "Approved artwork";
+    credit.textContent = "";
+    if (data.sourceUrl && /^https?:\/\//.test(data.sourceUrl)) {
+      const link = document.createElement("a"); link.href = data.sourceUrl; link.target = "_blank"; link.rel = "noopener"; link.textContent = label; credit.append(link);
+    } else { credit.textContent = label; }
+    credit.hidden = false;
+    image.onerror = () => { holdArtwork(); note.textContent = "Approved artwork unavailable"; };
+  } catch { if (image.dataset.momentKey === key) holdArtwork(); }
+  finally { if (image.dataset.loadingKey === key) delete image.dataset.loadingKey; }
 }
 
 function preloadImage(url) {
@@ -285,85 +273,4 @@ function preloadImage(url) {
     preview.onerror = reject;
     preview.src = url;
   });
-}
-
-function momentImageUrl(moment) {
-  const fallback = { text: "Disney & Pixar Bingo", category: "Story Magic" };
-  const item = moment || fallback;
-  const palettes = [
-    ["#233dff", "#ffd66b", "#070b2d"],
-    ["#9b2cff", "#6bd6ff", "#111548"],
-    ["#e33b72", "#ffe8a3", "#15103d"],
-    ["#16b6c8", "#ff8a4c", "#061735"],
-    ["#f4b83f", "#ff6f91", "#17113b"],
-    ["#475cff", "#9ee7c5", "#09143a"],
-  ];
-  const hash = [...item.text].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  const [primary, accent, background] = palettes[hash % palettes.length];
-  const shape = ["star", "castle", "sparkle", "screen", "ticket", "badge"][hash % 6];
-  const category = escapeSvg(item.category || "Disney & Pixar");
-  const initials = escapeSvg(item.text.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "!");
-  const art = shapeSvg(shape, primary, accent);
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760">
-      <defs>
-        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.22"/>
-        </filter>
-        <pattern id="dots" width="34" height="34" patternUnits="userSpaceOnUse">
-          <circle cx="5" cy="5" r="3" fill="${primary}" opacity="0.14"/>
-        </pattern>
-      </defs>
-      <rect width="1200" height="760" rx="34" fill="${background}"/>
-      <rect width="1200" height="760" fill="url(#dots)"/>
-      <circle cx="1015" cy="120" r="150" fill="${accent}" opacity="0.34"/>
-      <circle cx="155" cy="645" r="190" fill="${primary}" opacity="0.14"/>
-      <rect x="48" y="48" width="1104" height="664" rx="30" fill="none" stroke="${accent}" stroke-width="10" opacity="0.9"/>
-      <g filter="url(#shadow)">${art}</g>
-      <circle cx="600" cy="315" r="118" fill="#ffffff" opacity="0.88"/>
-      <text x="600" y="350" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="108" fill="#141414">${initials}</text>
-      <rect x="305" y="560" width="590" height="82" rx="41" fill="#050505" opacity="0.94"/>
-      <text x="600" y="614" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="900" fill="${accent}" letter-spacing="4">${category.toUpperCase()}</text>
-    </svg>
-  `;
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-}
-
-function shapeSvg(shape, primary, accent) {
-  if (shape === "castle") {
-    return `<path d="M290 610 h620 v-260 l-70 -38 v-92 h-86 v46 l-70 -38 v-92 h-96 v92 l-70 38 v-46 h-86 v92 l-70 38z" fill="${primary}"/><path d="M355 610 v-170 h100 v170 M550 610 v-210 h100 v210 M745 610 v-170 h100 v170" fill="${accent}" opacity="0.9"/><path d="M430 220 l45 -90 l45 90 M565 136 l70 -105 l70 105 M780 220 l45 -90 l45 90" fill="${accent}"/>`;
-  }
-  if (shape === "badge") {
-    return `<path d="M600 92 l105 118 l156 18 l-78 137 l31 153 l-151 -32 l-137 78 l-15 -156 l-116 -104 l142 -65z" fill="${primary}"/><circle cx="600" cy="330" r="150" fill="${accent}" opacity="0.9"/><circle cx="600" cy="330" r="78" fill="${primary}" opacity="0.92"/>`;
-  }
-  if (shape === "bolt") {
-    return `<polygon points="590,95 405,385 555,385 500,665 790,300 625,310 700,95" fill="${primary}"/><polygon points="625,145 505,340 640,335 600,520 725,285 590,295" fill="${accent}" opacity="0.88"/>`;
-  }
-  if (shape === "record") {
-    return `<circle cx="600" cy="315" r="210" fill="${primary}"/><circle cx="600" cy="315" r="122" fill="${backgroundSafe(accent)}" opacity="0.96"/><circle cx="600" cy="315" r="42" fill="${primary}"/><path d="M800 445 L945 590" stroke="${accent}" stroke-width="38" stroke-linecap="round"/>`;
-  }
-  if (shape === "screen") {
-    return `<rect x="330" y="115" width="540" height="335" rx="28" fill="${primary}"/><rect x="374" y="160" width="452" height="235" rx="18" fill="${accent}" opacity="0.9"/><rect x="535" y="450" width="130" height="70" fill="${primary}"/><rect x="455" y="515" width="290" height="34" rx="17" fill="${primary}"/>`;
-  }
-  if (shape === "ticket") {
-    return `<path d="M310 205 h580 a60 60 0 0 0 0 120 a60 60 0 0 0 0 120 h-580 a60 60 0 0 0 0-120 a60 60 0 0 0 0-120z" fill="${primary}"/><path d="M430 250 h340 M430 325 h340 M430 400 h340" stroke="${accent}" stroke-width="28" stroke-linecap="round"/>`;
-  }
-  if (shape === "sparkle") {
-    return `<path d="M600 80 L675 275 L880 350 L675 425 L600 640 L525 425 L320 350 L525 275 Z" fill="${primary}"/><path d="M860 135 L895 225 L990 260 L895 295 L860 390 L825 295 L730 260 L825 225 Z" fill="${accent}"/>`;
-  }
-  return `<path d="M600 80 L665 255 L850 260 L705 375 L755 555 L600 450 L445 555 L495 375 L350 260 L535 255 Z" fill="${primary}"/><circle cx="600" cy="345" r="105" fill="${accent}" opacity="0.9"/>`;
-}
-
-function backgroundSafe(color) {
-  return color === "#ffffff" ? "#fff9ef" : color;
-}
-
-function escapeSvg(value) {
-  return String(value).replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
-  })[char]);
 }

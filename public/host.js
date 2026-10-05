@@ -68,22 +68,14 @@ els.commandCenter.addEventListener("click", (event) => {
 });
 
 function render(state) {
-  const roundNumber = state.roundIndex + 1;
   HostRunbook.render(els.commandCenter, state);
-  els.roundName.textContent = `${state.title} • Round ${roundNumber}: ${state.round.name}`;
+  els.roundName.textContent = `${state.title} • ${state.round.name}`;
   els.roundMeta.textContent = `${roundRuleLabel(state.round.pattern)} • ${state.round.playMinutes} minutes of play • words rotate every ${state.autoPullEverySeconds} seconds`;
   els.statusPill.textContent = statusLabel(state.status);
   els.statusPill.className = `status-pill ${state.status}`;
   els.currentWord.textContent = state.currentWord?.text || (state.status === "countdown" ? "Bingo Starts Soon" : state.status === "break" ? "Break Time" : state.status === "ended" ? "Event Complete" : "Ready?");
   els.currentCategory.textContent = state.currentWord?.category || (state.status === "countdown" ? "Countdown jumps into Round 1 automatically" : state.status === "break" ? "Next round starts automatically" : state.status === "ended" ? "Final leaderboard is on display" : "Start the countdown when players are scanning in");
-  const placeholderMoment = state.status === "countdown"
-    ? { text: "Bingo Starts Soon", category: "15 Minutes" }
-    : state.status === "break"
-    ? { text: "Break Time", category: "10 Minutes" }
-    : state.status === "ended"
-    ? { text: "Event Complete", category: "Final Scores" }
-    : state.currentWord;
-  setMomentImage(els.hostMomentImage, placeholderMoment);
+  setMomentImage(els.hostMomentImage, state.currentWord);
   els.calledCount.textContent = state.called.length;
   els.remainingCount.textContent = state.deck.length;
   els.claimCount.textContent = state.claims.length;
@@ -107,7 +99,7 @@ function render(state) {
 
   els.calledWords.innerHTML = state.called.length
     ? state.called.map((word) => `<span class="word-chip">${escapeHtml(word.text)}</span>`).join("")
-    : `<span class="small">No moments pulled yet.</span>`;
+    : `<span class="small">No words pulled yet.</span>`;
 
   els.schedule.innerHTML = state.rounds
     .map((round, index) => {
@@ -155,7 +147,7 @@ async function runHostAction(action) {
       return;
     }
     if (action === "startRound") {
-      if (!confirm("Start the current round immediately? This clears called moments for this round.")) return;
+      if (!confirm("Start the current round immediately? This clears called words for this round.")) return;
       await api("/api/start-round");
       return;
     }

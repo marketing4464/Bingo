@@ -1,0 +1,1778 @@
+{
+  "title": "Spooky Season Bingo",
+  "approvalStatus": "approved",
+  "source": "Wikimedia Commons",
+  "items": [
+    {
+      "id": "spooky-01",
+      "word": "Ghost",
+      "category": "Halloween Characters & Creatures",
+      "searchQuery": "ghost Halloween illustration public domain",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-01-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-ghost.png",
+          "title": "Ghost \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept. Asset type: individual Halloween and fall bingo word image, candidate pending user approval. Style: polished playful storybook 3D illustration, handmade clay-like gentle textures, charming clear silhouette and friendly expression. Composition: square image, one single clear main subject centered filling 75 percent of frame, full subject visible, simple warm ivory studio backdrop and soft ground shadow. Lighting: warm soft studio illumination. Palette: pumpkin orange, muted plum, sage accents and warm ivory. No text, no letters, no numbers, no borders, no logos, no copyrighted characters, no gore, no clutter. Subject: a friendly classic white floating sheet ghost, little rounded eyes and smiling mouth, fluttering curved lower sheet edge and two tiny rounded arms.",
+          "sha256": "ef3dc6e95522441a78ac6acf7ec3578a08052e12f5dfa2cfa17d79542adea351"
+        }
+      ]
+    },
+    {
+      "id": "spooky-02",
+      "word": "Witch",
+      "category": "Halloween Characters & Creatures",
+      "searchQuery": "witch illustration public domain",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-02-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-witch.png",
+          "title": "Witch \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept. Asset type: individual Halloween and fall bingo word image, candidate pending user approval. Style: polished playful storybook 3D illustration, handmade clay-like gentle textures, charming clear silhouette and friendly expression. Composition: square image, one single clear main subject centered filling 75 percent of frame, full subject visible, simple warm ivory studio backdrop and soft ground shadow. Lighting: warm soft studio illumination. Palette: pumpkin orange, muted plum, sage accents and warm ivory. No text, no letters, no numbers, no borders, no logos, no copyrighted characters, no gore, no clutter. Subject: one smiling friendly whimsical witch character wearing a large purple pointed witch hat, sage-green skin, plum and pumpkin-orange clothing, holding a small broom. Generic original witch, full figure.",
+          "sha256": "4cd341712af83201808580913c096c19304b42df3e07c3e8454b7ce771837719"
+        }
+      ]
+    },
+    {
+      "id": "spooky-03",
+      "word": "Vampire",
+      "category": "Halloween Characters & Creatures",
+      "searchQuery": "vampire Halloween illustration public domain",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-03-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-vampire.png",
+          "title": "Vampire \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept. Asset type: individual Halloween and fall bingo word image, candidate pending user approval. Style: polished playful storybook 3D illustration, handmade clay-like gentle textures, charming clear silhouette and friendly expression. Composition: square image, one single clear main subject centered filling 75 percent of frame, full subject visible, simple warm ivory studio backdrop and soft ground shadow. Lighting: warm soft studio illumination. Palette: pumpkin orange, muted plum, sage accents and warm ivory. No text, no letters, no numbers, no borders, no logos, no copyrighted characters, no gore, no clutter. Subject: one smiling generic elegant vampire character with a plum high-collared cape, dark tailored outfit with pumpkin-orange vest accent, two small friendly visible fangs, neatly styled black hair. Full figure. No existing fictional character.",
+          "sha256": "392ac36f8570c0fb38a7defe8485c58833ab5fe439284a78bad2abf81a043348"
+        }
+      ]
+    },
+    {
+      "id": "spooky-04",
+      "word": "Mummy",
+      "category": "Halloween Characters & Creatures",
+      "searchQuery": "mummy Halloween costume bandages",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-04-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-mummy.png",
+          "title": "Mummy \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept. Asset type: individual Halloween and fall bingo word image, candidate pending user approval. Style: polished playful storybook 3D illustration, handmade clay-like gentle textures, charming clear silhouette and friendly expression. Composition: square image, one single clear main subject centered filling 75 percent of frame, full subject visible, simple warm ivory studio backdrop and soft ground shadow. Lighting: warm soft studio illumination. Palette: pumpkin orange, muted plum, sage accents and warm ivory. No text, no letters, no numbers, no borders, no logos, no copyrighted characters, no gore, no clutter. Subject: one cute friendly mummy character wrapped in overlapping warm ivory bandages, round bright smiling eyes peeking from bandages, one loose curling bandage end, small rounded hands and feet. Full figure.",
+          "sha256": "b46e915c5c93a04f5e5eccd4e05cf3a26a7038e7956fdfa53e6b177446cbae32"
+        }
+      ]
+    },
+    {
+      "id": "spooky-05",
+      "word": "Skeleton",
+      "category": "Halloween Characters & Creatures",
+      "searchQuery": "skeleton Halloween decoration",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-05-replacement-v2",
+          "imageUrl": "/assets/spooky-season/replacements/replacement-skeleton-v2.png",
+          "title": "Skeleton \u2013 original storybook Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "prompt": "Use case: stylized-concept\nAsset type: square bingo word illustration for a Halloween TV game; one individual asset, 1024x1024 or larger.\nPrimary request: a recognizable whole-body cartoon skeleton, clean ivory bones and a smiling skull with empty dark eye sockets, standing in a relaxed front three-quarter pose.\nScene/backdrop: seamless warm ivory studio backdrop with a gentle cream gradient and a soft floor shadow; isolated single subject.\nStyle/medium: polished playful 3D storybook illustration with rounded forms, subtle material texture, warm soft studio lighting. Slightly spooky, charming Halloween character. Comparable visual polish to a plush friendly ghost or theatrical storybook vampire.\nComposition/framing: show the entire skeleton from skull to both feet, centered and large; clear silhouette; broad margins around head and feet; keep the ribs, spine, pelvis, arms, hands, legs and feet recognizable; natural cartoon proportions.\nLighting/mood: gentle warm key light with a subtle violet edge light, inviting Halloween atmosphere.\nConstraints: no props, no clothes, no houses or scenery, no other characters, no text, no border, no watermark, no gore. Single skeleton image only.",
+          "status": "approved",
+          "sha256": "76745d3dc9602dccba440d476fa72f646f48a3effe206bd6ea54ad63a05d7af2"
+        }
+      ],
+      "replacementPreparedAt": "2026-10-05T15:56:50.828457Z"
+    },
+    {
+      "id": "spooky-06",
+      "word": "Werewolf",
+      "category": "Halloween Characters & Creatures",
+      "searchQuery": "werewolf illustration public domain",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "22224974",
+          "imageUrl": "/assets/spooky-season/spooky-06-22224974.png",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:WeirdTalesv36n2pg038_The_Werewolf_Howls.png",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/29/WeirdTalesv36n2pg038_The_Werewolf_Howls.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "WeirdTalesv36n2pg038 The Werewolf Howls.png",
+          "artist": "Mont Sudbury",
+          "license": "Public domain",
+          "licenseUrl": "",
+          "width": 960,
+          "height": 1113,
+          "status": "approved",
+          "sha256": "3637ba35376421641c47308aeefd056772c5783a0f51f9849b7314e4562015e1"
+        }
+      ]
+    },
+    {
+      "id": "spooky-07",
+      "word": "Zombie",
+      "category": "Halloween Characters & Creatures",
+      "searchQuery": "zombie Halloween illustration public domain non gory",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-07-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-zombie.png",
+          "title": "Zombie \u2014 friendly storybook illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "prompt": "Use case: stylized-concept. Asset type: pending image candidate for a Halloween and fall bingo word, Zombie. Create one polished festive friendly storybook 3D illustration in a square composition. Warm ivory clean studio backdrop. One cute mint-green smiling goofy zombie character, obvious and large centered, head and full body visible, fully clothed in an intact plum jacket and pumpkin-orange shirt with sage accents. Soft studio light, charming rounded sculpted materials. No wounds, blood, gore, weapons, copyright characters, text, labels, logos, watermark or extra subjects. Original cheerful Halloween character.",
+          "status": "approved",
+          "sha256": "b21e3314d84eaa257482bdef60e03d2db2cf09f48a3bb1cd4d83be274117a910"
+        }
+      ]
+    },
+    {
+      "id": "spooky-08",
+      "word": "Black Cat",
+      "category": "Halloween Characters & Creatures",
+      "searchQuery": "black cat portrait",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-08-replacement-v2",
+          "imageUrl": "/assets/spooky-season/replacements/replacement-black-cat-v2.png",
+          "title": "Black Cat \u2013 original storybook Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "prompt": "Use case: stylized-concept\nAsset type: square bingo word illustration for a Halloween TV game; one individual asset, 1024x1024 or larger.\nPrimary request: a full-body sleek deep-black cat sitting upright, with a long tail curled neatly around its front paws, vivid golden eyes, tall pointed ears, and clear graceful cat proportions.\nScene/backdrop: seamless warm ivory studio backdrop with a gentle cream gradient and a soft floor shadow; isolated single subject.\nStyle/medium: polished playful 3D storybook illustration with subtly textured soft black fur, rounded appealing features, clean silhouette and material richness. A little mysterious and spooky, charming Halloween atmosphere. Comparable visual polish to a plush friendly ghost or theatrical storybook vampire.\nComposition/framing: show the entire cat from ear tips to paws and tail, centered and large, front three-quarter view with head turned toward viewer; broad margins; ensure its dark coat is clearly visible against light ivory. Cat's tail must visibly curl in the foreground and be anatomically connected.\nLighting/mood: warm soft key light, subtle orange highlights and purple edge light, rich near-black coat, bright golden eye accents.\nConstraints: one cat only; no collar, no costume, no hat, no accessories, no pumpkins or props, no scenery, no text, no border, no watermark. No cropping of ears, paws, or tail.",
+          "status": "approved",
+          "sha256": "3cb288620ea62add27013db0f0529f67dccd11374653185360b9a52bb47d2915"
+        }
+      ],
+      "replacementPreparedAt": "2026-10-05T15:56:50.828457Z"
+    },
+    {
+      "id": "spooky-09",
+      "word": "Bat",
+      "category": "Halloween Characters & Creatures",
+      "searchQuery": "bat flying mammal",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "148295083",
+          "imageUrl": "/assets/spooky-season/spooky-09-148295083.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bat_Flying_in_a_Mine_Shaft_(70eeeeb2-9d49-0bd1-dda2-bf48ee13e9f8).jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Bat_Flying_in_a_Mine_Shaft_%2870eeeeb2-9d49-0bd1-dda2-bf48ee13e9f8%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Bat Flying in a Mine Shaft (70eeeeb2-9d49-0bd1-dda2-bf48ee13e9f8).jpg",
+          "artist": "NPS",
+          "license": "Public domain",
+          "licenseUrl": "",
+          "width": 960,
+          "height": 576,
+          "status": "approved",
+          "sha256": "5253c08335ac6bbb9efed112a8ee14da182537aa1f3d987b21f0cdbfd476ab97"
+        }
+      ]
+    },
+    {
+      "id": "spooky-10",
+      "word": "Spider",
+      "category": "Halloween Characters & Creatures",
+      "searchQuery": "spider close up",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "83318871",
+          "imageUrl": "/assets/spooky-season/qc-spider.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Araneus_diadematus_female.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Araneus_diadematus_female.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Araneus diadematus female.jpg",
+          "artist": "Gg. Any",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+          "width": 960,
+          "height": 539,
+          "status": "approved",
+          "sha256": "2759c7f91e64a990c02a71e8270995457ab1327acb6f3c3f74fa3dfc8b695e55",
+          "qualityReview": "recommended_candidate_for_user_review"
+        }
+      ]
+    },
+    {
+      "id": "spooky-11",
+      "word": "Haunted House",
+      "category": "Haunted Objects & Places",
+      "searchQuery": "haunted house Halloween decoration",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-11-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-haunted-house.png",
+          "title": "Haunted House \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept. Asset type: individual Halloween and fall bingo word image, candidate pending user approval. Style: polished playful storybook 3D illustration, handmade clay-like gentle textures and clear silhouette. Composition: square image, one single clear main subject centered filling 75 percent of frame, full subject visible, simple warm ivory studio backdrop and soft ground shadow. Lighting: warm soft studio illumination. Palette: pumpkin orange, muted plum, sage accents and warm ivory. No text, no letters, no numbers, no borders, no logos, no copyrighted characters, no gore, no clutter. Subject: a charming visibly haunted crooked Victorian house with deep purple roofs and glowing pumpkin-orange windows, elegant crooked towers, rounded miniature architectural proportions. One or two dark bare tree silhouettes kept very minimal around the base. No ghost, no characters, no pumpkins.",
+          "sha256": "292a5775e3cffeec30df04dbaa61f1ccc5ac6afd96cabcdb326b35adb6fcfd4c"
+        }
+      ]
+    },
+    {
+      "id": "spooky-12",
+      "word": "Tombstone",
+      "category": "Haunted Objects & Places",
+      "searchQuery": "Halloween tombstone prop",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "16938516",
+          "imageUrl": "/assets/spooky-season/qc-tombstone.png",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tombstone.svg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/65/Tombstone.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Tombstone.svg",
+          "artist": "Tombstone.PNG: Paranormal Skeptic\nderivative work: Cmglee (talk)",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+          "width": 960,
+          "height": 1266,
+          "status": "approved",
+          "sha256": "f43bf3ece26ea042fdc50de362fdaed4dd7626bda4dbdc62ad1ce4767a8029b1",
+          "qualityReview": "recommended_candidate_for_user_review"
+        }
+      ]
+    },
+    {
+      "id": "spooky-13",
+      "word": "Coffin",
+      "category": "Haunted Objects & Places",
+      "searchQuery": "closed coffin Halloween prop",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "152637633",
+          "imageUrl": "/assets/spooky-season/spooky-13-152637633.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Coffin_symbol.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1b/The_Coffin_symbol.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "The Coffin symbol.jpg",
+          "artist": "Unknown authorUnknown author",
+          "license": "Public domain",
+          "licenseUrl": "",
+          "width": 960,
+          "height": 488,
+          "status": "approved",
+          "sha256": "812a5054f9a1164549fd6b96781e69d453ee730fd5d1094e62a8dedd6dc400cc"
+        }
+      ]
+    },
+    {
+      "id": "spooky-14",
+      "word": "Skull",
+      "category": "Haunted Objects & Places",
+      "searchQuery": "skull Halloween decoration",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "60191357",
+          "imageUrl": "/assets/spooky-season/spooky-14-60191357.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Skull_MET_245921.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Skull_MET_245921.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Skull MET 245921.jpg",
+          "artist": "",
+          "license": "CC0",
+          "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+          "width": 960,
+          "height": 1190,
+          "status": "approved",
+          "sha256": "24566138295c87200a074a942f4b6c777e54accf7410e9e82f3e12fe283466cc"
+        }
+      ]
+    },
+    {
+      "id": "spooky-15",
+      "word": "Spiderweb",
+      "category": "Haunted Objects & Places",
+      "searchQuery": "spider web dew dark background",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "3626879",
+          "imageUrl": "/assets/spooky-season/spooky-15-3626879.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spider_web_Luc_Viatour.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/43/Spider_web_Luc_Viatour.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Spider web Luc Viatour.jpg",
+          "artist": "Luc Viatour",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+          "width": 960,
+          "height": 721,
+          "status": "approved",
+          "sha256": "2cf9a784ab74bf48b3c74cb423a41c58b0f259deb27353a81427f9f8753989bd"
+        }
+      ]
+    },
+    {
+      "id": "spooky-16",
+      "word": "Crystal Ball",
+      "category": "Haunted Objects & Places",
+      "searchQuery": "crystal ball fortune telling",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-16-replacement-v2",
+          "imageUrl": "/assets/spooky-season/replacements/replacement-crystal-ball-v2.png",
+          "title": "Crystal Ball \u2014 glowing lavender and teal original illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "prompt": "Use case: stylized-concept.\nAsset type: square 1024x1024 Halloween bingo image, a single immediately recognizable subject for a large TV.\nPrimary request: a fortune-teller CRYSTAL BALL, isolated on a warm ivory studio background.\nSubject: one perfectly round transparent glass sphere on a small ornate dark purple-black pedestal. A luminous lavender and teal magical swirl glows INSIDE the clear sphere, with tiny restrained sparkles. Glass edges and reflections clearly define a real translucent crystal ball; visible magical mist within it, not an opaque decorative stone.\nStyle/medium: polished playful 3D storybook Halloween illustration, tactile sculpted details, soft rounded shapes, charming and magical, matching a premium cute Halloween storybook character collection.\nComposition: centered single large complete object, occupying about 75 percent of the square canvas, balanced comfortable margins and a soft grounding shadow; no cropping.\nLighting: warm soft studio light with gentle magical inner glow, crisp readable silhouette.\nConstraints: no text, letters, logos, watermark, people, hands, skull, snowglobe scene, buildings, ornate surrounding props, stars outside the object, collage, borders or clutter. Keep the sphere translucent and clearly recognizable. Warm ivory opaque background.",
+          "sha256": "eaaf6ad45ee27840b05130d23201ef1bb837b6976dfd84bfa2717b4558cbcf62",
+          "status": "approved"
+        }
+      ],
+      "replacementPreparedAt": "2026-10-05T15:56:50.828457Z"
+    },
+    {
+      "id": "spooky-17",
+      "word": "Cauldron",
+      "category": "Haunted Objects & Places",
+      "searchQuery": "black iron cauldron",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-17-replacement-v2",
+          "imageUrl": "/assets/spooky-season/replacements/replacement-cauldron-v2.png",
+          "title": "Cauldron \u2014 bubbling green potion original illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "prompt": "Use case: stylized-concept.\nAsset type: square 1024x1024 Halloween bingo illustration, single immediately recognizable subject displayed on a large TV.\nPrimary request: a classic WITCH'S CAULDRON containing magical potion, isolated against a warm ivory studio background.\nSubject: a large squat black cast-iron cauldron with a round belly, wide thick circular rim, two small loop sidehandles, and three tiny visible feet. The top is filled with bright lime-green luminous bubbling magical potion, a few round green bubbles rising just above the rim, and two playful curling wisps of lavender-purple vapor. Slightly elevated three-quarter view so the wide rim and green potion are clearly visible.\nStyle/medium: polished playful 3D storybook Halloween illustration with tactile sculpted details, softened rounded shapes and charming spooky atmosphere, matching a premium cute Halloween storybook character collection.\nComposition: centered single complete object occupying about 75 percent of square canvas, balanced margins and a soft grounding shadow, no cropping. One cauldron only.\nLighting: warm soft studio light and restrained green magical glow, charcoal black textured metal, readable silhouette.\nConstraints: no text, letters, logos, watermark, people, witch character, hands, kitchen, soup, food, ladle, cooking fire, skull, surrounding scene, extra props, collage or border. Potion is unmistakably magical with bright green bubbles and purple wisps. Opaque warm ivory background.",
+          "sha256": "d79a1dc4d0a0a4985b58c2722a3f251779ddb734e32fbdbcd26892ad76f40c07",
+          "status": "approved"
+        }
+      ],
+      "replacementPreparedAt": "2026-10-05T15:56:50.828457Z"
+    },
+    {
+      "id": "spooky-18",
+      "word": "Broomstick",
+      "category": "Haunted Objects & Places",
+      "searchQuery": "traditional straw broomstick",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "31832219",
+          "imageUrl": "/assets/spooky-season/spooky-18-31832219.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hue_Vietnam_Broom-in-C%C3%A0n-Th%C3%A0nh-Palace-01.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Hue_Vietnam_Broom-in-C%C3%A0n-Th%C3%A0nh-Palace-01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Hue Vietnam Broom-in-C\u00e0n-Th\u00e0nh-Palace-01.jpg",
+          "artist": "CEphoto, Uwe Aranas",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+          "width": 960,
+          "height": 1440,
+          "status": "approved",
+          "sha256": "9a7b1fb2160347b7e5f48eabf1a212102791ba1aad7090585e45651cd3afd98b"
+        }
+      ]
+    },
+    {
+      "id": "spooky-19",
+      "word": "Witch Hat",
+      "category": "Haunted Objects & Places",
+      "searchQuery": "black pointed witch hat",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "131648696",
+          "imageUrl": "/assets/spooky-season/qc-witch-hat.png",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Witch_hat_with_red_bow.svg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/90/Witch_hat_with_red_bow.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Witch hat with red bow.svg",
+          "artist": "Kajsa Sj\u00f6gren (@Lixaxy)",
+          "license": "CC0",
+          "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+          "width": 960,
+          "height": 870,
+          "status": "approved",
+          "sha256": "89e57ee9cfaec48797adf56d00236b8d1c6f7a29e78b860b8798076996d533db",
+          "qualityReview": "recommended_candidate_for_user_review"
+        }
+      ]
+    },
+    {
+      "id": "spooky-20",
+      "word": "Spell Book",
+      "category": "Haunted Objects & Places",
+      "searchQuery": "old open magic spell book illustration public domain",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "153892178",
+          "imageUrl": "/assets/spooky-season/spooky-20-153892178.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Nasqueron_Operations_Grimoire.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/32/Nasqueron_Operations_Grimoire.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Nasqueron Operations Grimoire.jpg",
+          "artist": "Auteur\u00a0: Leonardo AI\u00a0; Prompt et retouches par S\u00e9bastien Santoro aka Dereckson",
+          "license": "Public domain",
+          "licenseUrl": "",
+          "width": 960,
+          "height": 960,
+          "status": "approved",
+          "sha256": "9e25ab7808958b0a70f4dad2749f2e1487fc819e9a8621069c86a8596bef9f32"
+        }
+      ]
+    },
+    {
+      "id": "spooky-21",
+      "word": "Jack-o'-lantern",
+      "category": "Treats & Costumes",
+      "searchQuery": "carved jack o lantern lit pumpkin",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "271348",
+          "imageUrl": "/assets/spooky-season/spooky-21-271348.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jack-o%27-Lantern_2003-10-31.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Jack-o%27-Lantern_2003-10-31.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Jack-o'-Lantern 2003-10-31.jpg",
+          "artist": "Toby Ord",
+          "license": "CC BY-SA 2.5",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+          "width": 960,
+          "height": 943,
+          "status": "approved",
+          "sha256": "ec29a59835aef18ef2553d462149edb295a741daedea618da6256566d2f3677b"
+        }
+      ]
+    },
+    {
+      "id": "spooky-22",
+      "word": "Candy Corn",
+      "category": "Treats & Costumes",
+      "searchQuery": "candy corn",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "12011817",
+          "imageUrl": "/assets/spooky-season/spooky-22-12011817.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Candy-Corn.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/56/Candy-Corn.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Candy-Corn.jpg",
+          "artist": "Evan-Amos",
+          "license": "Public domain",
+          "licenseUrl": "",
+          "width": 960,
+          "height": 736,
+          "status": "approved",
+          "sha256": "85e18c2908509b99d3451bf275e64d30e634e62f7b92cea6376c5534509de369"
+        }
+      ]
+    },
+    {
+      "id": "spooky-23",
+      "word": "Candy Apple",
+      "category": "Treats & Costumes",
+      "searchQuery": "red candy apple on stick",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "46486",
+          "imageUrl": "/assets/spooky-season/spooky-23-46486.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pommes_d_amour.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/34/Pommes_d_amour.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Pommes d amour.jpg",
+          "artist": "Greudin",
+          "license": "Public domain",
+          "licenseUrl": "",
+          "width": 960,
+          "height": 679,
+          "status": "approved",
+          "sha256": "176be34ca66a829385efb53b869d93e63bd1e558594f1132b9b0a9b8240ad59c"
+        }
+      ]
+    },
+    {
+      "id": "spooky-24",
+      "word": "Chocolate Bar",
+      "category": "Treats & Costumes",
+      "searchQuery": "unwrapped plain chocolate bar",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "68288023",
+          "imageUrl": "/assets/spooky-season/qc-chocolate-bar.png",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chocolate_bar.png",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Chocolate_bar.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Chocolate bar.png",
+          "artist": "Debora Cartegena",
+          "license": "Public domain",
+          "licenseUrl": "",
+          "width": 960,
+          "height": 625,
+          "status": "approved",
+          "sha256": "f37bd3ed2cd410c0c387eccd97b9c9ee764650f665870a87f39d024bba76a7d5",
+          "qualityReview": "recommended_candidate_for_user_review"
+        }
+      ]
+    },
+    {
+      "id": "spooky-25",
+      "word": "Lollipop",
+      "category": "Treats & Costumes",
+      "searchQuery": "spiral lollipop",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "15452347",
+          "imageUrl": "/assets/spooky-season/qc-lollipop.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lollipop-Rainbox-Swirl.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/90/Lollipop-Rainbox-Swirl.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Lollipop-Rainbox-Swirl.jpg",
+          "artist": "Evan-Amos",
+          "license": "CC0",
+          "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+          "width": 960,
+          "height": 872,
+          "status": "approved",
+          "sha256": "809563bacefbd205fab44d2e40af2b904a78c500dc034b10df266006b7849c07",
+          "qualityReview": "recommended_candidate_for_user_review"
+        }
+      ]
+    },
+    {
+      "id": "spooky-26",
+      "word": "Gummy Worms",
+      "category": "Treats & Costumes",
+      "searchQuery": "gummy worms candy",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "78706790",
+          "imageUrl": "/assets/spooky-season/spooky-26-78706790.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Three_Nice!_Gummy_Worms_(19543065510).jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Three_Nice%21_Gummy_Worms_%2819543065510%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Three Nice! Gummy Worms (19543065510).jpg",
+          "artist": "Willis Lam",
+          "license": "CC BY-SA 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+          "width": 960,
+          "height": 720,
+          "status": "approved",
+          "sha256": "49a1f0b159f87424a293e6801ef24a038f74cdc5dea751d70068dee44e2174a5"
+        }
+      ]
+    },
+    {
+      "id": "spooky-27",
+      "word": "Wrapped Candy",
+      "category": "Treats & Costumes",
+      "searchQuery": "twist wrapped hard candy",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "9024516",
+          "imageUrl": "/assets/spooky-season/spooky-27-9024516.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Candy_6577.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/db/Candy_6577.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Candy 6577.jpg",
+          "artist": "PereslavlFoto",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+          "width": 960,
+          "height": 639,
+          "status": "approved",
+          "sha256": "924c3bec69930f0cbd73d58c0fbc65f46675505850a4ce4c341db451da1628cf"
+        }
+      ]
+    },
+    {
+      "id": "spooky-28",
+      "word": "Pumpkin Bucket",
+      "category": "Treats & Costumes",
+      "searchQuery": "orange pumpkin trick or treat bucket handle",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "36605085",
+          "imageUrl": "/assets/spooky-season/spooky-28-36605085.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Halloween_candy_bucket.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Halloween_candy_bucket.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Halloween candy bucket.jpg",
+          "artist": "Petey21",
+          "license": "CC0",
+          "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+          "width": 960,
+          "height": 720,
+          "status": "approved",
+          "sha256": "a413d244eb0a5af31e7d5166a9de764fe95a527440ab53a27136e0c8c5ad5864"
+        }
+      ]
+    },
+    {
+      "id": "spooky-29",
+      "word": "Monster Mask",
+      "category": "Treats & Costumes",
+      "searchQuery": "generic Halloween monster mask",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "86495465",
+          "imageUrl": "/assets/spooky-season/spooky-29-86495465.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mask_Diabo_of_Portugal_used_on_folk_fest_and_rituals.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/58/Mask_Diabo_of_Portugal_used_on_folk_fest_and_rituals.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Mask Diabo of Portugal used on folk fest and rituals.jpg",
+          "artist": "Wilfredor",
+          "license": "CC0",
+          "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+          "width": 960,
+          "height": 1440,
+          "status": "approved",
+          "sha256": "97db952a0995ee4f673248bff6a08fb9b2fbd7a10ba7a3ecd729286499eb344a"
+        }
+      ]
+    },
+    {
+      "id": "spooky-30",
+      "word": "Costume Cape",
+      "category": "Treats & Costumes",
+      "searchQuery": "black red Halloween costume cape",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-30-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-costume-cape.png",
+          "title": "Costume Cape \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept. Asset type: individual Halloween and fall bingo word image, candidate pending user approval. Style: polished playful storybook 3D illustration, handmade clay-like gentle textures and clear silhouette. Composition: square image, one single clear main subject centered filling 75 percent of frame, full subject visible, simple warm ivory studio backdrop and soft ground shadow. Lighting: warm soft studio illumination. Palette: pumpkin orange, muted plum, sage accents and warm ivory. No text, no letters, no numbers, no borders, no logos, no copyrighted characters, no gore, no clutter. Subject: a standalone flowing deep plum Halloween vampire costume cape with warm orange lining and tall stiff pointed collar, visibly displayed as a cape on an invisible form. The front is open, showing the orange lining and empty space inside. Clearly an empty cape costume item, not a dress. No person, no face, no hands, no body, no mannequin, no clothing beneath.",
+          "sha256": "d5194a1158d277162a10352a4d196831fbd0b35efaa1fdf7e7cc98151fe35d72"
+        }
+      ]
+    },
+    {
+      "id": "spooky-31",
+      "word": "Full Moon",
+      "category": "Mystical Night",
+      "searchQuery": "full moon night sky",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "1254946",
+          "imageUrl": "/assets/spooky-season/spooky-31-1254946.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Full_Moon_Luc_Viatour.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Full_Moon_Luc_Viatour.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Full Moon Luc Viatour.jpg",
+          "artist": "Luc Viatour",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+          "width": 960,
+          "height": 969,
+          "status": "approved",
+          "sha256": "e04332e2e8ba4cfc17dbe5fc1be6e4f704f87f2c8c4985e71a3740d7c25cf9b2"
+        }
+      ]
+    },
+    {
+      "id": "spooky-32",
+      "word": "Owl",
+      "category": "Mystical Night",
+      "searchQuery": "owl portrait perched",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "82194237",
+          "imageUrl": "/assets/spooky-season/spooky-32-82194237.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Eurasian_eagle-owl_(44088).jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/31/Eurasian_eagle-owl_%2844088%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Eurasian eagle-owl (44088).jpg",
+          "artist": "Rhododendrites",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+          "width": 960,
+          "height": 677,
+          "status": "approved",
+          "sha256": "0e8d2b410977ada7ef45360f7d5012b28008c9c6bc62fb89710c743a8ee83edf"
+        }
+      ]
+    },
+    {
+      "id": "spooky-33",
+      "word": "Raven",
+      "category": "Mystical Night",
+      "searchQuery": "common raven black bird perched",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "67792700",
+          "imageUrl": "/assets/spooky-season/spooky-33-67792700.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Corvus_corax_clarionensis,_Point_Reyes_National_Seashore.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/91/Corvus_corax_clarionensis%2C_Point_Reyes_National_Seashore.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Corvus corax clarionensis, Point Reyes National Seashore.jpg",
+          "artist": "Frank Schulenburg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+          "width": 960,
+          "height": 640,
+          "status": "approved",
+          "sha256": "c37747a3b1aafbe0ab1277b42b9740a043de7fa0ccaf8bdbe3fb5eed0aee1b6b"
+        }
+      ]
+    },
+    {
+      "id": "spooky-34",
+      "word": "Toad",
+      "category": "Mystical Night",
+      "searchQuery": "toad close up",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "41154569",
+          "imageUrl": "/assets/spooky-season/spooky-34-41154569.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bufo_bufo_2015_G3.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Bufo_bufo_2015_G3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Bufo bufo 2015 G3.jpg",
+          "artist": "George Chernilevsky",
+          "license": "Public domain",
+          "licenseUrl": "",
+          "width": 960,
+          "height": 680,
+          "status": "approved",
+          "sha256": "20057894c50d3a0d13604dd3fcb29eeee4448325a780b0f43e6b6c081f052c79"
+        }
+      ]
+    },
+    {
+      "id": "spooky-35",
+      "word": "Snake",
+      "category": "Mystical Night",
+      "searchQuery": "coiled snake",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "7938052",
+          "imageUrl": "/assets/spooky-season/spooky-35-7938052.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Grass_Snake_-_Natrix_natrix.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d8/The_Grass_Snake_-_Natrix_natrix.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "The Grass Snake - Natrix natrix.jpg",
+          "artist": "Darius Bauzys",
+          "license": "CC BY 3.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+          "width": 960,
+          "height": 640,
+          "status": "approved",
+          "sha256": "d70f813259dcc8bfd0565661994c7d12e46649300d863248e1dacb8debbd1981"
+        }
+      ]
+    },
+    {
+      "id": "spooky-36",
+      "word": "Potion Bottle",
+      "category": "Mystical Night",
+      "searchQuery": "glass potion bottle colored liquid cork",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-36-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-potion-bottle.png",
+          "title": "Potion Bottle \u2014 friendly storybook illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "prompt": "Use case: stylized-concept. Asset type: pending image candidate for a Halloween and fall bingo word, Potion Bottle. Create one polished festive friendly storybook 3D illustration in a square composition. Warm ivory clean studio backdrop. A single round glass potion flask with a cork stopper, obvious and large centered. The flask contains luminous purple potion with charming visible bubbles, clear glass highlights and a soft purple glow. Tiny pumpkin-orange and sage accents on the cork tie, plum and purple main palette. Soft studio light and sculpted storybook polish. No labels, text, hands, characters, logos, watermark or extra objects.",
+          "status": "approved",
+          "sha256": "fddbe126ff0f1a9412a5746d65056f61e28a5a891b1b7ac021165cabbdfb53ae"
+        }
+      ]
+    },
+    {
+      "id": "spooky-37",
+      "word": "Magic Wand",
+      "category": "Mystical Night",
+      "searchQuery": "star magic wand prop",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-37-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-magic-wand.png",
+          "title": "Magic Wand \u2014 friendly storybook illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "prompt": "Use case: stylized-concept. Asset type: pending image candidate for a Halloween and fall bingo word, Magic Wand. Create one polished festive friendly storybook 3D illustration in a square composition. Warm ivory clean studio backdrop. A single clear recognizable black-and-silver magic wand with a big gold star tip, large and centered with gentle diagonal tilt, entire wand visible. A few tiny delicate magical sparkles clustered near the star. Plum, pumpkin-orange and sage accent hues in the sparkles. Soft studio light, sculpted storybook materials and charming festive Halloween mood. No hands, people, labels, text, logos, watermark, extra subjects or copyright references.",
+          "status": "approved",
+          "sha256": "da9cb91ee10d3eedfe70fe1da84b00892cd41b1681fc7712a8f764193783a6b9"
+        }
+      ]
+    },
+    {
+      "id": "spooky-38",
+      "word": "Glow Stick",
+      "category": "Mystical Night",
+      "searchQuery": "green glow stick glowing dark",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-38-replacement-v2",
+          "imageUrl": "/assets/spooky-season/replacements/replacement-glow-stick-v2.png",
+          "title": "Glow Stick \u2014 new Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "prompt": "Use case: stylized-concept. Asset type: square TV bingo image for the word Glow Stick. Primary request: a clear, polished, playful Halloween illustration of four unbent party glow sticks, arranged as a neat loose fan in the center. Each stick is a simple straight translucent plastic tube with rounded tips; neon lime green, orange, violet, and cyan, with a bright luminous inner line and soft glow. Style: refined 3D storybook illustration matching cheerful Halloween bingo assets. Scene/backdrop: warm ivory background with a very subtle lavender pool of light behind the tubes for visibility. Composition: tubes large, fully visible, centered with ample clean margin; almost overhead front view; simple recognizable silhouettes. No people, hands, bracelets, lanterns, packaging, extra objects, text, letters, numbers, labels, logos or watermark. Keep color luminous but make plastic glow-stick form unmistakable. High resolution, square composition, opaque background.",
+          "sha256": "6c5ef1e7d917525fb10c10aa943ea440889b905ae338fb6201ffeac98eaf8c1f",
+          "status": "approved"
+        }
+      ],
+      "replacementPreparedAt": "2026-10-05T15:56:50.828457Z"
+    },
+    {
+      "id": "spooky-39",
+      "word": "Candle Lantern",
+      "category": "Mystical Night",
+      "searchQuery": "metal candle lantern lit",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-39-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-candle-lantern.png",
+          "title": "Candle Lantern \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept. Asset type: pending review candidate for a Halloween and fall bingo word, Candle Lantern. Create a square polished playful storybook 3D illustration. Warm ivory clean simple studio backdrop. One black antique metal candle lantern, large and centered, entirely visible. The lantern is rectangular with clear glass panes and a small carrying loop; clearly show a single cream wax pillar candle with visible wick and lit flame INSIDE the transparent glass. Cozy pumpkin-orange candle glow and gentle plum-shadow accents. No oil reservoir, oil fuel tank, kerosene lamp, electric bulb, text, labels, logos, hands, humans, additional objects or watermark.",
+          "sha256": "68ed6bdccfad3fecf52ce242d1dcd4e04adeaf87663b78baf64ab3b74a5b6cda"
+        }
+      ]
+    },
+    {
+      "id": "spooky-40",
+      "word": "Foggy Forest",
+      "category": "Mystical Night",
+      "searchQuery": "foggy forest dark trees mist",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "134643601",
+          "imageUrl": "/assets/spooky-season/spooky-40-134643601.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Foggy_Forest_(50874610442).jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/32/Foggy_Forest_%2850874610442%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Foggy Forest (50874610442).jpg",
+          "artist": "Tero Karppinen from Finland",
+          "license": "CC BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+          "width": 960,
+          "height": 1440,
+          "status": "approved",
+          "sha256": "794c810cb2b460686e756dfd002799ecf2f4364892292225adb4ea3af9aeddfa"
+        }
+      ]
+    },
+    {
+      "id": "spooky-41",
+      "word": "Pumpkin",
+      "category": "Harvest Time",
+      "searchQuery": "whole uncarved orange pumpkin",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-4990747",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-41.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:FrenchMarketPumpkinsB.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5c/FrenchMarketPumpkinsB.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "FrenchMarketPumpkinsB.jpg",
+          "artist": "Infrogmation of New Orleans",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+          "sha256": "af7e3c5435aec3aaea6f70d4bcbd93b704393c9338141f68043c4ff02cba7d41",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-42",
+      "word": "Apple",
+      "category": "Harvest Time",
+      "searchQuery": "single red apple fruit",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-42-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-apple.png",
+          "title": "Apple \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept. Asset type: pending review candidate for a Halloween and fall bingo word, Apple. Create a square polished playful storybook 3D illustration. Warm ivory clean simple studio backdrop. One shiny classic bright-red whole apple, large and centered, fully visible, with a short brown stem and one tiny fresh sage-green leaf. Obvious apple silhouette and appetizing smooth red skin, warm soft studio light, rounded storybook 3D rendering polish. No slices, bite marks, plate, text, labels, logos, hands, humans, extra objects or watermark.",
+          "sha256": "c709389f25d6046dac49adbcec53fe5c90d1a53afa05dddec45753796d756bf6"
+        }
+      ]
+    },
+    {
+      "id": "spooky-49",
+      "word": "Hay Bale",
+      "category": "Harvest Time",
+      "searchQuery": "rectangular hay bale straw field",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-2307401",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-49.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Roundbale1.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Roundbale1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Roundbale1.jpg",
+          "artist": "Montanabw",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+          "sha256": "8996604502cd8bf3882435dda72a783cf4135f0418ec39376132e75d2ef4cd2b",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-50",
+      "word": "Scarecrow",
+      "category": "Harvest Time",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-140870",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-50.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kakashi2.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/76/Kakashi2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Kakashi2.jpg",
+          "artist": "",
+          "license": "Public domain",
+          "licenseUrl": "",
+          "sha256": "18bcd49e18a4da90ae0debeaeef2890e91ace0b00596d9ee26b249ab38b461f5",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-51",
+      "word": "Maple Leaf",
+      "category": "Autumn Nature",
+      "searchQuery": "single red maple leaf autumn",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "83273889",
+          "imageUrl": "/assets/spooky-season/spooky-51-83273889.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Growth_of_Chinese_Maple-red_Leaves_in_Deep_Autumn_Impression_(1).jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/76/The_Growth_of_Chinese_Maple-red_Leaves_in_Deep_Autumn_Impression_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "The Growth of Chinese Maple-red Leaves in Deep Autumn Impression (1).jpg",
+          "artist": "Jason M. C., Han",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+          "width": 960,
+          "height": 1280,
+          "status": "approved",
+          "sha256": "452b1c5f065312f698e7a4553319407f1cc2000ab6ef95742ac9fcbcc028b754"
+        }
+      ]
+    },
+    {
+      "id": "spooky-52",
+      "word": "Acorn",
+      "category": "Autumn Nature",
+      "searchQuery": "acorn oak nut cap",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "133624312",
+          "imageUrl": "/assets/spooky-season/spooky-52-133624312.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Acorn_in_Hatay,_Alt%C4%B1n%C3%B6z%C3%BC.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/46/Acorn_in_Hatay%2C_Alt%C4%B1n%C3%B6z%C3%BC.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Acorn in Hatay, Alt\u0131n\u00f6z\u00fc.jpg",
+          "artist": "Nur \u00c7a\u011flar",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+          "width": 960,
+          "height": 720,
+          "status": "approved",
+          "sha256": "f9c81eaebfda9ee4e1b4792205c892bef0644621a75632f945a11cfe4f7c8649"
+        }
+      ]
+    },
+    {
+      "id": "spooky-53",
+      "word": "Pinecone",
+      "category": "Autumn Nature",
+      "searchQuery": "brown pine cone",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "46277092",
+          "imageUrl": "/assets/spooky-season/spooky-53-46277092.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_brown_Cone_of_Pine-tree_on_green_moss.JPG",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a9/A_brown_Cone_of_Pine-tree_on_green_moss.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "A brown Cone of Pine-tree on green moss.JPG",
+          "artist": "Asmir97",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+          "width": 960,
+          "height": 640,
+          "status": "approved",
+          "sha256": "0615816a1e03d1e19784cf7a17fd7696843b3c2c59c6b42d7690256859b19e40"
+        }
+      ]
+    },
+    {
+      "id": "spooky-54",
+      "word": "Mushroom",
+      "category": "Autumn Nature",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-199352249",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-54.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Amanita_muscaria_Aberystwyth_2023.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/71/Amanita_muscaria_Aberystwyth_2023.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Amanita muscaria Aberystwyth 2023.jpg",
+          "artist": "Kieran Roy Powell",
+          "license": "CC BY 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+          "sha256": "339b3f64a2078a1b526103820cdbf3de4eb9f6d248d438392e7018f2301a1030",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-61",
+      "word": "Pumpkin Pie",
+      "category": "Cozy Fall Food",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-18896935",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-61.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pumpkin-Pie-Whole-Slice.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Pumpkin-Pie-Whole-Slice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Pumpkin-Pie-Whole-Slice.jpg",
+          "artist": "Evan-Amos",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+          "sha256": "28b9d7d8446913ba1da67dcedd267791371ec32fab06ca4e6d5f7e3efc70d6de",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-62",
+      "word": "Apple Pie",
+      "category": "Cozy Fall Food",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-100565360",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-62.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Apple_pie_14.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Apple_pie_14.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Apple pie 14.jpg",
+          "artist": "Shisma",
+          "license": "CC BY 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+          "sha256": "14ea3f2ec026a0681b97284c0f2d6b045ad72cbfdb5858513109ac2f066158a0",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-63",
+      "word": "Cinnamon Roll",
+      "category": "Cozy Fall Food",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-81737031",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-63.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cinnamon_roll_in_Stockholm.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Cinnamon_roll_in_Stockholm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Cinnamon roll in Stockholm.jpg",
+          "artist": "Kritzolina",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+          "sha256": "11aa4b48f58c766c45ada5160ae7abe7200f3dc477766685a728347c84e3a60a",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-64",
+      "word": "Hot Cocoa",
+      "category": "Cozy Fall Food",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-74473444",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-64.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:After_The_St._Patrick%27s_Parade_Late_Lunch_@_Lemon,_Dawson_Street,_Dublin,_Rep._Of_Ireland_A_Fine_Tradition!_(6992614913).jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9c/After_The_St._Patrick%27s_Parade_Late_Lunch_%40_Lemon%2C_Dawson_Street%2C_Dublin%2C_Rep._Of_Ireland_A_Fine_Tradition%21_%286992614913%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "After The St. Patrick's Parade Late Lunch @ Lemon, Dawson Street, Dublin, Rep. Of Ireland A Fine Tradition! (6992614913).jpg",
+          "artist": "|| UggBoy\u2665UggGirl || PHOTO || WORLD || TRAVEL ||",
+          "license": "CC BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+          "sha256": "c752d03837c958b5ac4b16d08544579af57e7834ae8b9f67c45852ee013915d1",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-65",
+      "word": "Apple Cider",
+      "category": "Cozy Fall Food",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-63478",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-65.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cider_and_apple_juice.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/60/Cider_and_apple_juice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Cider and apple juice.jpg",
+          "artist": "",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+          "sha256": "2dd1f41a9d744822e0b73d686c7bc3976d3298c466777a7271519c3786d8a653",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-69",
+      "word": "S'mores",
+      "category": "Cozy Fall Food",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-17055080",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-69.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Smores-Microwave.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Smores-Microwave.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Smores-Microwave.jpg",
+          "artist": "Evan-Amos",
+          "license": "CC0",
+          "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+          "sha256": "82e0eb91d3df83858ee7e61c7bd107458401e844617a46e464f4c6a8260074fb",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-70",
+      "word": "Popcorn",
+      "category": "Cozy Fall Food",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-15727643",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-70.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Popcorn_-_Studio_-_2011.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Popcorn_-_Studio_-_2011.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Popcorn - Studio - 2011.jpg",
+          "artist": "Bill Ebbesen",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+          "sha256": "8b1374fc9143db2c8d53718f5f247566313cac0b3d9b7f275e795ccc0d1e0e15",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-71",
+      "word": "Knit Sweater",
+      "category": "Fall Comforts & Activities",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-3610952",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-71.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Selburose-sweater.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/75/Selburose-sweater.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Selburose-sweater.jpg",
+          "artist": "Nils R. Barth",
+          "license": "Public domain",
+          "licenseUrl": "",
+          "sha256": "049e85e9bf68597725ceda173191263953816845b594a8e93fc2a6535835ce34",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-74",
+      "word": "Plaid Blanket",
+      "category": "Fall Comforts & Activities",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-74-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-plaid-blanket.png",
+          "title": "Plaid Blanket \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept. Asset type: individual Halloween and fall bingo word image, candidate pending user approval. Style: polished playful storybook 3D illustration, handmade clay-like gentle textures, clear friendly forms. Composition: square image, obvious single clear main subject centered filling most of frame, entire subject visible, simple warm ivory studio backdrop and soft ground shadow. Lighting: warm soft studio illumination. Palette: burnt pumpkin orange, muted plum, sage accents and warm ivory. No text, no letters, no numbers, no borders, no logos, no copyrighted characters, no humans, no faces, no clutter. Subject: one cozy neatly folded burnt-orange, plum and cream plaid wool blanket with soft tassels. Large bold clearly visible intersecting plaid stripes and warm thick textile texture. No bed, no pillows, no people.",
+          "sha256": "3883d030d2efb9b2942d0a93d783b2cd03a60304437a5fd68da48b4e64ff3e62"
+        }
+      ]
+    },
+    {
+      "id": "spooky-77",
+      "word": "Fireplace",
+      "category": "Fall Comforts & Activities",
+      "searchQuery": "indoor fireplace burning fire",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-77-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-fireplace.png",
+          "title": "Fireplace \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept\nAsset type: Spooky Season Bingo image candidate for the word Fireplace, pending user approval.\nPrimary request: A polished playful storybook 3D illustration of one cozy indoor stone-and-brick fireplace with a crackling orange fire and neatly stacked wooden logs. A small dark hearth at the base.\nScene/backdrop: Warm ivory, simple studio backdrop; no surrounding room furnishings.\nComposition/framing: Square composition; single fireplace centered, filling most of the frame and fully visible. Clear, instantly recognizable silhouette suited to a small bingo image tile.\nStyle/medium: High-quality soft storybook 3D illustration with rounded forms and tasteful texture.\nLighting/mood: Warm, cozy fall mood, glowing orange flames and soft diffuse lighting.\nConstraints: Exactly one indoor fireplace; no people, no room clutter, no text, no logos, no watermark. Keep all visual attention on the fireplace.",
+          "sha256": "2bafb6e61ba36262c3d96003ed955411217195180bcd5340865ff84e63a9d2ad"
+        }
+      ]
+    },
+    {
+      "id": "spooky-78",
+      "word": "Campfire",
+      "category": "Fall Comforts & Activities",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "wiki-3782539",
+          "imageUrl": "/assets/spooky-season/wiki-spooky-78.png",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Campfire_Pinecone.png",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Campfire_Pinecone.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "Campfire Pinecone.png",
+          "artist": "Emeldil at English Wikipedia\n\n(Original text: Pavan Srinath)",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+          "sha256": "0a075bc1f0076c4f2060ee71f3f8cda762256a7aa4747e228a077caa78c5e898",
+          "status": "approved"
+        }
+      ]
+    },
+    {
+      "id": "spooky-80",
+      "word": "Leaf Pile",
+      "category": "Fall Comforts & Activities",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "spooky-80-generated-v1",
+          "imageUrl": "/assets/spooky-season/generated-leaf-pile.png",
+          "title": "Leaf Pile \u2014 original playful Halloween illustration",
+          "artist": "Generated with OpenAI",
+          "license": "Original illustration",
+          "sourceUrl": "",
+          "status": "approved",
+          "prompt": "Use case: stylized-concept. Asset type: individual Halloween and fall bingo word image, candidate pending user approval. Style: polished playful storybook 3D illustration, handmade clay-like gentle textures, clear friendly forms. Composition: square image, obvious single clear main subject centered filling most of frame, entire subject visible, simple warm ivory studio backdrop and soft ground shadow. Lighting: warm soft studio illumination. Palette: burnt pumpkin orange, muted plum, sage accents and warm ivory. No text, no letters, no numbers, no borders, no logos, no copyrighted characters, no humans, no faces, no clutter. Subject: a clear heaped mound of raked red, burnt orange, and golden-yellow fallen maple leaves, piled into a rounded little hill. Tall three-dimensional mound with stacked overlapping autumn maple leaves, not a flat spread on ground. Small ground shadow, no tree, no rake, no people.",
+          "sha256": "45a02638ba5bcc2aeaba7d3eec8946da7714cf8564cce2309440b8e45503a975"
+        }
+      ]
+    },
+    {
+      "id": "horror-01",
+      "word": "Halloween",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-01-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-01-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:Halloween_(1978)_theatrical_poster.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/a/af/Halloween_%281978%29_theatrical_poster.jpg",
+          "title": "Halloween (1978) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "9504e598206af9c79bdce960bf78bb3c31739d20c5375da85aba2d9f5e7a55c4",
+          "status": "approved",
+          "width": 259,
+          "height": 384,
+          "wikipediaFile": "Halloween_(1978)_theatrical_poster.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/Halloween_%281978_film%29"
+        }
+      ],
+      "filmYear": 1978
+    },
+    {
+      "id": "horror-02",
+      "word": "Friday the 13th",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-02-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-02-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:Friday_the_13th_(1980)_theatrical_poster.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/2/2c/Friday_the_13th_%281980%29_theatrical_poster.jpg",
+          "title": "Friday the 13th (1980) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "fd23ae8e2999a73764dc2619b7cc402dc9ba6b98eb9dbd64965f7d3546e7a49e",
+          "status": "approved",
+          "width": 258,
+          "height": 391,
+          "wikipediaFile": "Friday_the_13th_(1980)_theatrical_poster.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/Friday_the_13th_%281980_film%29"
+        }
+      ],
+      "filmYear": 1980
+    },
+    {
+      "id": "horror-03",
+      "word": "A Nightmare on Elm Street",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-03-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-03-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:A_Nightmare_on_Elm_Street_(1984)_theatrical_poster.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/f/fa/A_Nightmare_on_Elm_Street_%281984%29_theatrical_poster.jpg",
+          "title": "A Nightmare on Elm Street (1984) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "d865ed5c46eccc40fe4b504398694ab15e8a2a8fee79848abcd274f44236b77b",
+          "status": "approved",
+          "width": 258,
+          "height": 391,
+          "wikipediaFile": "A_Nightmare_on_Elm_Street_(1984)_theatrical_poster.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/A_Nightmare_on_Elm_Street"
+        }
+      ],
+      "filmYear": 1984
+    },
+    {
+      "id": "horror-04",
+      "word": "Scream",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-04-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-04-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:Scream_(1996_film)_poster.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/8/86/Scream_%281996_film%29_poster.jpg",
+          "title": "Scream (1996) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "709d7bddf2bd852b1da43452fd416abdd3daccb446e2e0c293a2f9fd58a67aff",
+          "status": "approved",
+          "width": 260,
+          "height": 382,
+          "wikipediaFile": "Scream_(1996_film)_poster.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/Scream_%281996_film%29"
+        }
+      ],
+      "filmYear": 1996
+    },
+    {
+      "id": "horror-05",
+      "word": "The Exorcist",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-05-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-05-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:Exorcist_ver2.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/7/7b/Exorcist_ver2.jpg?utm_source=en.wikipedia.org&utm_campaign=imageinfo&utm_content=original",
+          "title": "The Exorcist (1973) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "6012b7a28c131958889b938706fe7e80315ed5c3e5548af8a8ccc6f490817558",
+          "status": "approved",
+          "width": 252,
+          "height": 378,
+          "wikipediaFile": "Exorcist_ver2.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/The_Exorcist_(film)"
+        }
+      ],
+      "filmYear": 1973
+    },
+    {
+      "id": "horror-06",
+      "word": "The Shining",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-06-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-06-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:The_Shining_(1980)_U.K._release_poster_-_The_tide_of_terror_that_swept_America_IS_HERE.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/1/1d/The_Shining_%281980%29_U.K._release_poster_-_The_tide_of_terror_that_swept_America_IS_HERE.jpg",
+          "title": "The Shining (1980) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "3b81a657520f07e1a562ada0ced21af68d57bc9ed7ef89b2b09a6a98dee9d73b",
+          "status": "approved",
+          "width": 263,
+          "height": 379,
+          "wikipediaFile": "The_Shining_(1980)_U.K._release_poster_-_The_tide_of_terror_that_swept_America_IS_HERE.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/The_Shining_%28film%29"
+        }
+      ],
+      "filmYear": 1980
+    },
+    {
+      "id": "horror-07",
+      "word": "The Texas Chain Saw Massacre",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-07-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-07-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:The_Texas_Chain_Saw_Massacre_(1974)_theatrical_poster.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/a/a0/The_Texas_Chain_Saw_Massacre_%281974%29_theatrical_poster.jpg",
+          "title": "The Texas Chain Saw Massacre (1974) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "d98a9f0e5cae3cadd0173f0fedcb05ad6e516346aff611c812380783df177de1",
+          "status": "approved",
+          "width": 250,
+          "height": 367,
+          "wikipediaFile": "The_Texas_Chain_Saw_Massacre_(1974)_theatrical_poster.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/The_Texas_Chain_Saw_Massacre"
+        }
+      ],
+      "filmYear": 1974
+    },
+    {
+      "id": "horror-08",
+      "word": "The Conjuring",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-08-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-08-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:The_Conjuring_poster.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/8/8c/The_Conjuring_poster.jpg",
+          "title": "The Conjuring (2013) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "a44eb36e5cd6e564bbee31e50a82500de2ed6c6fabd7f565f8fb0d0ab5160bcd",
+          "status": "approved",
+          "width": 220,
+          "height": 326,
+          "wikipediaFile": "The_Conjuring_poster.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/The_Conjuring"
+        }
+      ],
+      "filmYear": 2013
+    },
+    {
+      "id": "horror-09",
+      "word": "Poltergeist",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-09-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-09-poster.png",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:Poltergeist_(1982).png",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/e/e4/Poltergeist_%281982%29.png",
+          "title": "Poltergeist (1982) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "efda8281f93e6f61820548178a7284357599665f19bece4b000cea6c9d61e7f8",
+          "status": "approved",
+          "width": 255,
+          "height": 385,
+          "wikipediaFile": "Poltergeist_(1982).png",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/Poltergeist_%281982_film%29"
+        }
+      ],
+      "filmYear": 1982
+    },
+    {
+      "id": "horror-10",
+      "word": "Psycho",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-10-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-10-poster.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Psycho_(1960)_theatrical_poster_(retouched).jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/76/Psycho_%281960%29_theatrical_poster_%28retouched%29.jpg",
+          "title": "Psycho (1960) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Public domain",
+          "sha256": "79e5e90b8710799161de6674a537a2daf30daf86eca64f984ed3c4355d0bd699",
+          "status": "approved",
+          "width": 1957,
+          "height": 2899,
+          "wikipediaFile": "Psycho_(1960)_theatrical_poster_(retouched).jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/Psycho_%281960_film%29"
+        }
+      ],
+      "filmYear": 1960
+    },
+    {
+      "id": "horror-11",
+      "word": "The Ring",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-11-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-11-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:Theringpostere.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/3/37/Theringpostere.jpg",
+          "title": "The Ring (2002) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "7e6d46fa5dd39467762b6d325fe6ba59c63cce4246c50ca6331713818b21fda9",
+          "status": "approved",
+          "width": 260,
+          "height": 384,
+          "wikipediaFile": "Theringpostere.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/The_Ring_%282002_film%29"
+        }
+      ],
+      "filmYear": 2002
+    },
+    {
+      "id": "horror-12",
+      "word": "IT",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-12-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-12-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:It_(2017)_poster.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/5/5a/It_%282017%29_poster.jpg",
+          "title": "IT (2017) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "2ce2272466cf57d5cf1d01c48496a31162d53596736f7d225b2221c0c2b284d4",
+          "status": "approved",
+          "width": 220,
+          "height": 326,
+          "wikipediaFile": "It_(2017)_poster.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/It_%282017_film%29"
+        }
+      ],
+      "filmYear": 2017
+    },
+    {
+      "id": "horror-13",
+      "word": "Child's Play",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "sourceUrl": "https://cinemore.jp/jp/erudition/795/",
+          "originalUrl": "https://cinemore.jp/images/336b5a39cb4bab82f192da943e0d964ee196e8c6e15efb7248f4e118f3ee5113.jpg",
+          "title": "Child's Play (1988) \u2014 Chucky film still",
+          "artist": "Metro-Goldwyn-Mayer Studios Inc. \u00b7 original 1988 film still",
+          "license": "Film still \u00b7 \u00a9 1988 Metro-Goldwyn-Mayer Studios Inc.",
+          "width": 1200,
+          "height": 675,
+          "id": "horror-13-replacement-v2",
+          "imageUrl": "/assets/spooky-season/replacements/replacement-childs-play-v2.jpg",
+          "sha256": "0656d91b8a79794789687b0e33f873d407b52c17b7328e738beb8716030e1198",
+          "status": "approved"
+        }
+      ],
+      "filmYear": 1988,
+      "replacementPreparedAt": "2026-10-05T15:56:50.828457Z"
+    },
+    {
+      "id": "horror-14",
+      "word": "The Blair Witch Project",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-14-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-14-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:Blair_Witch_Project.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/2/26/Blair_Witch_Project.jpg",
+          "title": "The Blair Witch Project (1999) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "a81f6bd5698ddbf2ccd9acfc692e7d71049da48739ab14af8ae51fda1f3123f6",
+          "status": "approved",
+          "width": 220,
+          "height": 327,
+          "wikipediaFile": "Blair_Witch_Project.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/The_Blair_Witch_Project"
+        }
+      ],
+      "filmYear": 1999
+    },
+    {
+      "id": "horror-15",
+      "word": "Alien",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-15-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-15-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:Alien_movie_poster.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/c/c3/Alien_movie_poster.jpg",
+          "title": "Alien (1979) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "3f0989834eb2a3ea179c99853cc7419a00eaa44382185ef5abd662ab718e3cb0",
+          "status": "approved",
+          "width": 250,
+          "height": 382,
+          "wikipediaFile": "Alien_movie_poster.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/Alien_%28film%29"
+        }
+      ],
+      "filmYear": 1979
+    },
+    {
+      "id": "horror-16",
+      "word": "The Thing",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-16-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-16-poster.png",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:The_Thing_(1982_film).png",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/e/e3/The_Thing_%281982_film%29.png",
+          "title": "The Thing (1982) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "cba49fba052a4a0cd7f79811d0bd9225f8fc85c9023efe09532e430d5162402f",
+          "status": "approved",
+          "width": 250,
+          "height": 379,
+          "wikipediaFile": "The_Thing_(1982_film).png",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/The_Thing_%281982_film%29"
+        }
+      ],
+      "filmYear": 1982
+    },
+    {
+      "id": "horror-17",
+      "word": "Carrie",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-17-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-17-poster.jpg",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:Carrieposter.jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/d/d7/Carrieposter.jpg",
+          "title": "Carrie (1976) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "ed578bc53b4141aeb28585afda8e308a10df07de3226871fb8dd7bd43d5d0c9d",
+          "status": "approved",
+          "width": 255,
+          "height": 381,
+          "wikipediaFile": "Carrieposter.jpg",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/Carrie_%281976_film%29"
+        }
+      ],
+      "filmYear": 1976
+    },
+    {
+      "id": "horror-18",
+      "word": "The Omen",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "sourceUrl": "https://www.primevideo.com/detail/The-Omen/0OJSNEHNX2Q63E2HPUYRMMSQ9M",
+          "originalUrl": "https://m.media-amazon.com/images/S/pv-target-images/b66c4a1cda2009939e9d114a56fd4ee93a202b30b6a1dba6f0c6c924d6e647c2._SX1080_FMjpg_.jpg",
+          "title": "The Omen (1976) \u2014 Damien at the balcony",
+          "artist": "Twentieth Century Fox Film Corp. \u00b7 original 1976 film still",
+          "license": "Film still \u00b7 \u00a9 respective rights holder",
+          "width": 1080,
+          "height": 608,
+          "id": "horror-18-replacement-v2",
+          "imageUrl": "/assets/spooky-season/replacements/replacement-omen-v2.jpg",
+          "sha256": "b0d04c3cc954ee2c741a98713cec4d3e461e097faa4c07577d6d0fd0bf4ef5c9",
+          "status": "approved"
+        }
+      ],
+      "filmYear": 1976,
+      "replacementPreparedAt": "2026-10-05T15:56:50.828457Z"
+    },
+    {
+      "id": "horror-19",
+      "word": "Get Out",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "id": "horror-19-poster",
+          "imageUrl": "/assets/spooky-season/horror/horror-19-poster.png",
+          "sourceUrl": "https://en.wikipedia.org/wiki/File:Get_Out_poster.png",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/en/a/a3/Get_Out_poster.png",
+          "title": "Get Out (2017) \u2014 original film poster",
+          "artist": "Original film artwork",
+          "license": "Film poster \u00b7 \u00a9 respective rights holder",
+          "sha256": "3e8c2c071c26c8d90603f4fcaa44922abadb5502fcd57e008fa019207948244b",
+          "status": "approved",
+          "width": 258,
+          "height": 387,
+          "wikipediaFile": "Get_Out_poster.png",
+          "wikipediaArticleUrl": "https://en.wikipedia.org/wiki/Get_Out"
+        }
+      ],
+      "filmYear": 2017
+    },
+    {
+      "id": "horror-20",
+      "word": "Nosferatu",
+      "category": "Iconic Horror Films",
+      "status": "approved",
+      "candidates": [
+        {
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Max_Schreck_as_Count_Orlok_in_Nosferatu_%E2%80%93_Eine_Symphonie_des_Grauens_(1922).jpg",
+          "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/95/Max_Schreck_as_Count_Orlok_in_Nosferatu_%E2%80%93_Eine_Symphonie_des_Grauens_%281922%29.jpg",
+          "title": "Nosferatu (1922) \u2014 Max Schreck as Count Orlok",
+          "artist": "F. W. Murnau \u00b7 original 1922 film frame",
+          "license": "Public domain \u00b7 published 1922",
+          "width": 705,
+          "height": 900,
+          "id": "horror-20-replacement-v2",
+          "imageUrl": "/assets/spooky-season/replacements/replacement-nosferatu-v2.jpg",
+          "sha256": "dae09609d64b43f5ded02d40e0a96c8943d1386dd14537e753b13a82711c6838",
+          "status": "approved"
+        }
+      ],
+      "filmYear": 1922,
+      "replacementPreparedAt": "2026-10-05T15:56:50.828457Z"
+    }
+  ]
+}

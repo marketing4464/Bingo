@@ -17,8 +17,8 @@ const HostRunbook = (() => {
         ${healthTile("Supabase Sync", health.storageHealthy ? "Ready" : "Needs attention", health.storageHealthy, storageDetail(state.storage))}
         ${healthTile("Display Screen", health.displayConnected ? "Open" : "Not seen yet", health.displayConnected, seenDetail(health.lastDisplaySeenAt))}
         ${healthTile("Players", `${health.activePlayers || 0} active`, (health.activePlayers || 0) > 0, "Players appear here after they enter cards.")}
-        ${healthTile("QR + Deck", health.joinReady && health.deckReady ? "Ready" : "Check setup", health.joinReady && health.deckReady, health.joinReady ? `${state.deck.length} moments left` : "Join link missing")}
-        ${healthTile("Current Moment", health.currentMomentReady ? "Ready" : "Waiting", health.currentMomentReady, currentMomentDetail(state))}
+        ${healthTile("QR + Deck", health.joinReady && health.deckReady ? "Ready" : "Check setup", health.joinReady && health.deckReady, health.joinReady ? `${state.deck.length} words left` : "Join link missing")}
+        ${healthTile("Current Word", health.currentMomentReady ? "Ready" : "Waiting", health.currentMomentReady, currentMomentDetail(state))}
       </div>
 
       <div class="host-runner-body">
@@ -33,7 +33,7 @@ const HostRunbook = (() => {
         </div>
         <div class="host-notes">
           <strong>Player rules to announce</strong>
-          <p>Each player can choose 1-3 cards. Regular BINGO is any row, column, or diagonal for 100 points. Four Corners is a 50-point bonus. Round 3 allows regular BINGO plus a 200-point X Bingo bonus. Players keep their Round 3 cards for the final round. The final round is cover-all blackout only for 500 points; after a blackout, that card is replaced with a new card. Remind players to yell BINGO and make noise every time, because the loudest table wins a prize at the end.</p>
+          <p>Each player can choose 1-3 cards. There are three 20-minute rounds, with fresh cards dealt each round and 10-minute breaks after Rounds 1 and 2. Regular BINGO is any row, column, or diagonal for 100 points. Round 2 adds a 50-point Four Corners bonus. Round 3 is the final round and adds a 200-point X Bingo bonus. Remind players to yell BINGO and make noise every time, because the loudest table wins a prize at the end.</p>
         </div>
       </div>
     `;
@@ -62,12 +62,12 @@ const HostRunbook = (() => {
     }
     if (state.status === "playing") {
       return {
-        label: state.currentWord ? "Pull Next Moment" : "Restore Moment",
+        label: state.currentWord ? "Pull Next Word" : "Restore Word",
         action: "pullWord",
         kind: "primary",
         detail: state.currentWord
           ? `Live now: ${state.currentWord.text}. Auto-pull is every ${state.autoPullEverySeconds} seconds.`
-          : "The round is live, but no current moment is visible. Pull the next moment to recover.",
+          : "The round is live, but no current word is visible. Pull the next word to recover.",
       };
     }
     if (state.status === "paused") {
@@ -91,7 +91,7 @@ const HostRunbook = (() => {
         label: "Show Final Display",
         action: "openDisplay",
         kind: "secondary",
-        detail: "Final winners are showing over the looping video. Confirm prize pickup names before resetting.",
+        detail: "Final winners are on display. Confirm prize pickup names before resetting.",
       };
     }
     return {
@@ -117,9 +117,9 @@ const HostRunbook = (() => {
     return [
       { number: "1", text: "Open the display screen and confirm the QR code says Scan to play.", state: status === "setup" ? "active" : "done" },
       { number: "2", text: "Start the 15-minute countdown and let players enter names and choose up to 3 cards.", state: status === "countdown" ? "active" : stepDone(status, ["playing", "break", "ended"]) },
-      { number: "3", text: "Round 1 starts automatically. Regular BINGO scores in rounds 1-3; the final round is blackout only.", state: status === "playing" || status === "paused" ? "active" : stepDone(status, ["break", "ended"]) },
+      { number: "3", text: "Round 1 starts automatically. All three rounds allow regular BINGO; final Round 3 also has a 200-point X bonus.", state: status === "playing" || status === "paused" ? "active" : stepDone(status, ["break", "ended"]) },
       { number: "4", text: "During breaks, confirm leaderboard and claims before the next round starts.", state: status === "break" ? "active" : stepDone(status, ["ended"]) },
-      { number: "5", text: "At the end, leave the final winner video running and announce prize pickup.", state: status === "ended" ? "active" : "waiting" },
+      { number: "5", text: "At the end, leave the final winners on display and announce prize pickup.", state: status === "ended" ? "active" : "waiting" },
     ];
   }
 
@@ -149,7 +149,7 @@ const HostRunbook = (() => {
 
   function currentMomentDetail(state) {
     if (state.status !== "playing") return statusLabel(state.status);
-    return state.currentWord ? state.currentWord.text : "No active moment yet.";
+    return state.currentWord ? state.currentWord.text : "No active word yet.";
   }
 
   function relativeTime(timestamp) {

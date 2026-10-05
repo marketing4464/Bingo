@@ -1,6 +1,6 @@
-# On Par Pop Culture Bingo
+# On Par Spooky Season Bingo
 
-Digital bingo software for **Pop Culture Moments Bingo** at On Par Entertainment.
+Digital bingo software for **Spooky Season Bingo** at On Par Entertainment, live at https://www.opebingo.com/. The active deck has 40 Halloween words, 20 fall favorites, and 20 iconic horror films, with all 80 images individually approved.
 
 ## Run it
 
@@ -50,13 +50,13 @@ If players see a Vercel login after scanning the QR code, the display is likely 
 
 ## Event Format
 
-- Round 1: Red Carpet Warm-Up, 15 minutes, Any Line
-- Round 2: TV & Movie Icons, 15 minutes, regular bingo with a +50 four corners bonus
-- Round 3: Music Video Moments, 15 minutes, regular bingo with a +50 X bingo bonus
-- Round 4: Viral Finale, 15 minutes, Blackout
-- Breaks: 10 minutes between rounds
+- Round 1: 20 minutes, Any Line worth 100 points
+- Round 2: 20 minutes, regular bingo with a +50 four corners bonus
+- Round 3 (final): 20 minutes, regular bingo worth 100 points with a +200 X bingo bonus
+- Breaks: 10 minutes after Rounds 1 and 2
+- Fresh cards are dealt at the start of each round
 
-This creates a roughly 90-105 minute event with a few minutes for welcome, winner checks, and prize handoffs. Add music, prize calls, or a final bonus round if you want to stretch it closer to 2 hours.
+The event has exactly three rounds: 60 minutes of play and 20 minutes of breaks. Including the 15-minute opening countdown, the schedule takes 95 minutes before winner checks and prize handoffs.
 
 ## Host Flow
 
@@ -64,17 +64,17 @@ This creates a roughly 90-105 minute event with a few minutes for welcome, winne
 2. Open `http://localhost:4173`.
 3. Open the display page on the TV/projector.
 4. Let players scan the QR code.
-5. Click **Start Round**.
-6. The display pulls a new random moment every 20 seconds. Click **Pull Next Moment** only if the caller wants to advance early.
+5. Click **Start 15-Min Countdown**. Round 1 starts automatically at zero, or use **Start Round Now** if the room is ready early.
+6. The display pulls a new random word every 20 seconds. Click **Pull Next Word** if the caller wants to advance early.
 7. Verify any claims shown in the host console.
-8. Click **Start 10-Min Break** between rounds.
-9. Click **Next Round**, then **Start Round** again.
+8. After Rounds 1 and 2, the leaderboard and 10-minute break appear automatically. Use **Start 10-Min Break** to end a round early.
+9. The next round starts automatically after the break, or use **Next Round** to start early. After Round 3, the final winners appear.
 
-Players must tap/select their own squares as the moments are called. Their BINGO button turns on only when the selected squares match that round's pattern.
+Players must tap/select their own squares as the words are called. Their BINGO button turns on only when the selected squares match that round's pattern.
 
-Each regular BINGO is worth 100 points. Four corners, X bingo, and coverup add a 50-point bonus; the coverup round scores 150 points for the coverup claim. A player can claim multiple BINGOs on the same card as new lines or patterns are completed, and the break screen shows the overall points leaderboard.
+Each regular BINGO is worth 100 points in all three rounds. Round 2 Four Corners adds 50 points, and final Round 3 X Bingo adds 200 points. A player can claim multiple BINGOs on the same card as new lines or patterns are completed, and the break screen shows the overall points leaderboard.
 
-Pulled-word images use approved images from the active saved game. The default Pop Culture game is pre-approved from `public/assets/google-image-manifest.json`. New themed games can fetch recommendations through official image-search APIs only:
+Spooky Season uses the saved deck in `data/spooky-season-deck.json`, explicit decisions in `data/image-review-decisions.json`, and the matching approved local assets in `public/assets/spooky-season/`. `npm run cf:deploy` checks all 80 approvals and image hashes before using the existing Cloudflare worker/domain/storage configuration. A deck version changes saved cards and rejects old card claims. New themed games can fetch recommendations through official image-search APIs only:
 
 - Google Custom Search JSON API: `GOOGLE_API_KEY` and `GOOGLE_CX`
 - Bing Image Search: `BING_IMAGE_SEARCH_KEY` and optional `BING_IMAGE_SEARCH_ENDPOINT`

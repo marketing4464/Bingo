@@ -13,7 +13,6 @@ const displayEls = {
   momentPanel: $("#momentPanel"),
   leaderboardPanel: $("#leaderboardPanel"),
   bingoAlert: $("#bingoAlert"),
-  finalVideo: $("#finalLeaderboardVideo"),
 };
 let visibleClaimId = null;
 let claimAlertTimer = null;
@@ -42,6 +41,13 @@ window.addEventListener("resize", () => {
 });
 
 function stableDisplayState(state) {
+  if ((state.deckVersion && state.deckVersion !== displayState?.deckVersion)
+    || (state.roundPlanVersion && state.roundPlanVersion !== displayState?.roundPlanVersion)) {
+    heldCountdownState = null;
+    lastDisplayedMoment = null;
+    visibleClaimId = null;
+    visibleHypeUpdatedAt = null;
+  }
   if (state.status === "countdown" && state.countdownEndsAt) {
     heldCountdownState = state;
     return state;
@@ -94,7 +100,6 @@ function renderDisplay(state) {
   const joinTitle = document.querySelector(".join-strip strong");
   if (joinTitle) joinTitle.textContent = state.status === "countdown" ? "Scan to play!" : "Join the game";
   updateDisplayTimers(state);
-  updateFinalVideo(state.status === "ended");
 
   if (state.status === "countdown") {
     lastDisplayedMoment = null;
@@ -162,24 +167,25 @@ function fitSingleLineText(element, minSize) {
 }
 
 function renderPregameCountdown(state) {
-  displayEls.title.textContent = "Disney & Pixar Bingo";
-  displayEls.round.textContent = "Opening countdown";
+  const waitingForHost = state.status === "setup";
+  displayEls.title.textContent = "Spooky Season Bingo";
+  displayEls.round.textContent = waitingForHost ? "Waiting for the host" : "Opening countdown";
   displayEls.leaderboardPanel.innerHTML = `
     <div class="pregame-layout">
       <div class="pregame-panel event-art-panel">
-        <p class="brand-kicker">The Story Starts Soon</p>
-        <h2>Starts In</h2>
-        <strong class="pregame-countdown" id="pregameCountdown">${formatClock(state.countdownEndsAt - Date.now())}</strong>
-        <p class="pregame-copy">${escapeHtml(state.countdownCopy || "Round 1 starts automatically when the countdown ends.")}</p>
+        <p class="brand-kicker">The spooky fun starts soon</p>
+        <h2>${waitingForHost ? "Join the game" : "Starts In"}</h2>
+        ${waitingForHost ? "" : `<strong class="pregame-countdown" id="pregameCountdown">${formatClock(state.countdownEndsAt - Date.now())}</strong>`}
+        <p class="pregame-copy">${escapeHtml(waitingForHost ? "Waiting for the host to start the opening countdown. Scan the QR code to get your cards." : state.countdownCopy || "Round 1 starts automatically when the countdown ends.")}</p>
         <div class="pregame-rules">
           <strong>BINGO adds points</strong>
-          <span>Points determine the winners. Regular BINGO is 100. Round 3 X bonus is 200. Keep Round 3 cards for the final: cover-all blackout only for 500, then that card is replaced. Loudest table wins a prize, so yell BINGO every time.</span>
+          <span>Three 20-minute rounds with fresh cards each round. Regular BINGO is 100. Round 2 Four Corners bonus is 50. Final Round 3 X bonus is 200. Points determine the winners. Loudest table wins a prize, so yell BINGO every time.</span>
         </div>
       </div>
       <div class="pregame-qr-card">
         <strong>Scan to play!</strong>
         <span>${escapeHtml(state.joinUrl)}</span>
-        <img id="pregameQr" alt="QR code to join Disney and Pixar Bingo" />
+        <img id="pregameQr" alt="QR code to join Spooky Season Bingo" />
       </div>
     </div>
   `;
@@ -211,16 +217,6 @@ function renderLeaderboard(state) {
     ${renderTopLeaders(rows, isEnded)}
   `;
   scheduleFinalWinnerFit();
-}
-
-function updateFinalVideo(shouldShow) {
-  if (!displayEls.finalVideo) return;
-  displayEls.finalVideo.classList.toggle("hidden", !shouldShow);
-  if (shouldShow) {
-    displayEls.finalVideo.play().catch(() => {});
-  } else {
-    displayEls.finalVideo.pause();
-  }
 }
 
 function renderTopLeaders(rows, isEnded) {

@@ -2,6 +2,8 @@ let player = "";
 let cards = [];
 let currentState = null;
 let currentCardRoundIndex = null;
+let currentCardDeckVersion = null;
+let refreshingDeckCards = false;
 let playerHeartbeatTimer = null;
 let attemptedSessionRestore = false;
 let lastBingoSoundClaimId = null;
@@ -39,6 +41,7 @@ joinForm.addEventListener("submit", async (event) => {
     const deal = await dealCards(count);
     cards = deal.cards;
     currentCardRoundIndex = deal.roundIndex;
+    currentCardDeckVersion = deal.deckVersion;
     rememberLatestClaim(state);
     startPlayerHeartbeat();
     joinPanel.classList.add("hidden");
@@ -59,16 +62,31 @@ subscribe(async (state) => {
     attemptedSessionRestore = await restorePlayerSession(state);
   }
   if (!gamePanel.classList.contains("hidden")) {
+    if (refreshingDeckCards) return;
+    if (currentCardDeckVersion !== state.deckVersion) {
+      const count = Math.max(1, Math.min(3, cards.length || Number($("#cardCount").value || 1)));
+      refreshingDeckCards = true;
+      cards = [];
+      currentCardRoundIndex = null;
+      currentCardDeckVersion = null;
+      renderPlayer(state);
+      try {
+        await dealNewRoundCards(count);
+        savePlayerSession();
+        showToast("The bingo words changed. New cards dealt.");
+      } catch (error) {
+        joinPanel.classList.remove("hidden");
+        gamePanel.classList.add("hidden");
+        showToast(error.message || "Please join again to get the updated cards.");
+        return;
+      } finally {
+        refreshingDeckCards = false;
+      }
+    }
     if (currentCardRoundIndex !== null && state.roundIndex < currentCardRoundIndex) return;
     if (currentCardRoundIndex !== null && state.roundIndex > currentCardRoundIndex) {
-      if (shouldCarryCardsIntoRound(state)) {
-        currentCardRoundIndex = state.roundIndex;
-        cards.forEach((card) => card.claimedBingos.clear());
-        showToast("Final round started. Keep your cards: blackout only.");
-      } else {
-        await dealNewRoundCards();
-        showToast(`Round ${state.roundIndex + 1} started. New cards dealt.`);
-      }
+      await dealNewRoundCards();
+      showToast(`Round ${state.roundIndex + 1} started. New cards dealt.`);
       savePlayerSession();
     }
     playNewBingoSound(state);
@@ -81,6 +99,7 @@ async function dealCards(count) {
   const result = await api("/api/deal-cards", { player, count });
   return {
     roundIndex: result.roundIndex,
+    deckVersion: result.deckVersion,
     cards: result.cards.map((card) => ({
       number: card.number,
       cells: card.cells,
@@ -91,18 +110,11 @@ async function dealCards(count) {
   };
 }
 
-async function dealNewRoundCards() {
-  const count = Math.max(1, Math.min(3, cards.length || Number($("#cardCount").value || 1)));
+async function dealNewRoundCards(count = Math.max(1, Math.min(3, cards.length || Number($("#cardCount").value || 1)))) {
   const deal = await dealCards(count);
   cards = deal.cards;
   currentCardRoundIndex = deal.roundIndex;
-}
-
-function shouldCarryCardsIntoRound(state) {
-  return Boolean(state
-    && state.round?.pattern === "Blackout"
-    && currentCardRoundIndex === state.roundIndex - 1
-    && cards.length);
+  currentCardDeckVersion = deal.deckVersion;
 }
 
 function renderPlayer(state) {
@@ -229,6 +241,7 @@ async function addCard() {
     }
     cards = [...cards, ...addedCards].slice(0, 3);
     currentCardRoundIndex = deal.roundIndex;
+    currentCardDeckVersion = deal.deckVersion;
     if (currentState) renderPlayer(currentState);
     savePlayerSession();
     showToast(`Card ${cards.length} added. You can play up to 3 cards.`);
@@ -410,6 +423,7 @@ async function replaceBlackoutCard(cardNumber) {
   if (!replacement) throw new Error("Could not deal a replacement card.");
   cards = cards.map((card) => card.number === cardNumber ? replacement : card);
   currentCardRoundIndex = deal.roundIndex;
+  currentCardDeckVersion = deal.deckVersion;
 }
 
 function renderRecentPulls(state) {
@@ -421,7 +435,7 @@ function renderRecentPulls(state) {
         <strong>${escapeHtml(word.text)}</strong>
       </span>
     `).join("")
-    : `<span class="empty-recent">No moments pulled yet.</span>`;
+    : `<span class="empty-recent">No words pulled yet.</span>`;
 }
 
 function showToast(message) {
@@ -454,6 +468,7 @@ function savePlayerSession() {
     localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify({
       player,
       roundIndex: currentCardRoundIndex,
+      deckVersion: currentCardDeckVersion,
       cards: cards.map((card) => ({
         number: card.number,
         cells: card.cells,
@@ -473,15 +488,17 @@ async function restorePlayerSession(state) {
   player = saved.player;
   cards = saved.cards;
   currentCardRoundIndex = saved.roundIndex;
+  currentCardDeckVersion = saved.deckVersion;
   rememberLatestClaim(state);
+  if (currentCardDeckVersion !== state.deckVersion) {
+    const count = cards.length;
+    cards = [];
+    currentCardRoundIndex = null;
+    await dealNewRoundCards(count);
+  }
   if (currentCardRoundIndex > state.roundIndex) return false;
   if (currentCardRoundIndex < state.roundIndex) {
-    if (shouldCarryCardsIntoRound(state)) {
-      currentCardRoundIndex = state.roundIndex;
-      cards.forEach((card) => card.claimedBingos.clear());
-    } else {
-      await dealNewRoundCards();
-    }
+    await dealNewRoundCards();
   }
   $("#playerName").value = player;
   $("#cardCount").value = String(Math.max(1, Math.min(3, cards.length)));
@@ -507,6 +524,7 @@ function loadPlayerSession() {
     return {
       player: String(saved.player),
       roundIndex: Number.isInteger(saved.roundIndex) ? saved.roundIndex : 0,
+      deckVersion: String(saved.deckVersion || ""),
       cards: restoredCards,
     };
   } catch (error) {

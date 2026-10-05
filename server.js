@@ -4,6 +4,7 @@ const path = require("node:path");
 const os = require("node:os");
 const crypto = require("node:crypto");
 const { URL } = require("node:url");
+const seasonal = require("./seasonal-deck.js");
 
 const PORT = Number(process.env.PORT || 4173);
 
@@ -315,8 +316,8 @@ const rounds = [
   { name: "Round 1", pattern: "Any Line", playMinutes: 20, points: 100 },
   { name: "Round 2", pattern: "Four Corners", playMinutes: 20, points: 100, bonusPoints: 50 },
   { name: "Round 3", pattern: "X Pattern", playMinutes: 20, points: 100, bonusPoints: 200 },
-  { name: "Final Round", pattern: "Blackout", playMinutes: 30, points: 500 },
 ];
+const ROUND_PLAN_VERSION = "spooky-season-three-rounds-v1";
 
 function isFinalRoundIndex(roundIndex) {
   return Number(roundIndex) === rounds.length - 1;
@@ -324,6 +325,7 @@ function isFinalRoundIndex(roundIndex) {
 
 const clients = new Set();
 
+let gameStoreMigrationPending = false;
 let gameStore = loadGameStore();
 let state = freshState();
 
@@ -332,20 +334,49 @@ function loadGameStore() {
     const parsed = JSON.parse(fs.readFileSync(THEMED_GAMES_PATH, "utf8"));
     const games = Array.isArray(parsed.games) ? parsed.games.map(normalizeGame).filter(Boolean) : [];
     if (games.length) {
-      return {
+      return migrateSeasonalGameStore({
         updatedAt: Number(parsed.updatedAt) || Date.now(),
         activeGameId: parsed.activeGameId || games[0].id,
         games,
-      };
+      });
     }
   } catch {
-    // First run uses the built-in pop culture deck.
+    // First run uses the approved seasonal deck.
   }
-  const defaultGame = createDefaultDisneyPixarGame();
+  const defaultGame = seasonal.game(rounds);
   return {
     updatedAt: Date.now(),
     activeGameId: defaultGame.id,
     games: [defaultGame],
+  };
+}
+
+function migrateSeasonalGameStore(snapshot) {
+  const seasonalGame = seasonal.game(rounds);
+  const previous = snapshot.games.find((game) => game.id === seasonal.GAME_ID);
+  const hasDisneyGame = snapshot.games.some((game) => game.id === "disney-pixar-bingo");
+  const previousVersion = previous && gameDeckVersion(previous);
+  if (!hasDisneyGame && previousVersion === seasonalGame.deckVersion) {
+    if (JSON.stringify(previous.roundSettings) === JSON.stringify(rounds)) return snapshot;
+    const updatedAt = Math.max(Date.now(), Number(snapshot.updatedAt) + 1 || 0);
+    gameStoreMigrationPending = true;
+    return {
+      ...snapshot,
+      updatedAt,
+      games: snapshot.games.map((game) => game.id === seasonal.GAME_ID
+        ? { ...game, roundSettings: rounds, updatedAt: new Date(updatedAt).toISOString() }
+        : game),
+    };
+  }
+  const games = snapshot.games.filter((game) => !["disney-pixar-bingo", seasonal.GAME_ID].includes(game.id));
+  games.unshift(seasonalGame);
+  gameStoreMigrationPending = true;
+  return {
+    ...snapshot,
+    updatedAt: Math.max(Date.now(), Number(snapshot.updatedAt) + 1 || 0),
+    activeGameId: ["disney-pixar-bingo", seasonal.GAME_ID].includes(snapshot.activeGameId)
+      ? seasonal.GAME_ID : snapshot.activeGameId,
+    games,
   };
 }
 
@@ -390,7 +421,8 @@ async function hydrateGameStoreFromStorage({ force = false } = {}) {
       const rows = await supabaseRequest(
         `${SUPABASE_STATE_TABLE}?id=eq.${encodeURIComponent(GAME_STORE_ROW_ID)}&select=state`,
       );
-      const snapshot = normalizeGameStoreSnapshot(Array.isArray(rows) ? rows[0]?.state : null);
+      const storedSnapshot = normalizeGameStoreSnapshot(Array.isArray(rows) ? rows[0]?.state : null);
+      const snapshot = storedSnapshot && migrateSeasonalGameStore(storedSnapshot);
       if (snapshot && (Number(snapshot.updatedAt) || 0) >= (Number(gameStore.updatedAt) || 0)) {
         gameStore = snapshot;
       }
@@ -518,6 +550,10 @@ function normalizeDeckItem(item) {
     id: String(item.id || slugId(word)),
     word,
     description: String(item.description || item.category || "").slice(0, 160),
+    filmYear: item.filmYear || null,
+    imageArtist: String(item.imageArtist || ""),
+    imageLicense: String(item.imageLicense || ""),
+    imageLicenseUrl: String(item.imageLicenseUrl || ""),
     approvedImageUrl: String(item.approvedImageUrl || item.imageUrl || ""),
     imageSourceUrl: String(item.imageSourceUrl || ""),
     imageStatus: ["pending", "approved", "denied"].includes(item.imageStatus) ? item.imageStatus : "pending",
@@ -559,7 +595,7 @@ function getActiveGame() {
   return gameStore.games.find((game) => game.id === gameStore.activeGameId)
     || gameStore.games.find((game) => game.status === "live")
     || gameStore.games[0]
-    || createDefaultPopCultureGame();
+    || seasonal.game(rounds);
 }
 
 function gameReadyFromDeck(wordDeck) {
@@ -578,6 +614,7 @@ function publicGameSummary(game) {
   const progress = gameReadyFromDeck(game.wordDeck);
   return {
     id: game.id,
+    deckVersion: gameDeckVersion(game),
     title: game.title,
     theme: game.theme,
     status: game.status,
@@ -611,6 +648,16 @@ function publicGameDetail(game) {
     roundSettings: game.roundSettings,
     wordDeck: game.wordDeck,
   };
+}
+
+function gameDeckVersion(game = getActiveGame()) {
+  return crypto.createHash("sha256")
+    .update(JSON.stringify(game.wordDeck.map(({ id, word }) => ({ id, word }))))
+    .digest("hex");
+}
+
+function activeDeckVersion() {
+  return gameDeckVersion(getActiveGame());
 }
 
 function activeMoments() {
@@ -701,6 +748,8 @@ function freshState() {
   const activeGame = getActiveGame();
   return {
     gameId: activeGame.id,
+    deckVersion: activeDeckVersion(),
+    roundPlanVersion: ROUND_PLAN_VERSION,
     title: activeGame.title,
     theme: activeGame.theme,
     venue: "On Par Entertainment",
@@ -750,6 +799,8 @@ function playerPublicStateForOrigin(origin) {
   const publicState = publicStateForOrigin(origin);
   return {
     gameId: publicState.gameId,
+    deckVersion: publicState.deckVersion,
+    roundPlanVersion: publicState.roundPlanVersion,
     title: publicState.title,
     theme: publicState.theme,
     venue: publicState.venue,
@@ -819,6 +870,7 @@ function supabaseBrowserConfig() {
     url: config.url,
     key: publishableKey,
     publicStateTable: SUPABASE_PUBLIC_STATE_TABLE,
+    deckVersion: activeDeckVersion(),
   };
 }
 
@@ -870,10 +922,57 @@ function roleFromWebRequest(request) {
 
 async function prepareStateForRequest(canAdvanceGameClock) {
   await hydrateGameStoreFromStorage();
+  if (gameStoreMigrationPending) {
+    gameStoreMigrationPending = false;
+    await saveGameStore();
+  }
   await hydrateStateFromStorage({ force: true });
+  const deckChanged = synchronizeActiveDeck();
+  const roundsChanged = normalizeRoundConfiguration();
+  if (deckChanged || roundsChanged) await flushStateToStorage();
   if (!canAdvanceGameClock) return;
   const timingClamped = clampLivePullTimer();
   if (advanceState() || timingClamped) await flushStateToStorage();
+}
+
+function normalizeRoundConfiguration() {
+  let changed = state.roundPlanVersion !== ROUND_PLAN_VERSION;
+  state.roundPlanVersion = ROUND_PLAN_VERSION;
+  // A completed third round no longer queues a fourth round, and an old fourth
+  // round becomes an ended event while its calls and claims remain available.
+  if (state.roundIndex >= rounds.length || (state.roundIndex === rounds.length - 1 && state.status === "break")) {
+    state.roundIndex = rounds.length - 1;
+    state.status = "ended";
+    state.countdownEndsAt = null;
+    state.breakEndsAt = null;
+    state.playEndsAt = null;
+    state.pausedAt = null;
+    state.playRemainingMs = null;
+    state.nextPullAt = null;
+    changed = true;
+  }
+  if (Array.isArray(state.rounds) && JSON.stringify(state.rounds) !== JSON.stringify(rounds)) {
+    state.rounds = rounds;
+    changed = true;
+  }
+  if (state.round && JSON.stringify(state.round) !== JSON.stringify(rounds[state.roundIndex])) {
+    state.round = rounds[state.roundIndex];
+    changed = true;
+  }
+  if (!changed) return false;
+  state.updatedAt = Math.max(Date.now(), Number(state.updatedAt) + 1 || 0);
+  broadcast();
+  return true;
+}
+
+function synchronizeActiveDeck() {
+  if (state.gameId === getActiveGame().id && state.deckVersion === activeDeckVersion()) return false;
+  const previousUpdatedAt = Number(state.updatedAt) || 0;
+  state = freshState();
+  state.updatedAt = Math.max(Date.now(), previousUpdatedAt + 1);
+  imageCache.clear();
+  broadcast();
+  return true;
 }
 
 async function hydrateStateFromStorage({ force = false } = {}) {
@@ -927,6 +1026,8 @@ function normalizeStateSnapshot(snapshot) {
   return {
     ...freshState(),
     ...snapshot,
+    deckVersion: String(snapshot.deckVersion || ""),
+    roundPlanVersion: String(snapshot.roundPlanVersion || ""),
     currentWord: compactMoment(snapshot.currentWord),
     called: compactMoments(snapshot.called),
     deck: Array.isArray(snapshot.deck) ? compactMoments(snapshot.deck) : shuffle(activeMoments()),
@@ -1102,6 +1203,8 @@ function createSignedCard(player, number) {
   }
   const payload = {
     v: 1,
+    gameId: state.gameId,
+    deckVersion: state.deckVersion,
     player,
     roundIndex: state.roundIndex,
     number,
@@ -1193,7 +1296,8 @@ function completedBingosForCard(cells, selectedIndices, pattern, calledWords) {
 
 function cardRoundMatchesCurrentRound(cardRoundIndex) {
   return cardRoundIndex === state.roundIndex
-    || (isFinalRoundIndex(state.roundIndex) && cardRoundIndex === state.roundIndex - 1);
+    || (isFinalRoundIndex(state.roundIndex) && rounds[state.roundIndex]?.pattern === "Blackout"
+      && cardRoundIndex === state.roundIndex - 1);
 }
 
 function alreadyClaimedPattern(player, cardNumber, bingoId, fingerprint) {
@@ -1225,6 +1329,8 @@ function validateClaimBody(body) {
   }
   if (
     tokenPayload.v !== 1
+    || tokenPayload.gameId !== state.gameId
+    || tokenPayload.deckVersion !== state.deckVersion
     || tokenPayload.player !== player
     || !cardRoundMatchesCurrentRound(tokenPayload.roundIndex)
     || Number(tokenPayload.number) !== cardNumber
@@ -1300,7 +1406,7 @@ function ensureLiveRoundHasMoment() {
 
 function buildRoundDeck(previousRoundCalled = []) {
   const sourceMoments = activeMoments();
-  if (!isFinalRoundIndex(state.roundIndex)) return shuffle(sourceMoments);
+  if (!isFinalRoundIndex(state.roundIndex) || rounds[state.roundIndex]?.pattern !== "Blackout") return shuffle(sourceMoments);
   const previousTexts = new Set((previousRoundCalled || []).map((moment) => moment?.text).filter(Boolean));
   const newMoments = sourceMoments.filter((moment) => !previousTexts.has(moment.text));
   const duplicateMoments = sourceMoments.filter((moment) => previousTexts.has(moment.text));
@@ -1328,7 +1434,7 @@ function startOpeningCountdown() {
   state.status = "countdown";
   state.currentWord = null;
   state.called = [];
-  state.deck = shuffle(moments);
+  state.deck = shuffle(activeMoments());
   state.claims = [];
   state.countdownEndsAt = Date.now() + PREGAME_COUNTDOWN_MS;
   state.breakEndsAt = null;
@@ -1805,6 +1911,9 @@ function imageSearchQuery(text, category) {
 }
 
 async function findMomentImage(text, category) {
+  if (getActiveGame().id === seasonal.GAME_ID && !getActiveGame().wordDeck.some((item) => item.word === text && item.imageStatus === "approved" && item.approvedImageUrl)) {
+    return { ok: true, approved: false, status: "pending", imageStatus: "pending", url: null, title: text, source: "Awaiting image approval" };
+  }
   const key = `${text}|${category || ""}`;
   if (imageCache.has(key)) return imageCache.get(key);
 
@@ -1812,8 +1921,15 @@ async function findMomentImage(text, category) {
   if (activeItem) {
     const result = {
       ok: true,
+      approved: true,
+      status: "approved",
+      imageStatus: "approved",
       url: activeItem.approvedImageUrl,
       title: activeItem.word,
+      sourceUrl: activeItem.imageSourceUrl || "",
+      artist: activeItem.imageArtist || "",
+      license: activeItem.imageLicense || "",
+      licenseUrl: activeItem.imageLicenseUrl || "",
       query: imageSearchQuery(text, category),
       source: activeItem.imageSourceUrl || "Approved theme image",
       cached: true,
@@ -2166,7 +2282,7 @@ async function routeApi(req, res, pathname) {
   if (pathname === "/api/deal-cards") {
     const player = String(body.player || "Player").slice(0, 40);
     const cards = dealSignedCards(player, body.count);
-    sendJson(res, { ok: true, roundIndex: state.roundIndex, cards });
+    sendJson(res, { ok: true, roundIndex: state.roundIndex, gameId: state.gameId, deckVersion: state.deckVersion, cards });
     return;
   }
 
@@ -2424,7 +2540,7 @@ async function handleApiWebRequest(request, pathname) {
   if (pathname === "/api/deal-cards") {
     const player = String(body.player || "Player").slice(0, 40);
     const cards = dealSignedCards(player, body.count);
-    return webJson({ ok: true, roundIndex: state.roundIndex, cards });
+    return webJson({ ok: true, roundIndex: state.roundIndex, gameId: state.gameId, deckVersion: state.deckVersion, cards });
   }
 
   if (pathname === "/api/start-round") {
@@ -2594,7 +2710,7 @@ if (require.main === module) {
   server.listen(PORT, "0.0.0.0", () => {
     const local = `http://localhost:${PORT}`;
     const network = `http://${getLocalIp()}:${PORT}`;
-    console.log(`On Par Pop Culture Bingo is running:`);
+    console.log(`${getActiveGame().title} is running:`);
     console.log(`Host:    ${local}`);
     console.log(`Display: ${local}/display`);
     console.log(`Players: ${network}/play`);

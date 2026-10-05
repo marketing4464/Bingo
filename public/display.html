@@ -3,28 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>On Par Disney & Pixar Bingo Display</title>
+    <title>On Par Spooky Season Bingo Display</title>
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/spooky-theme.css" />
   </head>
   <body class="display-body">
     <main class="display-shell">
-      <video
-        class="final-leaderboard-video hidden"
-        id="finalLeaderboardVideo"
-        src="/assets/event-art/final-leaderboard-winners.mp4"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-        aria-hidden="true"
-      ></video>
+
       <header class="display-header">
         <div class="brand-lockup display-brand">
           <img class="brand-logo display-logo" src="/assets/on-par-logo-white.png" alt="On Par Entertainment logo" />
           <div>
           <p class="brand-kicker">On Par Entertainment</p>
-          <h1 id="displayTitle">Disney & Pixar Bingo</h1>
+          <h1 id="displayTitle">Spooky Season Bingo</h1>
           <p class="subtitle" id="displayRound">Round</p>
           </div>
         </div>
@@ -33,10 +24,10 @@
 
       <section class="display-word">
         <div class="draw-box display-moment-box" id="momentPanel">
-          <img class="moment-art display-art" id="displayMomentImage" alt="Current Disney and Pixar moment image" />
+          <img class="moment-art display-art" id="displayMomentImage" alt="Current approved Spooky Season image" />
           <div class="moment-copy">
             <div class="draw-word" id="displayWord">Scan In</div>
-            <div class="draw-category" id="displayCategory">Disney & Pixar Bingo</div>
+            <div class="draw-category" id="displayCategory">Spooky Season Bingo</div>
           </div>
         </div>
         <div class="leaderboard-panel hidden" id="leaderboardPanel"></div>
@@ -48,14 +39,14 @@
           <strong>Recently Pulled</strong>
           <div class="word-list" id="recentWords"></div>
         </div>
-        <div class="countdown-instructions" aria-label="How to play Disney and Pixar Bingo">
+        <div class="countdown-instructions" aria-label="How to play Spooky Season Bingo">
           <div>
             <strong>Scan To Join</strong>
             <span>Enter your name and choose 1-3 cards.</span>
           </div>
           <div>
             <strong>Play Along</strong>
-            <span>Tap squares when each moment is called.</span>
+            <span>Tap squares when each word is called.</span>
           </div>
           <div>
             <strong>Claim Bingo</strong>
@@ -63,7 +54,7 @@
           </div>
           <div>
             <strong>Points</strong>
-            <span>Lines 100 in rounds 1-3. Round 3 X bonus 200. Final blackout 500.</span>
+            <span>Lines 100. Round 2 Four Corners bonus 50. Final Round 3 X bonus 200.</span>
           </div>
           <div>
             <strong>Make Noise</strong>

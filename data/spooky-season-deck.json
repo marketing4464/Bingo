@@ -1,0 +1,602 @@
+[
+  {
+    "id": "spooky-01",
+    "word": "Ghost",
+    "category": "Halloween Characters & Creatures",
+    "searchQuery": "ghost Halloween illustration public domain",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-02",
+    "word": "Witch",
+    "category": "Halloween Characters & Creatures",
+    "searchQuery": "witch illustration public domain",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-03",
+    "word": "Vampire",
+    "category": "Halloween Characters & Creatures",
+    "searchQuery": "vampire Halloween illustration public domain",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-04",
+    "word": "Mummy",
+    "category": "Halloween Characters & Creatures",
+    "searchQuery": "mummy Halloween costume bandages",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-05",
+    "word": "Skeleton",
+    "category": "Halloween Characters & Creatures",
+    "searchQuery": "skeleton Halloween decoration",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-06",
+    "word": "Werewolf",
+    "category": "Halloween Characters & Creatures",
+    "searchQuery": "werewolf illustration public domain",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-07",
+    "word": "Zombie",
+    "category": "Halloween Characters & Creatures",
+    "searchQuery": "zombie Halloween illustration public domain non gory",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-08",
+    "word": "Black Cat",
+    "category": "Halloween Characters & Creatures",
+    "searchQuery": "black cat portrait",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-09",
+    "word": "Bat",
+    "category": "Halloween Characters & Creatures",
+    "searchQuery": "bat flying mammal",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-10",
+    "word": "Spider",
+    "category": "Halloween Characters & Creatures",
+    "searchQuery": "spider close up",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-11",
+    "word": "Haunted House",
+    "category": "Haunted Objects & Places",
+    "searchQuery": "haunted house Halloween decoration",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-12",
+    "word": "Tombstone",
+    "category": "Haunted Objects & Places",
+    "searchQuery": "Halloween tombstone prop",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-13",
+    "word": "Coffin",
+    "category": "Haunted Objects & Places",
+    "searchQuery": "closed coffin Halloween prop",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-14",
+    "word": "Skull",
+    "category": "Haunted Objects & Places",
+    "searchQuery": "skull Halloween decoration",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-15",
+    "word": "Spiderweb",
+    "category": "Haunted Objects & Places",
+    "searchQuery": "spider web dew dark background",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-16",
+    "word": "Crystal Ball",
+    "category": "Haunted Objects & Places",
+    "searchQuery": "crystal ball fortune telling",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-17",
+    "word": "Cauldron",
+    "category": "Haunted Objects & Places",
+    "searchQuery": "black iron cauldron",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-18",
+    "word": "Broomstick",
+    "category": "Haunted Objects & Places",
+    "searchQuery": "traditional straw broomstick",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-19",
+    "word": "Witch Hat",
+    "category": "Haunted Objects & Places",
+    "searchQuery": "black pointed witch hat",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-20",
+    "word": "Spell Book",
+    "category": "Haunted Objects & Places",
+    "searchQuery": "old open magic spell book illustration public domain",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-21",
+    "word": "Jack-o'-lantern",
+    "category": "Treats & Costumes",
+    "searchQuery": "carved jack o lantern lit pumpkin",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-22",
+    "word": "Candy Corn",
+    "category": "Treats & Costumes",
+    "searchQuery": "candy corn",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-23",
+    "word": "Candy Apple",
+    "category": "Treats & Costumes",
+    "searchQuery": "red candy apple on stick",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-24",
+    "word": "Chocolate Bar",
+    "category": "Treats & Costumes",
+    "searchQuery": "unwrapped plain chocolate bar",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-25",
+    "word": "Lollipop",
+    "category": "Treats & Costumes",
+    "searchQuery": "spiral lollipop",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-26",
+    "word": "Gummy Worms",
+    "category": "Treats & Costumes",
+    "searchQuery": "gummy worms candy",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-27",
+    "word": "Wrapped Candy",
+    "category": "Treats & Costumes",
+    "searchQuery": "twist wrapped hard candy",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-28",
+    "word": "Pumpkin Bucket",
+    "category": "Treats & Costumes",
+    "searchQuery": "orange pumpkin trick or treat bucket handle",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-29",
+    "word": "Monster Mask",
+    "category": "Treats & Costumes",
+    "searchQuery": "generic Halloween monster mask",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-30",
+    "word": "Costume Cape",
+    "category": "Treats & Costumes",
+    "searchQuery": "black red Halloween costume cape",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-31",
+    "word": "Full Moon",
+    "category": "Mystical Night",
+    "searchQuery": "full moon night sky",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-32",
+    "word": "Owl",
+    "category": "Mystical Night",
+    "searchQuery": "owl portrait perched",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-33",
+    "word": "Raven",
+    "category": "Mystical Night",
+    "searchQuery": "common raven black bird perched",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-34",
+    "word": "Toad",
+    "category": "Mystical Night",
+    "searchQuery": "toad close up",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-35",
+    "word": "Snake",
+    "category": "Mystical Night",
+    "searchQuery": "coiled snake",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-36",
+    "word": "Potion Bottle",
+    "category": "Mystical Night",
+    "searchQuery": "glass potion bottle colored liquid cork",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-37",
+    "word": "Magic Wand",
+    "category": "Mystical Night",
+    "searchQuery": "star magic wand prop",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-38",
+    "word": "Glow Stick",
+    "category": "Mystical Night",
+    "searchQuery": "green glow stick glowing dark",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-39",
+    "word": "Candle Lantern",
+    "category": "Mystical Night",
+    "searchQuery": "metal candle lantern lit",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-40",
+    "word": "Foggy Forest",
+    "category": "Mystical Night",
+    "searchQuery": "foggy forest dark trees mist",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-41",
+    "word": "Pumpkin",
+    "category": "Harvest Time",
+    "searchQuery": "whole uncarved orange pumpkin",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-42",
+    "word": "Apple",
+    "category": "Harvest Time",
+    "searchQuery": "single red apple fruit",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-49",
+    "word": "Hay Bale",
+    "category": "Harvest Time",
+    "searchQuery": "rectangular hay bale straw field",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-50",
+    "word": "Scarecrow",
+    "category": "Harvest Time",
+    "searchQuery": "scarecrow straw garden pumpkin patch",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-51",
+    "word": "Maple Leaf",
+    "category": "Autumn Nature",
+    "searchQuery": "single red maple leaf autumn",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-52",
+    "word": "Acorn",
+    "category": "Autumn Nature",
+    "searchQuery": "acorn oak nut cap",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-53",
+    "word": "Pinecone",
+    "category": "Autumn Nature",
+    "searchQuery": "brown pine cone",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-54",
+    "word": "Mushroom",
+    "category": "Autumn Nature",
+    "searchQuery": "red white spotted mushroom fly agaric",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-61",
+    "word": "Pumpkin Pie",
+    "category": "Cozy Fall Food",
+    "searchQuery": "pumpkin pie slice whipped cream",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-62",
+    "word": "Apple Pie",
+    "category": "Cozy Fall Food",
+    "searchQuery": "apple pie lattice crust slice",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-63",
+    "word": "Cinnamon Roll",
+    "category": "Cozy Fall Food",
+    "searchQuery": "cinnamon roll icing spiral",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-64",
+    "word": "Hot Cocoa",
+    "category": "Cozy Fall Food",
+    "searchQuery": "hot chocolate mug marshmallows",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-65",
+    "word": "Apple Cider",
+    "category": "Cozy Fall Food",
+    "searchQuery": "apple cider clear glass apples cinnamon",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-69",
+    "word": "S'mores",
+    "category": "Cozy Fall Food",
+    "searchQuery": "smore graham cracker marshmallow chocolate",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-70",
+    "word": "Popcorn",
+    "category": "Cozy Fall Food",
+    "searchQuery": "popcorn bowl popped corn",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-71",
+    "word": "Knit Sweater",
+    "category": "Fall Comforts & Activities",
+    "searchQuery": "knitted sweater autumn",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-74",
+    "word": "Plaid Blanket",
+    "category": "Fall Comforts & Activities",
+    "searchQuery": "plaid wool blanket",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-77",
+    "word": "Fireplace",
+    "category": "Fall Comforts & Activities",
+    "searchQuery": "indoor fireplace burning fire",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-78",
+    "word": "Campfire",
+    "category": "Fall Comforts & Activities",
+    "searchQuery": "outdoor campfire logs fire",
+    "status": "approved"
+  },
+  {
+    "id": "spooky-80",
+    "word": "Leaf Pile",
+    "category": "Fall Comforts & Activities",
+    "searchQuery": "pile colorful autumn leaves",
+    "status": "approved"
+  },
+  {
+    "id": "horror-01",
+    "word": "Halloween",
+    "category": "Iconic Horror Films",
+    "filmYear": 1978,
+    "wikipediaTitle": "Halloween (1978 film)",
+    "searchQuery": "Halloween 1978 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-02",
+    "word": "Friday the 13th",
+    "category": "Iconic Horror Films",
+    "filmYear": 1980,
+    "wikipediaTitle": "Friday the 13th (1980 film)",
+    "searchQuery": "Friday the 13th 1980 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-03",
+    "word": "A Nightmare on Elm Street",
+    "category": "Iconic Horror Films",
+    "filmYear": 1984,
+    "wikipediaTitle": "A Nightmare on Elm Street",
+    "searchQuery": "A Nightmare on Elm Street 1984 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-04",
+    "word": "Scream",
+    "category": "Iconic Horror Films",
+    "filmYear": 1996,
+    "wikipediaTitle": "Scream (1996 film)",
+    "searchQuery": "Scream 1996 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-05",
+    "word": "The Exorcist",
+    "category": "Iconic Horror Films",
+    "filmYear": 1973,
+    "wikipediaTitle": "The Exorcist (film)",
+    "searchQuery": "The Exorcist 1973 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-06",
+    "word": "The Shining",
+    "category": "Iconic Horror Films",
+    "filmYear": 1980,
+    "wikipediaTitle": "The Shining (film)",
+    "searchQuery": "The Shining 1980 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-07",
+    "word": "The Texas Chain Saw Massacre",
+    "category": "Iconic Horror Films",
+    "filmYear": 1974,
+    "wikipediaTitle": "The Texas Chain Saw Massacre",
+    "searchQuery": "The Texas Chain Saw Massacre 1974 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-08",
+    "word": "The Conjuring",
+    "category": "Iconic Horror Films",
+    "filmYear": 2013,
+    "wikipediaTitle": "The Conjuring",
+    "searchQuery": "The Conjuring 2013 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-09",
+    "word": "Poltergeist",
+    "category": "Iconic Horror Films",
+    "filmYear": 1982,
+    "wikipediaTitle": "Poltergeist (1982 film)",
+    "searchQuery": "Poltergeist 1982 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-10",
+    "word": "Psycho",
+    "category": "Iconic Horror Films",
+    "filmYear": 1960,
+    "wikipediaTitle": "Psycho (1960 film)",
+    "searchQuery": "Psycho 1960 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-11",
+    "word": "The Ring",
+    "category": "Iconic Horror Films",
+    "filmYear": 2002,
+    "wikipediaTitle": "The Ring (2002 film)",
+    "searchQuery": "The Ring 2002 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-12",
+    "word": "IT",
+    "category": "Iconic Horror Films",
+    "filmYear": 2017,
+    "wikipediaTitle": "It (2017 film)",
+    "searchQuery": "IT 2017 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-13",
+    "word": "Child's Play",
+    "category": "Iconic Horror Films",
+    "filmYear": 1988,
+    "wikipediaTitle": "Child's Play (1988 film)",
+    "searchQuery": "Child's Play 1988 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-14",
+    "word": "The Blair Witch Project",
+    "category": "Iconic Horror Films",
+    "filmYear": 1999,
+    "wikipediaTitle": "The Blair Witch Project",
+    "searchQuery": "The Blair Witch Project 1999 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-15",
+    "word": "Alien",
+    "category": "Iconic Horror Films",
+    "filmYear": 1979,
+    "wikipediaTitle": "Alien (film)",
+    "searchQuery": "Alien 1979 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-16",
+    "word": "The Thing",
+    "category": "Iconic Horror Films",
+    "filmYear": 1982,
+    "wikipediaTitle": "The Thing (1982 film)",
+    "searchQuery": "The Thing 1982 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-17",
+    "word": "Carrie",
+    "category": "Iconic Horror Films",
+    "filmYear": 1976,
+    "wikipediaTitle": "Carrie (1976 film)",
+    "searchQuery": "Carrie 1976 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-18",
+    "word": "The Omen",
+    "category": "Iconic Horror Films",
+    "filmYear": 1976,
+    "wikipediaTitle": "The Omen",
+    "searchQuery": "The Omen 1976 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-19",
+    "word": "Get Out",
+    "category": "Iconic Horror Films",
+    "filmYear": 2017,
+    "wikipediaTitle": "Get Out",
+    "searchQuery": "Get Out 2017 original film poster",
+    "status": "approved"
+  },
+  {
+    "id": "horror-20",
+    "word": "Nosferatu",
+    "category": "Iconic Horror Films",
+    "filmYear": 1922,
+    "wikipediaTitle": "Nosferatu",
+    "searchQuery": "Nosferatu 1922 original film poster",
+    "status": "approved"
+  }
+]
