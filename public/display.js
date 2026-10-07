@@ -38,6 +38,7 @@ setInterval(() => {
 window.addEventListener("resize", () => {
   if (!displayState) return;
   scheduleDisplayWordFit();
+  scheduleFinalWinnerFit();
 });
 
 function stableDisplayState(state) {
@@ -152,6 +153,7 @@ function scheduleDisplayWordFit() {
 
 function fitSingleLineText(element, minSize) {
   element.style.whiteSpace = "nowrap";
+  element.style.overflowWrap = "normal";
   element.style.fontSize = "";
   const computedSize = parseFloat(getComputedStyle(element).fontSize);
   let size = Math.floor(computedSize);
@@ -163,6 +165,8 @@ function fitSingleLineText(element, minSize) {
 
   if (element.scrollWidth > element.clientWidth) {
     element.style.fontSize = `${minSize}px`;
+    element.style.whiteSpace = "normal";
+    element.style.overflowWrap = "anywhere";
   }
 }
 
@@ -251,7 +255,13 @@ function renderTopLeaders(rows, isEnded) {
 function scheduleFinalWinnerFit() {
   requestAnimationFrame(() => {
     $$(".final-winner-card strong", displayEls.leaderboardPanel).forEach((element) => {
-      fitSingleLineText(element, 18);
+      if (window.BingoTV?.enabled) {
+        element.style.fontSize = "";
+        element.style.whiteSpace = "normal";
+        element.style.overflowWrap = "anywhere";
+      } else {
+        fitSingleLineText(element, 18);
+      }
     });
   });
 }

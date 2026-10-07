@@ -1,8 +1,51 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-let heartbeatId = localStorage.getItem("bingoHeartbeatId") || "";
+let heartbeatId = readBingoStorage("bingoHeartbeatId") || "";
 let bingoClientRole = inferBingoClientRole();
 let supabaseClientConfigPromise = null;
+
+function readBingoStorage(key) {
+  try { return localStorage.getItem(key); } catch { return null; }
+}
+
+function writeBingoStorage(key, value) {
+  try { localStorage.setItem(key, value); } catch { /* Heartbeats still work without browser storage. */ }
+}
+
+// Sleep or a lost connection can leave Silk's fetch pending. Always bound state requests.
+async function fetchBingoStateJson(url, options = {}, signal) {
+  const controller = typeof AbortController === "function" ? new AbortController() : null;
+  let timeout;
+  let abort;
+  const deadline = new Promise((_, reject) => {
+    abort = () => {
+      controller?.abort();
+      const error = new Error("State refresh cancelled");
+      error.name = "AbortError";
+      reject(error);
+    };
+    timeout = setTimeout(() => {
+      controller?.abort();
+      reject(new Error("State refresh timed out"));
+    }, 12000);
+    if (signal?.aborted) abort();
+    else signal?.addEventListener("abort", abort, { once: true });
+  });
+  try {
+    return await Promise.race([
+      (async () => {
+        const response = await fetch(url, { ...options, ...(controller ? { signal: controller.signal } : {}) });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || data.message || "Could not refresh bingo state");
+        return data;
+      })(),
+      deadline,
+    ]);
+  } finally {
+    clearTimeout(timeout);
+    signal?.removeEventListener("abort", abort);
+  }
+}
 
 function inferBingoClientRole() {
   const pathname = window.location.pathname;
@@ -30,29 +73,26 @@ function api(path, body = {}) {
   });
 }
 
-function getState() {
+function getState(signal) {
   if (bingoClientRole === "player") {
-    return getPlayerStateFromSupabase().catch((error) => {
+    return getPlayerStateFromSupabase(signal).catch((error) => {
+      if (signal?.aborted) throw error;
       console.warn("Could not refresh bingo state from Supabase; falling back to server.", error);
-      return getStateFromServer();
+      return getStateFromServer(signal);
     });
   }
-  return getStateFromServer();
+  return getStateFromServer(signal);
 }
 
-function getStateFromServer() {
+function getStateFromServer(signal) {
   const params = new URLSearchParams({ role: bingoClientRole });
-  return fetch(`/api/state?${params.toString()}`, {
+  return fetchBingoStateJson(`/api/state?${params.toString()}`, {
     cache: "no-store",
     headers: { "X-Bingo-Role": bingoClientRole },
-  }).then(async (response) => {
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || "Could not refresh bingo state");
-    return data;
-  });
+  }, signal);
 }
 
-async function getPlayerStateFromSupabase() {
+async function getPlayerStateFromSupabase(signal) {
   const config = await loadSupabaseClientConfig();
   if (!config?.url || !config?.key || !config?.publicStateTable) throw new Error("Supabase client config is incomplete");
   const params = new URLSearchParams({
@@ -60,15 +100,13 @@ async function getPlayerStateFromSupabase() {
     select: "state",
     limit: "1",
   });
-  const response = await fetch(`${config.url}/rest/v1/${config.publicStateTable}?${params.toString()}`, {
+  const rows = await fetchBingoStateJson(`${config.url}/rest/v1/${config.publicStateTable}?${params.toString()}`, {
     cache: "no-store",
     headers: {
       apikey: config.key,
       Authorization: `Bearer ${config.key}`,
     },
-  });
-  const rows = await response.json();
-  if (!response.ok) throw new Error(rows?.message || "Could not refresh bingo state from Supabase");
+  }, signal);
   const state = Array.isArray(rows) ? rows[0]?.state : null;
   if (!state) throw new Error("Supabase bingo state is not ready yet");
   if (!state.deckVersion || (config.deckVersion && state.deckVersion !== config.deckVersion)) {
@@ -79,11 +117,11 @@ async function getPlayerStateFromSupabase() {
 
 function loadSupabaseClientConfig() {
   if (!supabaseClientConfigPromise) {
-    supabaseClientConfigPromise = fetch("/api/client-config", { cache: "no-store" })
-      .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Could not load client config");
-        return data.supabase;
+    supabaseClientConfigPromise = fetchBingoStateJson("/api/client-config", { cache: "no-store" })
+      .then((data) => data.supabase)
+      .catch((error) => {
+        supabaseClientConfigPromise = null;
+        throw error;
       });
   }
   return supabaseClientConfigPromise;
@@ -110,28 +148,48 @@ function subscribe(onState) {
   let stopped = false;
   let lastUpdatedAt = null;
   let lastStableState = null;
+  let pollTimer = null;
+  let activeRequest = null;
+  let requestVersion = 0;
 
-  async function poll() {
+  async function poll(forceRender = false) {
     if (stopped) return;
+    clearTimeout(pollTimer);
+    const version = ++requestVersion;
+    activeRequest?.abort();
+    activeRequest = typeof AbortController === "function" ? new AbortController() : null;
     try {
-      const state = await getState();
+      const state = await getState(activeRequest?.signal);
+      if (stopped || version !== requestVersion) return;
       const stableState = stabilizeLiveState(state, lastStableState);
-      if (stableState && (stableState.updatedAt !== lastUpdatedAt || stableState.deckVersion !== lastStableState?.deckVersion || stableState.roundPlanVersion !== lastStableState?.roundPlanVersion)) {
+      if (stableState && (forceRender || stableState.updatedAt !== lastUpdatedAt || stableState.deckVersion !== lastStableState?.deckVersion || stableState.roundPlanVersion !== lastStableState?.roundPlanVersion)) {
         lastUpdatedAt = stableState.updatedAt;
         lastStableState = stableState;
         onState(stableState);
       }
     } catch (error) {
-      console.warn("Could not refresh bingo state", error);
+      if (error.name !== "AbortError" && version === requestVersion && !stopped) console.warn("Could not refresh bingo state", error);
     } finally {
-      if (!stopped) setTimeout(poll, 1000);
+      if (!stopped && version === requestVersion) pollTimer = setTimeout(poll, 1000);
     }
   }
 
+  const resume = () => { if (!document.hidden) poll(true); };
+  document.addEventListener("visibilitychange", resume);
+  window.addEventListener("pageshow", resume);
+  window.addEventListener("online", resume);
+  window.addEventListener("focus", resume);
   poll();
   return {
     close() {
       stopped = true;
+      requestVersion += 1;
+      clearTimeout(pollTimer);
+      activeRequest?.abort();
+      document.removeEventListener("visibilitychange", resume);
+      window.removeEventListener("pageshow", resume);
+      window.removeEventListener("online", resume);
+      window.removeEventListener("focus", resume);
     },
   };
 }
@@ -148,7 +206,7 @@ function startHeartbeat(role, detailProvider = () => ({})) {
       });
       if (response.id && response.id !== heartbeatId) {
         heartbeatId = response.id;
-        localStorage.setItem("bingoHeartbeatId", heartbeatId);
+        writeBingoStorage("bingoHeartbeatId", heartbeatId);
       }
     } catch (error) {
       console.warn("Could not send bingo heartbeat", error);
@@ -156,6 +214,12 @@ function startHeartbeat(role, detailProvider = () => ({})) {
   }
 
   sendHeartbeat();
+  if (role === "host" || role === "display") {
+    const resumeHeartbeat = () => { if (!document.hidden) sendHeartbeat(); };
+    document.addEventListener("visibilitychange", resumeHeartbeat);
+    window.addEventListener("pageshow", resumeHeartbeat);
+    window.addEventListener("online", resumeHeartbeat);
+  }
   return setInterval(sendHeartbeat, 10000);
 }
 

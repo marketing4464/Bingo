@@ -84,6 +84,14 @@ If no image-search API is configured, the dashboard creates generated placeholde
 
 Without Supabase configuration, game state is stored in memory and a server restart resets the event.
 
+## Amazon Silk on Fire TV
+
+Open `https://www.opebingo.com/display?tv=1` on the Fire TV or Fire TV Stick for the venue screen. Use `https://www.opebingo.com/?tv=1` for the host console. Fire TV user agents enable this layout automatically; `?tv=1` also works when Silk is using its desktop user agent, and `?tv=0` keeps the regular layout.
+
+The TV layout keeps a 5% margin at each edge, measures the available browser height, and fits countdowns, called words, QR codes, and leaders within that space. The remote's cursor and Select button work with the existing controls. Arrow keys also move focus between enabled controls, with a visible focus ring. TV links open in the same tab; the display has a Host link to return to the console.
+
+Select **Fullscreen** to use the browser's fullscreen capability. If the Silk build does not support or permit it, the page fits the available screen and shows a reminder to hide Silk's toolbar for more space. Live state refreshes immediately after returning from sleep, bringing the tab back into view, or reconnecting. State requests time out and retry if the connection stalls.
+
 ## Supabase Storage
 
 The server persists the live game snapshot to the Supabase table `public.on_par_bingo_state`. The app reads and writes the single row with `id = 'current'`.

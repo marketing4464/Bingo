@@ -68,6 +68,8 @@ els.commandCenter.addEventListener("click", (event) => {
 });
 
 function render(state) {
+  const activeControl = document.activeElement;
+  const activeCommand = els.commandCenter.contains(activeControl) ? activeControl.dataset.hostAction : null;
   HostRunbook.render(els.commandCenter, state);
   els.roundName.textContent = `${state.title} • ${state.round.name}`;
   els.roundMeta.textContent = `${roundRuleLabel(state.round.pattern)} • ${state.round.playMinutes} minutes of play • words rotate every ${state.autoPullEverySeconds} seconds`;
@@ -123,17 +125,26 @@ function render(state) {
     : `<p class="small">Claims will appear here when players tap BINGO.</p>`;
 
   renderTimer(state);
+  // State updates replace the command-center button; keep the remote's focus usable.
+  if (activeCommand && window.BingoTV?.enabled) {
+    const replacement = els.commandCenter.querySelector(`[data-host-action="${activeCommand}"]:not(:disabled)`)
+      || els.commandCenter.querySelector("[data-host-action]:not(:disabled)")
+      || document.querySelector(".controls button:not(:disabled)");
+    window.BingoTV.focusControl(replacement, false);
+  } else if (activeControl?.disabled && window.BingoTV?.enabled) {
+    window.BingoTV.focusControl(els.commandCenter.querySelector("[data-host-action]:not(:disabled)") || document.querySelector(".controls button:not(:disabled)"), false);
+  }
 }
 
 async function runHostAction(action) {
   try {
     if (action === "none") return;
     if (action === "openDisplay") {
-      window.open("/display", "_blank", "noopener");
+      window.BingoTV.openPage("/display");
       return;
     }
     if (action === "openPlayer") {
-      window.open("/play", "_blank", "noopener");
+      window.BingoTV.openPage("/play");
       return;
     }
     if (action === "startCountdown") {
