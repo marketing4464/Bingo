@@ -16,10 +16,15 @@ const PULL_INTERVAL_MS = 20 * 1000;
 const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
 const PLAYER_STATE_CACHE_MS = 1000;
+const SUPABASE_REQUEST_TIMEOUT_MS = 8 * 1000;
 const TRIVIA_CONTROL_ROOM_URL = "https://on-par-themed-trivia.vercel.app/host";
 
 let cachedState = null;
 let cachedStateLoadedAt = 0;
+const storageHealth = {
+  provider: "supabase", configured: true, available: false,
+  lastLoadedAt: null, lastSavedAt: null, error: null,
+};
 
 const HYPE_MESSAGES = [
   "make some noise - prizes for the loudest table",
@@ -194,7 +199,11 @@ async function handleApi(request, env, url) {
     }
     return json({ error: "Not found" }, 404);
   } catch (error) {
-    return json({ error: error.message || "Request failed" }, 500);
+    return json({
+      error: error.message || "Request failed",
+      ...(error.code ? { code: error.code } : {}),
+      ...(error.code === "BINGO_STORAGE_UNAVAILABLE" ? { storage: storageStatus() } : {}),
+    }, error.status || 500);
   }
 }
 
@@ -256,6 +265,9 @@ function freshState() {
 async function loadState(env, { allowCached = false } = {}) {
   if (allowCached && cachedState && Date.now() - cachedStateLoadedAt < PLAYER_STATE_CACHE_MS) return structuredClone(cachedState);
   const rows = await supabaseRequest(env, `${SUPABASE_STATE_TABLE}?id=eq.${GAME_STATE_ROW_ID}&select=state`);
+  storageHealth.available = true;
+  storageHealth.lastLoadedAt = Date.now();
+  storageHealth.error = null;
   const snapshot = Array.isArray(rows) ? rows[0]?.state : null;
   const state = normalizeState(snapshot);
   if (snapshot?.gameId !== ACTIVE_GAME_ID || snapshot?.title !== ACTIVE_GAME_TITLE
@@ -326,8 +338,6 @@ function advanceState(state) {
 
 async function saveState(env, state) {
   touch(state);
-  cachedState = structuredClone(state);
-  cachedStateLoadedAt = Date.now();
   await Promise.all([
     supabaseRequest(env, `${SUPABASE_STATE_TABLE}?on_conflict=id`, {
       method: "POST",
@@ -340,6 +350,11 @@ async function saveState(env, state) {
       body: JSON.stringify({ id: GAME_STATE_ROW_ID, state: playerState(state, env), updated_at: new Date().toISOString() }),
     }),
   ]);
+  storageHealth.available = true;
+  storageHealth.lastSavedAt = Date.now();
+  storageHealth.error = null;
+  cachedState = structuredClone(state);
+  cachedStateLoadedAt = Date.now();
 }
 
 function publicState(request, state, env) {
@@ -363,7 +378,7 @@ function publicState(request, state, env) {
       joinReady: true,
       deckReady: true,
       currentMomentReady: state.status !== "playing" || Boolean(state.currentWord || state.called.length),
-      storageHealthy: true,
+      storageHealthy: storageHealth.available,
       displayConnected: true,
       hostConnected: true,
       activePlayers: 0,
@@ -609,19 +624,45 @@ function arrayBufferToBase64Url(buffer) {
 
 async function supabaseRequest(env, pathname, options = {}) {
   const config = supabaseConfig(env);
-  const response = await fetch(`${config.url}/rest/v1/${pathname}`, {
-    ...options,
-    headers: {
-      apikey: config.key,
-      Authorization: `Bearer ${config.key}`,
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
+  const controller = new AbortController();
+  let timeout;
+  const deadline = new Promise((_, reject) => {
+    timeout = setTimeout(() => {
+      reject(new Error("Storage did not respond within 8 seconds"));
+      controller.abort();
+    }, SUPABASE_REQUEST_TIMEOUT_MS);
   });
-  if (!response.ok) throw new Error(`Supabase request failed (${response.status}): ${await response.text()}`);
-  if (response.status === 204) return null;
-  const text = await response.text();
-  return text ? JSON.parse(text) : null;
+  try {
+    return await Promise.race([
+      (async () => {
+        const response = await fetch(`${config.url}/rest/v1/${pathname}`, {
+          ...options,
+          signal: controller.signal,
+          headers: {
+            apikey: config.key,
+            Authorization: `Bearer ${config.key}`,
+            "Content-Type": "application/json",
+            ...options.headers,
+          },
+        });
+        if (!response.ok) throw new Error(`Storage returned HTTP ${response.status}`);
+        if (response.status === 204) return null;
+        const text = await response.text();
+        return text ? JSON.parse(text) : null;
+      })(),
+      deadline,
+    ]);
+  } catch (cause) {
+    controller.abort();
+    const error = new Error(`Live bingo storage is temporarily unavailable. Please retry shortly. ${cause.message || "Storage request failed"}.`);
+    error.status = 503;
+    error.code = "BINGO_STORAGE_UNAVAILABLE";
+    storageHealth.available = false;
+    storageHealth.error = error.message;
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function supabaseConfig(env) {
@@ -646,14 +687,7 @@ function signingSecret(env) {
 }
 
 function storageStatus() {
-  return {
-    provider: "supabase",
-    configured: true,
-    available: true,
-    lastLoadedAt: Date.now(),
-    lastSavedAt: Date.now(),
-    error: null,
-  };
+  return { ...storageHealth };
 }
 
 function joinUrlForRequest(request, env) {

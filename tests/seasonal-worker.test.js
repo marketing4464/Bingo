@@ -61,7 +61,7 @@ async function fixture(initialState = null) {
   const context = vm.createContext({
     module: { exports: {} }, exports: {}, console, Request, Response, Headers, URL, URLSearchParams,
     TextEncoder, TextDecoder, Uint8Array, Buffer, structuredClone, btoa, atob,
-    crypto: crypto.webcrypto, Date: FixtureDate,
+    crypto: crypto.webcrypto, Date: FixtureDate, AbortController, setTimeout, clearTimeout,
     fetch: async (input, options = {}) => {
       const url = new URL(typeof input === "string" ? input : input.url);
       if (url.origin === "https://investigation.fixture.invalid") {

@@ -144,6 +144,11 @@ function absoluteUrl(value) {
   }
 }
 
+function setStateConnectionInterrupted(interrupted) {
+  const notice = document.querySelector?.("[data-state-connection]");
+  if (notice) notice.hidden = !interrupted;
+}
+
 function subscribe(onState) {
   let stopped = false;
   let lastUpdatedAt = null;
@@ -161,6 +166,7 @@ function subscribe(onState) {
     try {
       const state = await getState(activeRequest?.signal);
       if (stopped || version !== requestVersion) return;
+      setStateConnectionInterrupted(false);
       const stableState = stabilizeLiveState(state, lastStableState);
       if (stableState && (forceRender || stableState.updatedAt !== lastUpdatedAt || stableState.deckVersion !== lastStableState?.deckVersion || stableState.roundPlanVersion !== lastStableState?.roundPlanVersion)) {
         lastUpdatedAt = stableState.updatedAt;
@@ -168,7 +174,10 @@ function subscribe(onState) {
         onState(stableState);
       }
     } catch (error) {
-      if (error.name !== "AbortError" && version === requestVersion && !stopped) console.warn("Could not refresh bingo state", error);
+      if (error.name !== "AbortError" && version === requestVersion && !stopped) {
+        setStateConnectionInterrupted(true);
+        console.warn("Could not refresh bingo state", error);
+      }
     } finally {
       if (!stopped && version === requestVersion) pollTimer = setTimeout(poll, 1000);
     }
