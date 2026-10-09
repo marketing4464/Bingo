@@ -13,7 +13,7 @@ function writeBingoStorage(key, value) {
 }
 
 // Sleep or a lost connection can leave Silk's fetch pending. Always bound state requests.
-async function fetchBingoStateJson(url, options = {}, signal) {
+async function fetchBingoStateJson(url, options = {}, signal, timeoutMs = 15000) {
   const controller = typeof AbortController === "function" ? new AbortController() : null;
   let timeout;
   let abort;
@@ -27,7 +27,7 @@ async function fetchBingoStateJson(url, options = {}, signal) {
     timeout = setTimeout(() => {
       controller?.abort();
       reject(new Error("State refresh timed out"));
-    }, 12000);
+    }, timeoutMs);
     if (signal?.aborted) abort();
     else signal?.addEventListener("abort", abort, { once: true });
   });
@@ -89,7 +89,7 @@ function getStateFromServer(signal) {
   return fetchBingoStateJson(`/api/state?${params.toString()}`, {
     cache: "no-store",
     headers: { "X-Bingo-Role": bingoClientRole },
-  }, signal);
+  }, signal, 50000);
 }
 
 async function getPlayerStateFromSupabase(signal) {

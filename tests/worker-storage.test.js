@@ -24,6 +24,7 @@ async function fixture() {
   let now = Date.now();
   let mode = "healthy";
   let timerId = 0;
+  let publicWriteGate = null;
   const timers = new Map();
   const calls = [];
   const initial = {
@@ -53,13 +54,26 @@ async function fixture() {
       assert(Object.hasOwn(records, table));
       const method = options.method || "GET";
       calls.push({ table, method, signal: options.signal });
-      if (mode === "headers-stalled" || (mode === "writes-stalled" && method === "POST")) return new Promise(() => {});
+      if (method !== "GET" && table === "on_par_bingo_public_state" && publicWriteGate) {
+        const gate = publicWriteGate;
+        publicWriteGate = null;
+        await gate;
+      }
+      if (mode === "headers-stalled" || (mode === "writes-stalled" && method !== "GET")) return new Promise(() => {});
       if (mode === "body-stalled") return { ok: true, status: 200, text: () => new Promise(() => {}) };
       if (mode === "network-failed") throw new Error("Connection refused");
-      if (mode === "http-failed" || (mode === "public-write-failed" && method === "POST" && table === "on_par_bingo_public_state")) return new Response("Unavailable", { status: 503 });
-      if (method === "POST") {
-        records[table] = JSON.parse(options.body).state;
-        return new Response(null, { status: 204 });
+      if (mode === "http-failed" || (mode === "public-write-failed" && method !== "GET" && table === "on_par_bingo_public_state")) return new Response("Unavailable", { status: 503 });
+      if (method !== "GET") {
+        const payload = JSON.parse(options.body);
+        if (method === "PATCH") {
+          if (!records[table]) return Response.json([]);
+          const expected = url.searchParams.get("state->>updatedAt");
+          const ceiling = Number((url.searchParams.get("or") || "").match(/updatedAt\.lte\.(\d+)/)?.[1]);
+          if (expected && expected !== `eq.${records[table].updatedAt}`) return Response.json([]);
+          if (ceiling && Number(records[table].updatedAt) > ceiling) return Response.json([]);
+        } else if (records[table]) return Response.json([]);
+        records[table] = payload.state;
+        return Response.json([{ id: "current", state: records[table] }]);
       }
       return Response.json([{ state: records[table] }]);
     },
@@ -79,9 +93,14 @@ async function fixture() {
     setMode(value) { mode = value; },
     getTime() { return now; },
     cache() { return vm.runInContext("cachedState && structuredClone(cachedState)", context); },
+    delayNextPublicWrite() {
+      let release;
+      publicWriteGate = new Promise((resolve) => { release = resolve; });
+      return release;
+    },
     expireDeadlines() {
       assert(timers.size > 0, "a pending storage request must have a deadline");
-      for (const timer of [...timers.values()]) { assert.equal(timer.delay, 8000); timer.callback(); }
+      for (const timer of [...timers.values()]) { assert.equal(timer.delay, 15000); timer.callback(); }
     },
   };
 }
@@ -107,7 +126,7 @@ test("storage health reports observed load/save times, rather than claiming unch
 });
 
 for (const mode of ["headers-stalled", "body-stalled"]) {
-  test(`an eight-second deadline bounds ${mode} and does not reset or write game state`, async () => {
+  test(`a fifteen-second deadline bounds ${mode} and does not reset or write game state`, async () => {
     const f = await fixture();
     f.setMode(mode);
     const pending = f.request("/api/state?role=host");
@@ -117,12 +136,12 @@ for (const mode of ["headers-stalled", "body-stalled"]) {
     assert.equal(result.status, 503);
     assert.equal(result.data.code, "BINGO_STORAGE_UNAVAILABLE");
     assert.match(result.data.error, /retry shortly/i);
-    assert.match(result.data.error, /8 seconds/);
+    assert.match(result.data.error, /15 seconds/);
     assert.equal(result.data.storage.available, false);
     assert.equal(result.data.storage.lastLoadedAt, null);
     assert.equal(result.data.storage.lastSavedAt, null);
     assert.equal(f.calls[0].signal.aborted, true);
-    assert(!f.calls.some((call) => call.method === "POST"));
+    assert(!f.calls.some((call) => call.method !== "GET"));
     assert.deepEqual(f.records.on_par_bingo_state, f.initial);
     assert.equal(f.cache(), null);
     assert.equal(f.timers.size, 0);
@@ -138,20 +157,20 @@ test("network and upstream HTTP failures return actionable 503s without generati
     assert.equal(result.data.code, "BINGO_STORAGE_UNAVAILABLE");
     assert.equal(result.data.storage.available, false);
     assert.equal(result.data.storage.lastLoadedAt, null);
-    assert(!f.calls.some((call) => call.method === "POST"));
+    assert(!f.calls.some((call) => call.method !== "GET"));
     assert.equal(f.cache(), null);
     assert.equal(f.timers.size, 0);
   }
 });
 
-test("stalled writes fail at eight seconds and do not publish an uncommitted cached draw", async () => {
+test("stalled writes fail at fifteen seconds and do not publish an uncommitted cached draw", async () => {
   const f = await fixture();
   await f.request("/api/state?role=player");
   const committed = f.cache();
   f.setMode("writes-stalled");
   const pending = f.request("/api/pull", {});
   await flush();
-  assert.equal(f.timers.size, 2, "both private and public writes are bounded");
+  assert.equal(f.timers.size, 1, "the public write waits for the private compare-and-swap to commit");
   f.expireDeadlines();
   const result = await pending;
   assert.equal(result.status, 503);
@@ -182,4 +201,59 @@ test("a failed public write keeps the previous committed cache; a later successf
   assert.equal(f.cache().hypeMessage, "Recovered");
   assert.equal(f.records.on_par_bingo_public_state.hypeMessage, "Recovered");
   assert.equal(f.timers.size, 0);
+});
+
+function claimBody(player, card) {
+  return { player, card: card.number, cells: card.cells, cardToken: card.token,
+    selected: [0, 1, 2, 3, 4, 12], bingos: [{ id: "row-1" }] };
+}
+
+test("simultaneous claims reject the stale write and retain both scores after a fresh retry", async () => {
+  const f = await fixture();
+  f.records.on_par_bingo_state.called = structuredClone(words);
+  const alice = (await f.request("/api/deal-cards", { player: "Alice", count: 1 })).data.cards[0];
+  const bob = (await f.request("/api/deal-cards", { player: "Bob", count: 1 })).data.cards[0];
+  const bodies = [claimBody("Alice", alice), claimBody("Bob", bob)];
+  const results = await Promise.all(bodies.map((body) => f.request("/api/claim", body)));
+  assert.deepEqual(results.map((result) => result.status).sort(), [200, 409]);
+  const loser = results.findIndex((result) => result.status === 409);
+  assert.equal(results[loser].data.code, "BINGO_STATE_CONFLICT");
+  assert.equal(f.records.on_par_bingo_state.claims.length, 2, "one accepted new claim and the original score survive the collision");
+  const retried = await f.request("/api/claim", bodies[loser]);
+  assert.equal(retried.status, 200);
+  assert.equal(f.records.on_par_bingo_state.claims.length, 3);
+  assert.deepEqual(f.records.on_par_bingo_state.claims.map((claim) => claim.player).sort(), ["Alice", "Bob", "Existing Player"]);
+  assert.equal(f.records.on_par_bingo_state.claims.reduce((sum, claim) => sum + claim.points, 0), 300);
+});
+
+test("a draw racing a claim cannot overwrite an accepted score", async () => {
+  const f = await fixture();
+  f.records.on_par_bingo_state.called = structuredClone(words);
+  const card = (await f.request("/api/deal-cards", { player: "Scoring Player", count: 1 })).data.cards[0];
+  const body = claimBody("Scoring Player", card);
+  const results = await Promise.all([f.request("/api/claim", body), f.request("/api/pull", {})]);
+  assert.deepEqual(results.map((result) => result.status).sort(), [200, 409]);
+  const loser = results.findIndex((result) => result.status === 409);
+  assert.equal(results[loser].data.code, "BINGO_STATE_CONFLICT");
+  const retried = loser === 0 ? await f.request("/api/claim", body) : await f.request("/api/pull", {});
+  assert.equal(retried.status, 200);
+  assert.equal(f.records.on_par_bingo_state.claims.length, 2);
+  assert.equal(f.records.on_par_bingo_state.claims.reduce((sum, claim) => sum + claim.points, 0), 200);
+  assert.equal(f.records.on_par_bingo_state.called.length, words.length + 1);
+});
+
+test("a delayed older public write cannot replace a newer public snapshot or cache", async () => {
+  const f = await fixture();
+  await f.request("/api/state?role=player");
+  const release = f.delayNextPublicWrite();
+  const older = f.request("/api/hype", { message: "Older snapshot" });
+  await flush();
+  assert.equal(f.records.on_par_bingo_state.hypeMessage, "Older snapshot");
+  const newer = await f.request("/api/hype", { message: "Newer snapshot" });
+  assert.equal(newer.status, 200);
+  release();
+  assert.equal((await older).status, 200);
+  assert.equal(f.records.on_par_bingo_state.hypeMessage, "Newer snapshot");
+  assert.equal(f.records.on_par_bingo_public_state.hypeMessage, "Newer snapshot");
+  assert.equal(f.cache().hypeMessage, "Newer snapshot");
 });

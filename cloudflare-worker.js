@@ -16,11 +16,12 @@ const PULL_INTERVAL_MS = 20 * 1000;
 const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
 const PLAYER_STATE_CACHE_MS = 1000;
-const SUPABASE_REQUEST_TIMEOUT_MS = 8 * 1000;
+const SUPABASE_REQUEST_TIMEOUT_MS = 15 * 1000;
 const TRIVIA_CONTROL_ROOM_URL = "https://on-par-themed-trivia.vercel.app/host";
 
 let cachedState = null;
 let cachedStateLoadedAt = 0;
+const stateStorageBases = new WeakMap();
 const storageHealth = {
   provider: "supabase", configured: true, available: false,
   lastLoadedAt: null, lastSavedAt: null, error: null,
@@ -112,7 +113,7 @@ async function handleApi(request, env, url) {
 
     let state = await loadState(env);
     if (pathname === "/api/start-countdown") {
-      state = startOpeningCountdown();
+      state = inheritStorageBase(startOpeningCountdown(), state);
       await saveState(env, state);
       return json(publicState(request, state, env));
     }
@@ -186,7 +187,7 @@ async function handleApi(request, env, url) {
     }
     if (pathname === "/api/reset") {
       if (body.confirm !== "RESET") return json({ error: "Reset confirmation required." }, 400);
-      state = freshState();
+      state = inheritStorageBase(freshState(), state);
       await saveState(env, state);
       return json(publicState(request, state, env));
     }
@@ -263,13 +264,18 @@ function freshState() {
 }
 
 async function loadState(env, { allowCached = false } = {}) {
-  if (allowCached && cachedState && Date.now() - cachedStateLoadedAt < PLAYER_STATE_CACHE_MS) return structuredClone(cachedState);
+  if (allowCached && cachedState && Date.now() - cachedStateLoadedAt < PLAYER_STATE_CACHE_MS) {
+    const cached = structuredClone(cachedState);
+    stateStorageBases.set(cached, { exists: true, updatedAt: cached.updatedAt });
+    return cached;
+  }
   const rows = await supabaseRequest(env, `${SUPABASE_STATE_TABLE}?id=eq.${GAME_STATE_ROW_ID}&select=state`);
   storageHealth.available = true;
   storageHealth.lastLoadedAt = Date.now();
   storageHealth.error = null;
   const snapshot = Array.isArray(rows) ? rows[0]?.state : null;
   const state = normalizeState(snapshot);
+  stateStorageBases.set(state, { exists: Array.isArray(rows) && rows.length > 0, updatedAt: snapshot?.updatedAt ?? null });
   if (snapshot?.gameId !== ACTIVE_GAME_ID || snapshot?.title !== ACTIVE_GAME_TITLE
       || snapshot?.deckVersion !== ACTIVE_DECK_VERSION
       || snapshot?.roundPlanVersion !== ACTIVE_ROUND_PLAN_VERSION) {
@@ -336,25 +342,58 @@ function advanceState(state) {
   }
 }
 
+function inheritStorageBase(nextState, previousState) {
+  const base = stateStorageBases.get(previousState);
+  if (base) stateStorageBases.set(nextState, base);
+  return nextState;
+}
+
+function stateConflict() {
+  const error = new Error("The live game changed while this action was being saved. Refresh and try again.");
+  error.status = 409;
+  error.code = "BINGO_STATE_CONFLICT";
+  return error;
+}
+
 async function saveState(env, state) {
+  const base = stateStorageBases.get(state);
+  if (!base) throw stateConflict();
   touch(state);
-  await Promise.all([
-    supabaseRequest(env, `${SUPABASE_STATE_TABLE}?on_conflict=id`, {
-      method: "POST",
-      headers: { Prefer: "resolution=merge-duplicates" },
-      body: JSON.stringify({ id: GAME_STATE_ROW_ID, state, updated_at: new Date().toISOString() }),
-    }),
-    supabaseRequest(env, `${SUPABASE_PUBLIC_STATE_TABLE}?on_conflict=id`, {
-      method: "POST",
-      headers: { Prefer: "resolution=merge-duplicates" },
-      body: JSON.stringify({ id: GAME_STATE_ROW_ID, state: playerState(state, env), updated_at: new Date().toISOString() }),
-    }),
-  ]);
+  const privatePayload = { id: GAME_STATE_ROW_ID, state, updated_at: new Date().toISOString() };
+  let saved;
+  if (base.exists) {
+    const filters = new URLSearchParams({ id: `eq.${GAME_STATE_ROW_ID}`, "state->>updatedAt": base.updatedAt === null ? "is.null" : `eq.${base.updatedAt}` });
+    saved = await supabaseRequest(env, `${SUPABASE_STATE_TABLE}?${filters}`, {
+      method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify(privatePayload),
+    });
+  } else {
+    saved = await supabaseRequest(env, `${SUPABASE_STATE_TABLE}?on_conflict=id`, {
+      method: "POST", headers: { Prefer: "resolution=ignore-duplicates,return=representation" }, body: JSON.stringify(privatePayload),
+    });
+  }
+  if (!Array.isArray(saved) || !saved.length) throw stateConflict();
+  stateStorageBases.set(state, { exists: true, updatedAt: state.updatedAt });
+
+  const publicPayload = { id: GAME_STATE_ROW_ID, state: playerState(state, env), updated_at: new Date().toISOString() };
+  // JSONB comparison is numeric; ->> would compare timestamp text lexically.
+  const publicFilters = new URLSearchParams({ id: `eq.${GAME_STATE_ROW_ID}`, or: `(state->updatedAt.lte.${state.updatedAt},state->updatedAt.is.null)` });
+  let published = await supabaseRequest(env, `${SUPABASE_PUBLIC_STATE_TABLE}?${publicFilters}`, {
+    method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify(publicPayload),
+  });
+  if (!Array.isArray(published) || !published.length) {
+    // If a newer public row already exists, ignore the duplicate instead of
+    // overwriting it. This also creates the public row on the first setup.
+    published = await supabaseRequest(env, `${SUPABASE_PUBLIC_STATE_TABLE}?on_conflict=id`, {
+      method: "POST", headers: { Prefer: "resolution=ignore-duplicates,return=representation" }, body: JSON.stringify(publicPayload),
+    });
+  }
   storageHealth.available = true;
   storageHealth.lastSavedAt = Date.now();
   storageHealth.error = null;
-  cachedState = structuredClone(state);
-  cachedStateLoadedAt = Date.now();
+  if (Array.isArray(published) && published.length) {
+    cachedState = structuredClone(state);
+    cachedStateLoadedAt = Date.now();
+  }
 }
 
 function publicState(request, state, env) {
@@ -631,7 +670,7 @@ async function supabaseRequest(env, pathname, options = {}) {
   let timeout;
   const deadline = new Promise((_, reject) => {
     timeout = setTimeout(() => {
-      reject(new Error("Storage did not respond within 8 seconds"));
+      reject(new Error("Storage did not respond within 15 seconds"));
       controller.abort();
     }, SUPABASE_REQUEST_TIMEOUT_MS);
   });
@@ -731,7 +770,7 @@ function shuffle(items) {
 }
 
 function touch(state) {
-  state.updatedAt = Date.now();
+  state.updatedAt = Math.max(Date.now(), (Number(state.updatedAt) || 0) + 1);
   return state;
 }
 

@@ -71,12 +71,19 @@ async function fixture(initialState = null) {
       assert.equal(url.origin, "https://supabase.fixture.invalid", "worker tests cannot contact live Supabase, Cloudflare, or image services");
       const table = url.pathname.split("/").pop();
       assert(Object.hasOwn(records, table), `unexpected Supabase table ${table}`);
-      if (options.method === "POST") {
+      if (options.method === "POST" || options.method === "PATCH") {
         const payload = JSON.parse(options.body);
         assert.equal(payload.id, "current");
+        if (options.method === "PATCH") {
+          if (!records[table]) return Response.json([]);
+          const expected = url.searchParams.get("state->>updatedAt");
+          const ceiling = Number((url.searchParams.get("or") || "").match(/updatedAt\.lte\.(\d+)/)?.[1]);
+          if (expected && expected !== `eq.${records[table].updatedAt}`) return Response.json([]);
+          if (ceiling && Number(records[table].updatedAt) > ceiling) return Response.json([]);
+        } else if (records[table]) return Response.json([]);
         records[table] = structuredClone(payload.state);
         posts.push({ table, ...payload });
-        return new Response(null, { status: 204 });
+        return Response.json([{ id: "current", state: records[table] }]);
       }
       assert.equal(url.searchParams.get("id"), "eq.current");
       return Response.json(records[table] ? [{ state: records[table] }] : []);

@@ -184,7 +184,7 @@ test("a stalled state fetch has a deadline and storage restrictions do not stop 
     fetch: (_, options) => { requestSignal = options.signal; return new Promise(() => {}); },
   });
   const request = vm.runInContext("getStateFromServer()", f.context);
-  const timeout = Array.from(f.timers.values()).find((timer) => timer.delay === 12000);
+  const timeout = Array.from(f.timers.values()).find((timer) => timer.delay === 50000);
   assert(timeout);
   timeout.callback();
   await assert.rejects(request, /timed out/);
@@ -192,4 +192,16 @@ test("a stalled state fetch has a deadline and storage restrictions do not stop 
   assert.equal(f.timers.size, 0);
   assert.equal(vm.runInContext('readBingoStorage("test")', f.context), null);
   assert.doesNotThrow(() => vm.runInContext('writeBingoStorage("test", "value")', f.context));
+});
+
+
+test("direct public/config state requests use a 15-second body deadline", async () => {
+  const f = sharedFixture({ fetch: async () => ({ ok: true, json: () => new Promise(() => {}) }) });
+  const request = vm.runInContext('fetchBingoStateJson("/api/client-config")', f.context);
+  await flush();
+  const timeout = Array.from(f.timers.values()).find((timer) => timer.delay === 15000);
+  assert(timeout, "Direct state/config reads allow queued DB responses but remain bounded");
+  timeout.callback();
+  await assert.rejects(request, /timed out/);
+  assert.equal(f.timers.size, 0);
 });

@@ -107,7 +107,7 @@ test("a stalled Silk request without AbortController warns at its deadline and r
     fetch: async () => ++requests === 1 ? new Promise(() => {}) : Response.json(state),
   });
   const subscription = vm.runInContext("subscribe(onState)", f.context);
-  f.tick(12000);
+  f.tick(50000);
   await flush();
   assert.equal(f.notice.hidden, false);
   assert.equal(f.rendered.length, 0);
