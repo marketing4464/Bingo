@@ -92,9 +92,15 @@ The TV layout keeps a 5% margin at each edge, measures the available browser hei
 
 Select **Fullscreen** to use the browser's fullscreen capability. If the Silk build does not support or permit it, the page fits the available screen and shows a reminder to hide Silk's toolbar for more space. Live state refreshes immediately after returning from sleep, bringing the tab back into view, or reconnecting. State requests time out and retry if the connection stalls.
 
+## Cloudflare Live Storage
+
+Cloudflare production uses the `BINGO_LIVE_STATE` Durable Object to keep scores, calls, and timers together. Its alarms advance the game even when the host browser is closed. Existing stored state remains authoritative across deployments.
+
+The initial recovery snapshot at `data/recovery-seed.json` contains player records and stays local; it is excluded from GitHub. Tests and Wrangler builds prepare a `null` placeholder only when this file is absent and never replace an existing snapshot. A new, empty Durable Object requires a verified local recovery snapshot; with a null seed it returns a storage error without creating or resetting a game. Later deployments with a null seed retain the already stored game.
+
 ## Supabase Storage
 
-The server persists the live game snapshot to the Supabase table `public.on_par_bingo_state`. The app reads and writes the single row with `id = 'current'`.
+The Node and Next.js servers persist the live game snapshot to the Supabase table `public.on_par_bingo_state`. They read and write the single row with `id = 'current'`.
 
 Use these environment variables when you want to override the built-in project defaults:
 

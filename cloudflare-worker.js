@@ -2,6 +2,7 @@ import seasonalDocument from "./data/spooky-season-deck.json";
 import reviewDocument from "./data/image-review-decisions.json";
 import seasonalImageManifest from "./public/assets/spooky-season/image-candidates.json";
 import releaseDocument from "./data/spooky-season-release.json";
+import recoverySeed from "./data/recovery-seed.json";
 import { handleMurderMysteryApi, MurderMysteryState } from "./murder-mystery-worker.js";
 import { proxyMurderMystery } from "./murder-mystery-proxy.mjs";
 
@@ -17,6 +18,7 @@ const PREGAME_COUNTDOWN_MS = 15 * 60 * 1000;
 const BREAK_MS = 10 * 60 * 1000;
 const PLAYER_STATE_CACHE_MS = 1000;
 const SUPABASE_REQUEST_TIMEOUT_MS = 15 * 1000;
+const DURABLE_STATE_KEY = "bingo-live-state-v1";
 const TRIVIA_CONTROL_ROOM_URL = "https://on-par-themed-trivia.vercel.app/host";
 
 let cachedState = null;
@@ -59,6 +61,150 @@ const rounds = [
   { name: "Round 3", pattern: "X Pattern", playMinutes: 20, points: 100, bonusPoints: 200 },
 ];
 
+// One object owns the live game. The full snapshot and its public projection
+// share one SQLite-backed storage value, so a score and a call cannot diverge.
+export class BingoLiveState {
+  constructor(ctx, env) {
+    this.ctx = ctx;
+    this.env = { ...env, __BINGO_DURABLE_CONTEXT: this };
+    this.operationQueue = Promise.resolve();
+    this.health = {
+      provider: "cloudflare-durable-object", configured: true, available: false,
+      lastLoadedAt: null, lastSavedAt: null, error: null,
+    };
+    this.ready = ctx.blockConcurrencyWhile(async () => {
+      const stored = await ctx.storage.get(DURABLE_STATE_KEY);
+      if (!stored) {
+        assertDurableSnapshot(recoverySeed);
+        const state = structuredClone(recoverySeed);
+        await ctx.storage.put(DURABLE_STATE_KEY, {
+          state, publicState: playerState(state, this.env), seededAt: Date.now(),
+        });
+        this.health.lastSavedAt = Date.now();
+      } else {
+        assertDurableSnapshot(stored.state);
+      }
+      this.health.available = true;
+      this.health.lastLoadedAt = Date.now();
+      await this.scheduleAlarm();
+    });
+  }
+
+  enqueue(operation) {
+    const result = this.operationQueue.then(async () => {
+      await this.ready;
+      return operation();
+    });
+    this.operationQueue = result.catch(() => {});
+    return result;
+  }
+
+  async fetch(request) {
+    try {
+      // Receive the body before entering the queue; a slow phone upload must
+      // not hold up state reads, calls, or another player's completed claim.
+      const readyRequest = request.method === "POST"
+        ? new Request(request, { body: await request.text() }) : request;
+      return await this.enqueue(async () => {
+        const response = await handleApi(readyRequest, this.env, new URL(readyRequest.url));
+        await this.scheduleAlarm();
+        return response;
+      });
+    } catch (cause) {
+      const error = this.storageError(cause);
+      return json({ error: error.message, code: error.code, storage: storageStatus(this.env) }, error.status);
+    }
+  }
+
+  async loadState() {
+    try {
+      const stored = await this.ctx.storage.get(DURABLE_STATE_KEY);
+      assertDurableSnapshot(stored?.state);
+      const state = structuredClone(stored.state);
+      stateStorageBases.set(state, { exists: true, updatedAt: state.updatedAt });
+      this.health.available = true;
+      this.health.lastLoadedAt = Date.now();
+      this.health.error = null;
+      return state;
+    } catch (cause) {
+      throw this.storageError(cause);
+    }
+  }
+
+  async saveState(state) {
+    const base = stateStorageBases.get(state);
+    if (!base) throw stateConflict();
+    assertDurableSnapshot(state);
+    touch(state);
+    try {
+      await this.ctx.storage.transaction(async (transaction) => {
+        const stored = await transaction.get(DURABLE_STATE_KEY);
+        assertDurableSnapshot(stored?.state);
+        if (Number(stored.state.updatedAt) !== Number(base.updatedAt)) throw stateConflict();
+        await transaction.put(DURABLE_STATE_KEY, {
+          ...stored, state: structuredClone(state), publicState: playerState(state, this.env),
+        });
+      });
+      stateStorageBases.set(state, { exists: true, updatedAt: state.updatedAt });
+      this.health.available = true;
+      this.health.lastSavedAt = Date.now();
+      this.health.error = null;
+    } catch (cause) {
+      if (cause.code === "BINGO_STATE_CONFLICT") throw cause;
+      throw this.storageError(cause);
+    }
+  }
+
+  async scheduleAlarm() {
+    const stored = await this.ctx.storage.get(DURABLE_STATE_KEY);
+    assertDurableSnapshot(stored?.state);
+    const state = stored.state;
+    const deadlines = [];
+    if (state.status === "countdown" && state.countdownEndsAt) deadlines.push(Number(state.countdownEndsAt));
+    if (state.status === "break" && state.breakEndsAt) deadlines.push(Number(state.breakEndsAt));
+    if (state.status === "playing") {
+      if (state.playEndsAt) deadlines.push(Number(state.playEndsAt));
+      if (state.autoPullEnabled !== false && state.nextPullAt) deadlines.push(Number(state.nextPullAt));
+    }
+    const valid = deadlines.filter((value) => Number.isFinite(value) && value > 0);
+    if (valid.length) await this.ctx.storage.setAlarm(Math.max(Date.now() + 1, Math.min(...valid)));
+    else await this.ctx.storage.deleteAlarm();
+  }
+
+  async alarm() {
+    return this.enqueue(async () => {
+      const state = await this.loadState();
+      await advanceAndSave(this.env, state);
+      await this.scheduleAlarm();
+    });
+  }
+
+  storageError(cause) {
+    const error = new Error(`Live bingo storage is temporarily unavailable. Please retry shortly. ${cause.message || "Durable storage request failed"}.`);
+    error.status = 503;
+    error.code = "BINGO_STORAGE_UNAVAILABLE";
+    this.health.available = false;
+    this.health.error = error.message;
+    return error;
+  }
+}
+
+function assertDurableSnapshot(state) {
+  if (!state || typeof state !== "object" || state.gameId !== ACTIVE_GAME_ID
+      || state.title !== ACTIVE_GAME_TITLE
+      || state.deckVersion !== ACTIVE_DECK_VERSION || state.roundPlanVersion !== ACTIVE_ROUND_PLAN_VERSION
+      || !Array.isArray(state.deck) || !Array.isArray(state.called) || !Array.isArray(state.claims)
+      || !Number.isInteger(state.roundIndex) || state.roundIndex < 0 || state.roundIndex >= rounds.length
+      || !["setup", "countdown", "playing", "paused", "break", "ended"].includes(state.status)
+      || typeof state.updatedAt !== "number" || !Number.isFinite(state.updatedAt) || state.updatedAt <= 0) {
+    throw new Error("The verified live bingo snapshot is missing or invalid; the game has not been reset");
+  }
+}
+
+function usesDurableState(env) {
+  return Boolean(env.BINGO_LIVE_STATE || env.__BINGO_DURABLE_CONTEXT);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -70,7 +216,21 @@ export default {
     if (url.pathname.startsWith("/murder-mystery/api/")) {
       return handleMurderMysteryApi(request, env);
     }
-    if (url.pathname.startsWith("/api/")) return handleApi(request, env, url);
+    if (url.pathname.startsWith("/api/")) {
+      if (env.BINGO_LIVE_STATE && !["/api/client-config", "/api/moment-image", "/api/heartbeat"].includes(url.pathname)) {
+        const id = env.BINGO_LIVE_STATE.idFromName(ACTIVE_GAME_ID);
+        try {
+          return await env.BINGO_LIVE_STATE.get(id).fetch(request);
+        } catch (error) {
+          return json({
+            error: "Live bingo storage is temporarily unavailable. Please retry shortly.",
+            code: "BINGO_STORAGE_UNAVAILABLE",
+            storage: { provider: "cloudflare-durable-object", configured: true, available: false, error: error.message },
+          }, 503);
+        }
+      }
+      return handleApi(request, env, url);
+    }
     return env.ASSETS.fetch(assetRequest(request, url));
   },
 };
@@ -78,10 +238,10 @@ export default {
 async function handleApi(request, env, url) {
   try {
     if (request.method === "GET" && url.pathname === "/api/client-config") {
-      return json({ ok: true, supabase: browserSupabaseConfig(env) });
+      return json({ ok: true, stateProvider: usesDurableState(env) ? "cloudflare-durable-object" : "supabase", supabase: browserSupabaseConfig(env) });
     }
     if (request.method === "GET" && url.pathname === "/api/storage-status") {
-      return json({ ok: true, storage: storageStatus() });
+      return json({ ok: true, storage: storageStatus(env) });
     }
     if (request.method === "GET" && url.pathname === "/api/moment-image") {
       const text = url.searchParams.get("text") || "";
@@ -92,6 +252,13 @@ async function handleApi(request, env, url) {
       const role = roleFromRequest(request, url);
       let state = await loadState(env);
       if (role === "host" || role === "display") state = await advanceAndSave(env, state);
+      if (env.__BINGO_DURABLE_CONTEXT && role === "player") {
+        return json({
+          ...playerState(state, env), moments,
+          activeGame: { id: state.gameId, title: state.title, theme: state.theme, status: "approved", wordCount: moments.length },
+          storage: storageStatus(env),
+        });
+      }
       return json(publicState(request, state, env));
     }
 
@@ -203,7 +370,7 @@ async function handleApi(request, env, url) {
     return json({
       error: error.message || "Request failed",
       ...(error.code ? { code: error.code } : {}),
-      ...(error.code === "BINGO_STORAGE_UNAVAILABLE" ? { storage: storageStatus() } : {}),
+      ...(error.code === "BINGO_STORAGE_UNAVAILABLE" ? { storage: storageStatus(env) } : {}),
     }, error.status || 500);
   }
 }
@@ -264,6 +431,7 @@ function freshState() {
 }
 
 async function loadState(env, { allowCached = false } = {}) {
+  if (env.__BINGO_DURABLE_CONTEXT) return env.__BINGO_DURABLE_CONTEXT.loadState();
   if (allowCached && cachedState && Date.now() - cachedStateLoadedAt < PLAYER_STATE_CACHE_MS) {
     const cached = structuredClone(cachedState);
     stateStorageBases.set(cached, { exists: true, updatedAt: cached.updatedAt });
@@ -356,6 +524,7 @@ function stateConflict() {
 }
 
 async function saveState(env, state) {
+  if (env.__BINGO_DURABLE_CONTEXT) return env.__BINGO_DURABLE_CONTEXT.saveState(state);
   const base = stateStorageBases.get(state);
   if (!base) throw stateConflict();
   touch(state);
@@ -411,13 +580,13 @@ function publicState(request, state, env) {
     pregameCountdownSeconds: PREGAME_COUNTDOWN_MS / 1000,
     leaderboard: leaderboardFromClaims(state.claims),
     latestClaim: state.claims[0] || null,
-    storage: storageStatus(),
+    storage: storageStatus(env),
     health: {
       ok: true,
       joinReady: true,
       deckReady: true,
       currentMomentReady: state.status !== "playing" || Boolean(state.currentWord || state.called.length),
-      storageHealthy: storageHealth.available,
+      storageHealthy: storageStatus(env).available,
       displayConnected: true,
       hostConnected: true,
       activePlayers: 0,
@@ -721,6 +890,7 @@ function browserSupabaseConfig(env) {
     key: env.SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_PUBLISHABLE_KEY,
     publicStateTable: SUPABASE_PUBLIC_STATE_TABLE,
     deckVersion: ACTIVE_DECK_VERSION,
+    ...(usesDurableState(env) ? { enabled: false, stateProvider: "cloudflare-durable-object" } : {}),
   };
 }
 
@@ -728,8 +898,8 @@ function signingSecret(env) {
   return env.BINGO_CARD_SECRET || env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 }
 
-function storageStatus() {
-  return { ...storageHealth };
+function storageStatus(env = {}) {
+  return { ...(env.__BINGO_DURABLE_CONTEXT?.health || storageHealth) };
 }
 
 function joinUrlForRequest(request, env) {

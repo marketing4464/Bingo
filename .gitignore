@@ -12,3 +12,5 @@ dist-worker-route/
 .playwright-cli/
 .vercel
 .env*
+# Live event recovery data stays local and in the deployed private worker.
+data/recovery-seed.json

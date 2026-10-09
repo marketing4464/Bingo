@@ -74,13 +74,7 @@ function api(path, body = {}) {
 }
 
 function getState(signal) {
-  if (bingoClientRole === "player") {
-    return getPlayerStateFromSupabase(signal).catch((error) => {
-      if (signal?.aborted) throw error;
-      console.warn("Could not refresh bingo state from Supabase; falling back to server.", error);
-      return getStateFromServer(signal);
-    });
-  }
+  // The worker owns live state; every screen reads the same event authority.
   return getStateFromServer(signal);
 }
 
