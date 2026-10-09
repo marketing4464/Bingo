@@ -168,7 +168,7 @@ function subscribe(onState) {
       if (stopped || version !== requestVersion) return;
       setStateConnectionInterrupted(false);
       const stableState = stabilizeLiveState(state, lastStableState);
-      if (stableState && (forceRender || stableState.updatedAt !== lastUpdatedAt || stableState.deckVersion !== lastStableState?.deckVersion || stableState.roundPlanVersion !== lastStableState?.roundPlanVersion)) {
+      if (stableState && (forceRender || stableState.updatedAt !== lastUpdatedAt || stableState.deckVersion !== lastStableState?.deckVersion || stableState.roundPlanVersion !== lastStableState?.roundPlanVersion || stableState.recoveryId !== lastStableState?.recoveryId)) {
         lastUpdatedAt = stableState.updatedAt;
         lastStableState = stableState;
         onState(stableState);
@@ -238,6 +238,10 @@ function stabilizeLiveState(state, previous) {
     || (state.roundPlanVersion && state.roundPlanVersion !== previous.roundPlanVersion)) {
     return state;
   }
+  const incomingRecoveryId = Number(state.recoveryId) || 0;
+  const previousRecoveryId = Number(previous.recoveryId) || 0;
+  if (Number.isFinite(incomingRecoveryId) && incomingRecoveryId > 0 && incomingRecoveryId > previousRecoveryId) return state;
+  if (previousRecoveryId > 0 && incomingRecoveryId !== previousRecoveryId) return null;
   const incomingUpdatedAt = Number(state.updatedAt) || 0;
   const previousUpdatedAt = Number(previous.updatedAt) || 0;
   if (incomingUpdatedAt < previousUpdatedAt) return null;

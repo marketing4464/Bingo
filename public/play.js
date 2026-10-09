@@ -3,6 +3,7 @@ let cards = [];
 let currentState = null;
 let currentCardRoundIndex = null;
 let currentCardDeckVersion = null;
+let currentCardRecoveryId = 0;
 let refreshingDeckCards = false;
 let playerHeartbeatTimer = null;
 let attemptedSessionRestore = false;
@@ -42,6 +43,7 @@ joinForm.addEventListener("submit", async (event) => {
     cards = deal.cards;
     currentCardRoundIndex = deal.roundIndex;
     currentCardDeckVersion = deal.deckVersion;
+    currentCardRecoveryId = deal.recoveryId;
     rememberLatestClaim(state);
     startPlayerHeartbeat();
     joinPanel.classList.add("hidden");
@@ -63,17 +65,20 @@ subscribe(async (state) => {
   }
   if (!gamePanel.classList.contains("hidden")) {
     if (refreshingDeckCards) return;
-    if (currentCardDeckVersion !== state.deckVersion) {
+    const deckChanged = currentCardDeckVersion !== state.deckVersion;
+    const recoveryChanged = currentCardRecoveryId !== (Number(state.recoveryId) || 0);
+    if (deckChanged || recoveryChanged) {
       const count = Math.max(1, Math.min(3, cards.length || Number($("#cardCount").value || 1)));
       refreshingDeckCards = true;
       cards = [];
       currentCardRoundIndex = null;
       currentCardDeckVersion = null;
+      currentCardRecoveryId = 0;
       renderPlayer(state);
       try {
         await dealNewRoundCards(count);
         savePlayerSession();
-        showToast("The bingo words changed. New cards dealt.");
+        showToast(deckChanged ? "The bingo words changed. New cards dealt." : "The host restored the event. New cards dealt.");
       } catch (error) {
         joinPanel.classList.remove("hidden");
         gamePanel.classList.add("hidden");
@@ -97,9 +102,13 @@ subscribe(async (state) => {
 
 async function dealCards(count) {
   const result = await api("/api/deal-cards", { player, count });
+  if ((Number(result.recoveryId) || 0) < (Number(currentState?.recoveryId) || 0)) {
+    throw new Error("The event was restored. Please get the updated cards.");
+  }
   return {
     roundIndex: result.roundIndex,
     deckVersion: result.deckVersion,
+    recoveryId: Number(result.recoveryId) || 0,
     cards: result.cards.map((card) => ({
       number: card.number,
       cells: card.cells,
@@ -115,6 +124,7 @@ async function dealNewRoundCards(count = Math.max(1, Math.min(3, cards.length ||
   cards = deal.cards;
   currentCardRoundIndex = deal.roundIndex;
   currentCardDeckVersion = deal.deckVersion;
+  currentCardRecoveryId = deal.recoveryId;
 }
 
 function renderPlayer(state) {
@@ -242,6 +252,7 @@ async function addCard() {
     cards = [...cards, ...addedCards].slice(0, 3);
     currentCardRoundIndex = deal.roundIndex;
     currentCardDeckVersion = deal.deckVersion;
+    currentCardRecoveryId = deal.recoveryId;
     if (currentState) renderPlayer(currentState);
     savePlayerSession();
     showToast(`Card ${cards.length} added. You can play up to 3 cards.`);
@@ -424,6 +435,7 @@ async function replaceBlackoutCard(cardNumber) {
   cards = cards.map((card) => card.number === cardNumber ? replacement : card);
   currentCardRoundIndex = deal.roundIndex;
   currentCardDeckVersion = deal.deckVersion;
+  currentCardRecoveryId = deal.recoveryId;
 }
 
 function renderRecentPulls(state) {
@@ -469,6 +481,7 @@ function savePlayerSession() {
       player,
       roundIndex: currentCardRoundIndex,
       deckVersion: currentCardDeckVersion,
+      recoveryId: currentCardRecoveryId,
       cards: cards.map((card) => ({
         number: card.number,
         cells: card.cells,
@@ -489,8 +502,9 @@ async function restorePlayerSession(state) {
   cards = saved.cards;
   currentCardRoundIndex = saved.roundIndex;
   currentCardDeckVersion = saved.deckVersion;
+  currentCardRecoveryId = saved.recoveryId;
   rememberLatestClaim(state);
-  if (currentCardDeckVersion !== state.deckVersion) {
+  if (currentCardDeckVersion !== state.deckVersion || currentCardRecoveryId !== (Number(state.recoveryId) || 0)) {
     const count = cards.length;
     cards = [];
     currentCardRoundIndex = null;
@@ -525,6 +539,7 @@ function loadPlayerSession() {
       player: String(saved.player),
       roundIndex: Number.isInteger(saved.roundIndex) ? saved.roundIndex : 0,
       deckVersion: String(saved.deckVersion || ""),
+      recoveryId: Number(saved.recoveryId) || 0,
       cards: restoredCards,
     };
   } catch (error) {

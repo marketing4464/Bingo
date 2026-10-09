@@ -60,3 +60,45 @@ test("display clears held countdown and artwork when the round plan changes", ()
   assert.equal(vm.runInContext("heldCountdownState", context), null);
   assert.equal(vm.runInContext("lastDisplayedMoment", context), null);
 });
+
+test("a newer recovery generation permits an authorized Round 3 rollback and rejects stale generations", () => {
+  const context = sharedContext();
+  context.beforeRecovery = { ...migrated, status: "playing", roundIndex: 2, recoveryId: 1000, updatedAt: 300 };
+  context.recoveredBreak = { ...context.beforeRecovery, status: "break", roundIndex: 1, recoveryId: 2000, updatedAt: 200 };
+  assert.equal(vm.runInContext("stabilizeLiveState(recoveredBreak, beforeRecovery)", context), context.recoveredBreak);
+  assert.equal(vm.runInContext("stabilizeLiveState({...beforeRecovery, updatedAt:400}, recoveredBreak)", context), null);
+  assert.equal(vm.runInContext("stabilizeLiveState({...beforeRecovery, recoveryId:undefined, updatedAt:400}, recoveredBreak)", context), null);
+  assert.equal(vm.runInContext("stabilizeLiveState({...beforeRecovery, recoveryId:'1000', updatedAt:400}, recoveredBreak)", context), null);
+  assert.equal(vm.runInContext("stabilizeLiveState({...beforeRecovery, recoveryId:'invalid', updatedAt:400}, recoveredBreak)", context), null);
+  assert.equal(vm.runInContext("stabilizeLiveState({...recoveredBreak, updatedAt:199}, recoveredBreak)", context), null,
+    "Same-generation old timestamps remain rejected");
+  assert.equal(vm.runInContext("stabilizeLiveState({...recoveredBreak, status:'playing', roundIndex:2, updatedAt:201}, recoveredBreak).roundIndex", context), 2);
+});
+
+test("display drops held countdown and artwork for a recovered break", () => {
+  const recoveredBreak = { ...migrated, status: "break", roundIndex: 1, recoveryId: 2000 };
+  const context = vm.createContext({
+    recoveredBreak, Date, $: () => ({}),
+    setBingoClientRole() {}, startHeartbeat() {}, subscribe() {}, setInterval: () => 1,
+    window: { addEventListener() {} },
+  });
+  vm.runInContext(read("display.js"), context);
+  vm.runInContext(`
+    displayState = {...recoveredBreak, status:'playing', roundIndex:2, recoveryId:1000};
+    heldCountdownState = {...displayState, status:'countdown', countdownEndsAt:Date.now()+900000};
+    lastDisplayedMoment = {text:'Ghost'};
+  `, context);
+  assert.equal(vm.runInContext("stableDisplayState(recoveredBreak)", context), recoveredBreak);
+  assert.equal(vm.runInContext("heldCountdownState", context), null);
+  assert.equal(vm.runInContext("lastDisplayedMoment", context), null);
+});
+
+
+test("a legitimate new deck starts without inheriting the previous event recovery generation", () => {
+  const context = sharedContext();
+  context.recoveredEvent = { ...migrated, recoveryId: 2000, roundIndex: 2, status: "playing", updatedAt: 300 };
+  context.newDeck = { ...context.recoveredEvent, deckVersion: "next-approved-deck", recoveryId: undefined, roundIndex: 0, status: "setup", updatedAt: 100 };
+  assert.equal(vm.runInContext("stabilizeLiveState(newDeck, recoveredEvent)", context), context.newDeck);
+  assert.equal(vm.runInContext("stabilizeLiveState({...newDeck, deckVersion:recoveredEvent.deckVersion}, recoveredEvent)", context), null,
+    "Recovery protection still rejects a missing generation within the same deck");
+});

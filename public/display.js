@@ -43,7 +43,8 @@ window.addEventListener("resize", () => {
 
 function stableDisplayState(state) {
   if ((state.deckVersion && state.deckVersion !== displayState?.deckVersion)
-    || (state.roundPlanVersion && state.roundPlanVersion !== displayState?.roundPlanVersion)) {
+    || (state.roundPlanVersion && state.roundPlanVersion !== displayState?.roundPlanVersion)
+    || (Number(state.recoveryId) || 0) !== (Number(displayState?.recoveryId) || 0)) {
     heldCountdownState = null;
     lastDisplayedMoment = null;
     visibleClaimId = null;

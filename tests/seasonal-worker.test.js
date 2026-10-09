@@ -222,6 +222,43 @@ test("obsolete fourth-round progress and the old break after Round 3 end without
   }
 });
 
+test("recovery generation reaches public state and cards, rejects old cards, and preserves legacy compatibility", async () => {
+  const recoveryId = Date.now();
+  const snapshot = { ...previousSeasonalState(0), recoveryId };
+  const recovered = await fixture(snapshot);
+  const state = await recovered.request("/api/state?role=player");
+  assert.equal(state.recoveryId, recoveryId);
+  const deal = await recovered.request("/api/deal-cards", { player: "Recovery Tester", count: 1 });
+  assert.equal(deal.recoveryId, recoveryId);
+  const card = deal.cards[0];
+  const payload = JSON.parse(Buffer.from(card.token.split(".")[0], "base64url"));
+  assert.equal(payload.recoveryId, recoveryId);
+  const claim = { player: payload.player, card: card.number, cells: card.cells, selected: [12] };
+  function signed(changed) {
+    const encoded = Buffer.from(JSON.stringify(changed)).toString("base64url");
+    return `${encoded}.${crypto.createHmac("sha256", cardSecret).update(encoded).digest("base64url")}`;
+  }
+  for (const prior of [undefined, recoveryId - 1]) {
+    const old = { ...payload };
+    if (prior === undefined) delete old.recoveryId;
+    else old.recoveryId = prior;
+    const result = await recovered.request("/api/claim", { ...claim, cardToken: signed(old) }, 409);
+    assert.match(result.error, /does not match/);
+  }
+  const valid = await recovered.request("/api/claim", { ...claim, cardToken: card.token }, 400);
+  assert.match(valid.error, /No completed BINGO/, "current-generation card passes identity validation");
+  await recovered.request("/api/hype", { message: "Recovery test" });
+  assert.equal(recovered.records.on_par_bingo_public_state.recoveryId, recoveryId);
+  const legacy = await fixture(previousSeasonalState(0));
+  const legacyDeal = await legacy.request("/api/deal-cards", { player: "Recovery Tester", count: 1 });
+  assert.equal(legacyDeal.recoveryId, null);
+  const legacyCard = legacyDeal.cards[0];
+  const oldPayload = JSON.parse(Buffer.from(legacyCard.token.split(".")[0], "base64url"));
+  delete oldPayload.recoveryId;
+  const compatible = await legacy.request("/api/claim", { player: oldPayload.player, card: legacyCard.number, cells: legacyCard.cells, selected: [12], cardToken: signed(oldPayload) }, 400);
+  assert.match(compatible.error, /No completed BINGO/, "missing generation remains valid before any recovery");
+});
+
 test("all eighty worker images are the user's approved files and match their recorded hashes", async () => {
   const f = await fixture();
   assert.equal(deck.length, 80);

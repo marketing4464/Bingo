@@ -107,7 +107,7 @@ async function handleApi(request, env, url) {
       const count = Math.max(1, Math.min(3, Number(body.count || 1)));
       const cards = [];
       for (let index = 0; index < count; index += 1) cards.push(await createSignedCard(env, state, player, index + 1));
-      return json({ ok: true, roundIndex: state.roundIndex, deckVersion: state.deckVersion, cards });
+      return json({ ok: true, roundIndex: state.roundIndex, deckVersion: state.deckVersion, recoveryId: state.recoveryId || null, cards });
     }
 
     let state = await loadState(env);
@@ -393,6 +393,7 @@ function playerState(state, env) {
   const full = publicState(new Request(env.PUBLIC_JOIN_URL || "https://www.opebingo.com/play"), state, env);
   return {
     gameId: full.gameId,
+    recoveryId: full.recoveryId || null,
     deckVersion: full.deckVersion,
     roundPlanVersion: full.roundPlanVersion,
     title: full.title,
@@ -494,7 +495,7 @@ function buildRoundDeck(roundIndex, previousCalled = []) {
 async function createSignedCard(env, state, player, number) {
   const pool = shuffle(moments.map((moment) => moment.text)).slice(0, 24);
   const cells = Array.from({ length: 25 }, (_, index) => (index === 12 ? "FREE" : pool.shift()));
-  const payload = { v: 1, gameId: state.gameId, deckVersion: state.deckVersion, player, roundIndex: state.roundIndex, number, cells };
+  const payload = { v: 1, gameId: state.gameId, deckVersion: state.deckVersion, recoveryId: state.recoveryId || null, player, roundIndex: state.roundIndex, number, cells };
   return { number, cells, token: await sign(env, payload) };
 }
 
@@ -505,7 +506,9 @@ async function validateClaim(env, state, body) {
   const cells = Array.isArray(body.cells) && body.cells.length === 25 ? body.cells.map((cell) => String(cell || "").slice(0, 80)) : null;
   const tokenPayload = await verify(env, body.cardToken);
   if (!cells || !tokenPayload) return { error: "Could not verify this bingo card. Refresh your card and try again.", status: 400 };
-  if (tokenPayload.gameId !== state.gameId || tokenPayload.deckVersion !== state.deckVersion || tokenPayload.player !== player || Number(tokenPayload.number) !== cardNumber || JSON.stringify(tokenPayload.cells) !== JSON.stringify(cells)) {
+  if (tokenPayload.gameId !== state.gameId || tokenPayload.deckVersion !== state.deckVersion
+      || Number(tokenPayload.recoveryId || 0) !== Number(state.recoveryId || 0)
+      || tokenPayload.player !== player || Number(tokenPayload.number) !== cardNumber || JSON.stringify(tokenPayload.cells) !== JSON.stringify(cells)) {
     return { error: "This bingo card does not match the current round. Refresh your card and try again.", status: 409 };
   }
   const cardRoundOk = tokenPayload.roundIndex === state.roundIndex
